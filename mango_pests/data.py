@@ -1,0 +1,1 @@
+# Custom Python class for pests/dieaseas
