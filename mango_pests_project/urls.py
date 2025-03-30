@@ -21,4 +21,5 @@ from mango_pests import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^$', views.home),
+    path('about/', views.about),
 ]
