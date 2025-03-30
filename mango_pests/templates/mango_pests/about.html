@@ -1,16 +1,30 @@
-
-
 {%extends "mango_pests/base.html"%}
 
+{%comment%}
+    Documentation relevant:
+    https://www.w3schools.com/django/django_tags_for.php
+    https://www.w3schools.com/django/ref_filters_divisibleby.php
+    https://www.w3schools.com/python/python_dictionaries.asp
+    https://getbootstrap.com/docs/5.0/components/card/#using-grid-markup
+{%endcomment%}
+
+
+
 {%block content%}
+
 <div class="row">
-    <div class="col-sm-6">
+{%for card in aboutcards%}
+    <div class="col-md-4">
       <div class="card">
         <div class="card-body">
-          <h6 class="card-title">Special title treatment</h6>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <h6 class="card-title">{{card.membername}}</h6>
+          <p class="card-text">{{card.aboutmember}}</p>
         </div>
       </div>
     </div>
+{%if forloop.counter|divisibleby:2 %}
+    </div> <div class="row">
+{%endif%}
+{%endfor%}
+</div>
 {%endblock%}
