@@ -14,6 +14,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# Sources:
+# https://www.w3schools.com/django/django_slug_field.php
+
 from django.contrib import admin
 from django.urls import path, re_path
 from mango_pests import views
@@ -25,5 +28,5 @@ urlpatterns = [
     re_path(r'^$', views.home, name="home"),
     path('about/', views.about, name="about"),
     path('pestlist/', views.pestlist, name="pestlist"),
-    re_path(r'^pestlist/[^/]+/?$', views.pestlist_about)
+    re_path(r'^pestlist/(?P<slugurl>[a-zA-Z-]+)/?$', views.pestlist_about)
 ]

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .data import Pestsdiseases
 
 # Create your views here.
 
@@ -7,15 +8,23 @@ def home(request):
     return(render(request, 'mango_pests\home.html'))
 
 def pestlist(request):
+    #for x in range(2):
+    #    pestcards.append({
+    #    "text": "Mike Zebrowski is a figment of my imagination. It was the first royalty free image that I could find to use a temporary placeholder for images.",
+    #   "title":"A wild Mike Zebrowski"})
     pestcards = []
-    for x in range(2):
-        pestcards.append({"text": "Mike Zebrowski is a figment of my imagination. It was the first royalty free image that I could find to use a temporary placeholder for images.",
-        "title":"A wild Mike Zebrowski"})
+    for pest in Pestsdiseases:
+        pestcards.append(pest.dictionaryconstruct())
     return(render(request, 'mango_pests\project_list.html', {"pestcards":pestcards}))
 
-def pestlist_about(request):
-
-    return(render(request, 'mango_pests\project_detail.html'))
+def pestlist_about(request, slugurl):
+    for pest in Pestsdiseases:
+        if(pest.urlslug == slugurl):
+            pestdetails = pest.dictionaryconstruct()
+            break
+    for pest in pestdetails:
+        print(pest)
+    return(render(request, 'mango_pests\project_detail.html', {"pestdetails":pestdetails}))
 
 def about(request):
     aboutcards = [
