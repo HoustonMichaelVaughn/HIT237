@@ -1,20 +1,30 @@
 {%extends "mango_pests/base.html"%}
 
 {%comment%}
-    Documentation relevant:
-    https://www.w3schools.com/django/django_tags_for.php
-    https://www.w3schools.com/django/ref_filters_divisibleby.php
-    https://www.w3schools.com/python/python_dictionaries.asp
-    https://getbootstrap.com/docs/5.0/components/card/#using-grid-markup
+Documentation relevant:
+https://www.w3schools.com/django/django_tags_for.php
+https://www.w3schools.com/django/ref_filters_divisibleby.php
+https://www.w3schools.com/python/python_dictionaries.asp
+https://getbootstrap.com/docs/5.0/components/card/#using-grid-markup
 {%endcomment%}
 
 
 
 {%block content%}
+<div class="container">
+  <div class="row justify-content-center mb-2">
+    <div class="card mb-2 w-50">
+      <div class="card-body text-center">
+        <h6 class="card-title">Meet the team!</h6>
+      </div>
+    </div>
+  </div>
+</div>
 
-<div class="row">
-{%for card in aboutcards%}
-    <div class="col-md-4">
+<div class="container">
+  <div class="row justify-content-center mb-2">
+    {%for card in aboutcards%}
+    <div class="col-md-4 mb-2">
       <div class="card">
         <div class="card-body">
           <h6 class="card-title">{{card.membername}}</h6>
@@ -22,9 +32,10 @@
         </div>
       </div>
     </div>
-{%if forloop.counter|divisibleby:2 %}
-    </div> <div class="row">
-{%endif%}
-{%endfor%}
-</div>
-{%endblock%}
+    {% if forloop.counter|divisibleby:2 and not forloop.last %}
+  </div>
+  <div class="row justify-content-center mb-2">
+    {%endif%}
+    {%endfor%}
+  </div>
+  {%endblock%}
