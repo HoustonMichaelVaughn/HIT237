@@ -9,7 +9,8 @@ def home(request):
 def pestlist(request):
     pestcards = []
     for x in range(2):
-        pestcards.append({"text": "Mike Zebrowski is a figment of my imagination. It was the first royalty free image that I could find to use a temporary placeholder for images.",
+        pestcards.append({
+        "text": "Mike Zebrowski is a figment of my imagination. It was the first royalty free image that I could find to use a temporary placeholder for images.",
         "title":"A wild Mike Zebrowski"})
     return(render(request, 'mango_pests\project_list.html', {"pestcards":pestcards}))
 
