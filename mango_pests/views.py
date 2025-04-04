@@ -13,6 +13,10 @@ def pestlist(request):
         "title":"A wild Mike Zebrowski"})
     return(render(request, 'mango_pests\project_list.html', {"pestcards":pestcards}))
 
+def pestlist_about(request):
+
+    return(render(request, 'mango_pests\project_detail.html'))
+
 def about(request):
     aboutcards = [
         {"membername":"Houston Vaughn",

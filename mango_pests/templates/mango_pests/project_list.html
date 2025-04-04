@@ -3,7 +3,9 @@
 
 {%comment%}
     Everytime I write a <div> a part of my soul dies.
-
+    
+    Sources:
+    https://getbootstrap.com/docs/5.2/components/card/
     TO:DO make images more responsive depending on end user agent. It's not too bad at the moment.
 {%endcomment%}
 
@@ -22,19 +24,19 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             {% for card in pestcards %}
-            <div class="card mb-2">
+            <div class="card mb-2 custom-mangoborder border-3">
                 <div class="row g-0 align-items-center">
                     <div class="col-md-2">
-                        <img class="img-fluid rounded-start" src="{% static 'images/pests/temporary-zebro.avif' %}" alt="Card image cap">
+                        <img class="img-fluid rounded" src="{% static 'images/pests/temporary-zebro.avif' %}" alt="Card image cap">
                     </div>
                     <div class="col-md-3 align-items-center justify-content-center">
                         <div class="card-body text-center">
-                            <p class="card-title mb-0">{{ card.title }}</p>
+                            <a class="card-title mb-0 fade-text" href="{{ card.title }}">{{ card.title }}</a>
                         </div>
                     </div>
                     <div class="col-md-7">
                         <div class="card-body">
-                            <p class="card-text">{{ card.text }}</p>
+                            <p class="card-text fade-text">{{ card.text }}</p>
                         </div>
                     </div>
                 </div>

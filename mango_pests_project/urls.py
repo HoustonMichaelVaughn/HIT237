@@ -25,4 +25,5 @@ urlpatterns = [
     re_path(r'^$', views.home, name="home"),
     path('about/', views.about, name="about"),
     path('pestlist/', views.pestlist, name="pestlist"),
+    re_path(r'^pestlist/[^/]+/?$', views.pestlist_about)
 ]
