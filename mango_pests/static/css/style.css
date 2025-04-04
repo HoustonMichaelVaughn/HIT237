@@ -1,0 +1,21 @@
+/*
+    Used for the project_list transistions
+    Sources:
+    https://www.w3schools.com/css/css_pseudo_classes.asp
+*/
+.card:hover .fade-text {
+    color: #ffa000;
+    transition: color 0.5s ease-in-out; 
+}
+
+.card .fade-text {
+    color: #000000; 
+    transition: color 0.5s ease-in-out; 
+}
+
+/*
+    Used for the border colouring in project_list.html
+*/
+.custom-mangoborder {
+    --bs-card-border-color: #ff5733 !important;
+}

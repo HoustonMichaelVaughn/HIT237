@@ -6,6 +6,17 @@ def home(request):
     
     return(render(request, 'mango_pests\home.html'))
 
+def pestlist(request):
+    pestcards = []
+    for x in range(2):
+        pestcards.append({"text": "Mike Zebrowski is a figment of my imagination. It was the first royalty free image that I could find to use a temporary placeholder for images.",
+        "title":"A wild Mike Zebrowski"})
+    return(render(request, 'mango_pests\project_list.html', {"pestcards":pestcards}))
+
+def pestlist_about(request):
+
+    return(render(request, 'mango_pests\project_detail.html'))
+
 def about(request):
     aboutcards = [
         {"membername":"Houston Vaughn",
