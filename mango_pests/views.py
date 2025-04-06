@@ -5,7 +5,8 @@ from .data import Pestsdiseases
 
 def home(request):
     
-    return(render(request, 'mango_pests\home.html'))
+    return(render(request, 'mango_pests/home.html'))
+
 
 def pestlist(request):
     #for x in range(2):
@@ -15,16 +16,16 @@ def pestlist(request):
     pestcards = []
     for pest in Pestsdiseases:
         pestcards.append(pest.dictionaryconstruct())
-    return(render(request, 'mango_pests\project_list.html', {"pestcards":pestcards}))
+    return(render(request, 'mango_pests/project_list.html', {"pestcards": pestcards}))
 
-def pestlist_about(request, slugurl):
+def pest_detail(request, slugurl):
     for pest in Pestsdiseases:
         if(pest.urlslug == slugurl):
             pestdetails = pest.dictionaryconstruct()
             break
     for pest in pestdetails:
         print(pest)
-    return(render(request, 'mango_pests\project_detail.html', {"pestdetails":pestdetails}))
+    return(render(request, 'mango_pests/project_detail.html', {"pestdetails": pestdetails}))
 
 def about(request):
     aboutcards = [
