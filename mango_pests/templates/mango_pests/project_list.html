@@ -2,47 +2,47 @@
 {% load static %}
 
 {%comment%}
-    Everytime I write a <div> a part of my soul dies.
-    
+Everytime I write a <div> a part of my soul dies.
+
     Sources:
     https://getbootstrap.com/docs/5.2/components/card/
     TO:DO make images more responsive depending on end user agent. It's not too bad at the moment.
-{%endcomment%}
+    {%endcomment%}
 
-{%block content%}
-<div class="container">
-    <div class="row justify-content-center mb-2">
-        <div class="card mb-2 w-50">
-            <div class="card-body text-center">
-                <h6 class="card-title">Mango Pests and Diseases</h6>
+    {%block content%}
+    <div class="container">
+        <div class="row justify-content-center mb-2">
+            <div class="card mb-2 w-50">
+                <div class="card-body text-center">
+                    <h6 class="card-title">Mango Pests and Diseases</h6>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            {% for card in pestcards %}
-            <div class="card mb-2 custom-mangoborder border-3">
-                <div class="row g-0 align-items-center">
-                    <div class="col-md-2">
-                        <img class="img-fluid rounded" src="{% static card.image %}" alt="Card image cap">
-                    </div>
-                    <div class="col-md-3 align-items-center justify-content-center">
-                        <div class="card-body text-center">
-                            <a class="card-title mb-0 fade-text" href="{{ card.urlslug }}">{{ card.cardtitle }}</a>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                {% for card in pestcards %}
+                <div class="card mb-2 custom-mangoborder border-3">
+                    <div class="row g-0 align-items-center">
+                        <div class="col-md-2">
+                            <img class="img-fluid rounded" src="{% static card.image %}" alt="Card image cap">
                         </div>
-                    </div>
-                    <div class="col-md-7">
-                        <div class="card-body">
-                            <p class="card-text fade-text">{{ card.cardtext }}</p>
+                        <div class="col-md-3 align-items-center justify-content-center">
+                            <div class="card-body text-center">
+                                <a class="card-title mb-0 fade-text" href="{{ card.urlslug }}">{{ card.cardtitle }}</a>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="card-body">
+                                <p class="card-text fade-text">{{ card.cardtext }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
-</div>
-{%endblock%}
+    {%endblock%}

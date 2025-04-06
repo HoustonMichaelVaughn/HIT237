@@ -1,7 +1,56 @@
 {%extends "mango_pests/base.html"%}
+{%load static%}
 
-{%block content%}
+{%comment%}
 
-<p>{{pestdetails.cardtitle}}</p>
-<p>{{pestdetails.detailedinfo}}</p>
-{%endblock%}
+Sources:
+https://getbootstrap.com/docs/4.0/components/list-group/
+
+Notes:
+Symptoms have a nifty little feature that allows you to pass the "serverity" of each symptom.
+Otherwise a standard level can be passed inside the dictionary.
+
+{%endcomment%}
+
+{% block content %}
+
+<div class="container text-center">
+
+    <h1 class="display-4">{{ pestdetails.cardtitle }}</h1>
+    <div class="row justify-content-center my-4">
+        <div class="col-md-3">
+            <img src="{% static pestdetails.image %}" class="img-fluid rounded" alt="...">
+        </div>
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <p>{{ pestdetails.detailedinfo }}</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <ul class="list-group mb-4">
+                <li class="list-group-item active">Symptoms</li>
+                {% for level, symptom in pestdetails.symptoms.items %}
+                <li class="list-group-item list-group-item-{{ level }}">{{ symptom }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <ul class="list-group mb-4">
+                <li class="list-group-item active">Treatments</li>
+                {% for treatment in pestdetails.treatments %}
+                <li class="list-group-item list-group-item-primary">{{ treatment }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
