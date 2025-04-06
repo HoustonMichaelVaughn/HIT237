@@ -2,6 +2,8 @@
     Used for the project_list transistions
     Sources:
     https://www.w3schools.com/css/css_pseudo_classes.asp
+    https://cssgradient.io/
+    https://www.canva.com/colors/color-wheel/
 */
 .card:hover .fade-text {
     color: #ffa000;
@@ -18,4 +20,20 @@
 */
 .custom-mangoborder {
     --bs-card-border-color: #ff5733 !important;
+}
+
+.navbar {
+    /*background: linear-gradient(180deg, #80B3FF 0%, #72A4E2 90%, #ffcc80 100%);*/
+    color: white;
+}
+
+body {
+    /*background: linear-gradient(180deg, rgba(255,152,0,1) 0%, rgba(255,184,0,1) 42%, rgba(201,255,0,1) 100%);*/
+    /*background: linear-gradient(to bottom, #ffcc80, #ffb74d, #ff9800);*/
+    background: linear-gradient(to bottom, rgba(255,204,128,1) 0%, rgba(255,183,77,1) 70%,rgba(255,167,38,1) 80%, rgba(255,152,0,1) 100%);
+    background-attachment: fixed;
+    color: #333;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
