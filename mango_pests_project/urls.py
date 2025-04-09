@@ -18,16 +18,12 @@ Including another URLconf
 # https://www.w3schools.com/django/django_slug_field.php
 
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, include
 from mango_pests import views
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^$', views.home, name="home"),
-    path('about/', views.about, name="about"),
-    path('pestlist/', views.pestlist, name="pestlist"),
-    re_path(r'^pestlist/(?P<slugurl>[a-zA-Z-]+)/?$', views.pest_detail, name='pest_detail')
-    
+    path('', include('mango_pests.urls')),
 ]
