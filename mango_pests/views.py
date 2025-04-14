@@ -55,4 +55,4 @@ class AboutView(View):
                 "aboutmember":"Temp Text"}
             ]
         return(render(request, r'mango_pests\about.html',{"aboutcards":aboutcards}))
->>>>>>> 25c76cad9582980b1a94e3b2b481d9fdf57a8d43
+
