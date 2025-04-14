@@ -34,7 +34,7 @@ Otherwise a standard level can be passed inside the dictionary.
         <div class="col-md-8">
             <ul class="list-group mb-4">
                 <li class="list-group-item active">Symptoms</li>
-                {% for level, symptom in pestdetails.symptoms.items %}
+                {% for level, symptom in pestdetails.symptoms %}
                 <li class="list-group-item list-group-item-{{ level }}">{{ symptom }}</li>
                 {% endfor %}
             </ul>
