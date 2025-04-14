@@ -34,7 +34,7 @@ def about(request):
         {"membername":"Neolisa De Castro",
          "aboutmember":"Temp Text"},
         {"membername":"Gislene Freitas De Lima Clancy",
-         "aboutmember":"Temp Text"},
+         "aboutmember": " Computer Science student at CDU. Contributed pest research, data structuring, image integration, and helped shape user interaction flow for this project."},
         {"membername":"Dean Metcalfe",
          "aboutmember":"Temp Text"}
     ]
