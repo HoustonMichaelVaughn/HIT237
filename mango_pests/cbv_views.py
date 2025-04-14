@@ -14,5 +14,16 @@ class PestListView(TemplateView):
       #allows additional arguments to be accepted by context dictionary
       context['pestcards']=[pest.dictionaryconstruct()] for pest in Pestdiseases]
       return context
-      
+      #!!!!comments will be updated later!!!
+ class PestDetailView(TemplateView):
+  template_name = 'mango_pests/project_detail.html'
+  #create class PestListView to render the Pest List Page from template project_list.html
+    def get_context_data(self,**kwargs):
+      # define method get_context_data to apply PestListView to data that is input through the template project_list.html
+      context = super(). get_context_data(**kwargs)
+      #allows additional arguments to be accepted by context dictionary
+      slugurl =self.kwargs['slugurl']
+      for pest in Pestdiseases:
+        if pest.urlslug == slugurl:
+          
       
