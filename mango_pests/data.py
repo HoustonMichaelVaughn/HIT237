@@ -187,11 +187,12 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
         "Use pheromone or visual traps where applicable"
     ]  # Treatment & management
 
+
     [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
+    ("warning", "Puncture holes are seen on the fruit and will be soft near the puncture points, sometimes oozing liquid can be seen around the dimples"),
+    ("danger",  "Pulp is converted into a bad- smelling, discoloured semi-liquid mass"),
+    ("warning", " Fruit will develop large, sunken brown patches or even open wounds"),
+    ("danger",  "Fruit will drop prematurely"),
     ], # Symptoms combined with warning signs
 
     ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
@@ -243,73 +244,78 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",
         "Promote natural predators (e.g., lady beetles, parasitic wasps)",
         "Inspect regularly to catch and treat new infestations early"
     ]  # Recommended management steps
+
     [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
+    ("warning", "Leaf Hoppers will be present in large numbers on the flowers & new leaf flushes"),
+    ("warning", "Browning and Drying of Flowers"),
+    ("danger", "Decreased percentage of fruit set and ultimately reduced production."),
     ], # Symptoms combined with warning signs
 
     ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
       "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
+
 )
 
 Pest5 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
+    'Mango Stem Borer', # Title
+    """The Mango Stem Borer (Batocera rufomaculata sp.) has been observed to cause an alarming situation in old and young orchards, posing a significant threat to mango cultivation""", # Brief description
+    'mango_pests/static/images/pests/Mango Stem Borer.jpg', # Location of image
+    """The mango stem borer is a serious pest,and the grub stage causes damage by cutting and biting fresh twigs andshoots. When a grub enters a shoot, it digs a tunnel inside the stem, causingthe shoots to dry out. 
+    Severe infestation affects the entire shoots and causes the tree to look like it has been burned, resulting in a significant reduction in yield. The pest's larvae live for a long time (about a year) and hibernate inside the dry shoot during the winter. 
+    They activate and pupate within as the weather warms up, and adults emerge and begin egg laying during Autumn months.""", # Detailed description
     [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
+    ("warning", "Tunnels can be found in the tree's periphery or deep within the trunk."),
+    ("danger", "Early on, the damage is not evident, but the leaking of sticky fluid from various spots on the tree trunk and branchescan be seen."),
+    ("warning", "A limb or two begins to shed leaves and dry up."),
+    ("danger", " A hole with seeping sap and frass on the barkare visible indications in advanced stages of illness."),
+    ("warning","Branches to turn yellow, followed by drying and dieback of terminal shootsand branches."),
+    ( "danger", "Tree Death."), 
     ], # Symptoms combined with warning signs
-
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
+    ["Destruction of infected branches", 
+     "Sanitation of orchard farm",
+     "Extracting grubs.", 
+     "Integrated Pest Management Programs in Mango Orchards using Chemical and Biological Agents" ,
+     "The orchard should be tilled or hoed three times during winter- 15cm deep in soil.",
+     "Host-Plant Resistance- cultivating Mango species that are resistant to Stem Borer infestation",
+     "Passing X-Rays through the trunk or stem of a Mango Tree."] # How to treat
 )
 
 Pest6 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
+    'Bacterial Black Spot', # Title
+    """The Bacterial Black Spot can potentially be more damaging to flowers than Anthracnose.""", # Brief description
+    'mango_pests/static/images/pests/Mango Bacterial Blight Disease Fruit.jpg', # Location of image
+    """The disease attacks through natural openings such as stomata, wax and oil glands, leaf and fruit abrasions, leaf scars, and at the apex of branches in the panicle. Damage by adverse environmental conditions such as frost and wind can also create sites for infection. 
+    In young trees the disease can cause dieback of branches.""", # Detailed description
     [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
+    ("warning", "Leaf lesions consist of black, raised, angular areas, restricted by the veins and frequently surrounded by a yellow margin."),
+    ("danger", "Elongated stem cankers occur on the bark and can cause terminal dieback."),
+    ("warning", "Fruit lesions consist of individual or multiple star-shaped cracks, often appearing with anthracnose lesions in a tearstain pattern."),
+    ("danger", "Unlike anthracnose, bacterial lesions do not expand as the fruit ripen."),
     ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
+    ["From pinnacle emergence, apply copper fungicide registered for control of bacterial leaf spot every three weeks.",
+     "From fruit set until harvest, copper fungicide every 14–28 days depending on the weather. In dry seasons fewer sprays are needed, saving time and pesticide.",
+     "New flush growth should be sprayed during autumn. This prevents a build-up of disease on young foliage. ", 
+     "Postharvest treatments will not provide complete disease control. It is important to follow field spray recommendations to reduce the level of postharvest disease", 
+     "Cool fruit promptly following harvest.",
+     " Site selection and planting density are important in disease control.", 
+     " Pruning trees is extremely important. This should be done to remove all sources of inoculum and to maximise air circulation and penetration of sunlight.",
+     " Apply fertiliser sparingly and with caution."] # How to treat
 )
 
 Pest7 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
+    'Sooty Mould', # Title
+    """Capnodium mangiferum (mango) Many plants develop sooty moulds when colonised by insects that produce honeydew, e.g., coconut, guava, mango, soursop and ornamentals, e.g., Frangipani.""", # Brief description
+    'mango_pests/static/images/pests/Mango Bacterial Blight Disease Leaves.jpg', # Location of image
+    """Sooty moulds do not attack plants. The fungi that cause sooty moulds grow on the sugary substances that are produced by insects - mostly, aphids, soft scale (not armoured scale), leafhoppers, planthoppers, psyllids and whiteflies - as they suck the sap of plants. The secretions are known as 'honeydew'. The fungi that grow on honeydew reduce the plants ability to photosynthesise and this may stunt growth, cause leaves to yellow and die early, and may reduce the quality of fruit.""", # Detailed description
     [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
+    ("warning", "Black Velvety Thin Membranous covering on the leaf blade. The entire leaf blade is covered or it may be only as flakes on the leaf."),
+    ("danger", "In severe cases, the tree completely turns black with mould on entire surface of twigs and leaves."),
+    ("warning", "The affected leaves curl and shrivel under dry conditions."),
+    ("danger", "The fungus multiplies on the ‘honey dew’ secreted by the insects and spreads on the plant surface making it black and ugly owing to the masses of black spores on the leaf surface. The severity of incidence is dependent upon the sugary secretion by the insects."),
+    ("warning", "During flowering time, its attack results in reduced fruit set and sometimes causes fruit fall. It is also noticed on fruits of late mango varieties")
     ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
+    ["Pour Hot Water over Ants Nests that are close to Mango Trees", "Prune Branches to prevent access for Ants and other ahrmful Insects",
+     "Use Soap Sprays to kill Sap Sucking Insects", "Use Oil and Dishsoap Spray on Infested Leaves", "Synthetic pyrethroid insecticides to kill ants; these insecticides may also be tried against scale insects as they are likely to be effective against the crawlers - crawlers are the active nymphs which spread infestations to new plants and/or new gardens."] # How to treat
 )
 
 
