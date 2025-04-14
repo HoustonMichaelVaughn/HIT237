@@ -11,13 +11,13 @@ SEVERITY_WARNING = "warning"
 SEVERITY_DANGER = "danger"
 
 class Intrusion:
-    #   I don't we are allowed to use Django models for this class so I've made manually made
+    #   I don't think we are allowed to use Django models for this class so I've made manually made
     #   a url slug generator that way it's much nicer than %20,%20, etc
     #   cardtitle: The name of the pest (Used for card and else where)
     #   cardtext: Text to be used for the card
     #   image: the link to the image (Might be refactored to make it more responsive)
     #   detailedinfo: Information displayed on project_detail
-    #   symptoms: symptoms displayed. Must be dictionary to indicate level
+    #   symptoms: symptoms displayed. Must be a list of tuples
     #   treatments: passed as a list, used in project_detail
     #   urlslug is self made by slugger function, used for neater URLs
 
@@ -26,18 +26,9 @@ class Intrusion:
         self.cardtext = cardtext
         self.image = image
         self.detailedinfo = detailedinfo
-        self.symptoms = symptoms 
+        self.symptoms = symptoms
         self.treatments = treatments
         self.urlslug = self.slugger(cardtitle)
-
-    def dictionaryconstruct(self):
-         return{"cardtitle": self.cardtitle,
-             "cardtext": self.cardtext,
-             "image": self.image,
-             "detailedinfo": self.detailedinfo,
-             "urlslug": self.urlslug,
-             "symptoms": self.symptoms,
-             "treatments": self.treatments}
     
     def slugger(self, cardtitle):
         return sub(r'[^A-Za-z]+','-',cardtitle)
@@ -119,6 +110,7 @@ Information source:
 Northern Territory Government. (2010). Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes. 
 Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",  # Source Detailed description
     [
+
         (SEVERITY_WARNING, "Small dark lesions on leaves or fruit surface"),
         (SEVERITY_WARNING, "Leaf spots coalescing, causing partial defoliation"),
         (SEVERITY_DANGER, "Black or brown spreading lesions on mature fruit"),
@@ -131,6 +123,15 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",  # Source Deta
         "Use forced air cooling (13–20°C) post-harvest to slow fungal development",
         "Maintain overall orchard hygiene to prevent reinfection"
     ]  # Control and management strategies
+
+    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
+    ("danger", "Presence of sooty mold growing on the honeydew"),
+    ("warning", "Yellowing or wilting of leaves"),
+    ("danger", "Deformed and scarred fruit"),
+    ], # Symptoms combined with warning signs
+    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
+     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
+
 )
 
 Pest3 = Intrusion(
@@ -172,6 +173,7 @@ Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Disea
 Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
 """,  # Detailed description
     [
+
         (SEVERITY_WARNING, "Wet-looking frass near stem end or between clustered fruits"),
         (SEVERITY_WARNING, "Small bore holes visible on fruit surface"),
         (SEVERITY_DANGER, "Larval tunneling causing fruit rot and internal breakdown"),
@@ -184,6 +186,16 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
         "Maintain orchard hygiene and monitor fallen fruit",
         "Use pheromone or visual traps where applicable"
     ]  # Treatment & management
+
+
+    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
+    ("danger", "Presence of sooty mold growing on the honeydew"),
+    ("warning", "Yellowing or wilting of leaves"),
+    ("danger", "Deformed and scarred fruit"),
+    ], # Symptoms combined with warning signs
+
+    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
+     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
 
 )
 
@@ -218,6 +230,7 @@ Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Disea
 Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",  
 
     [
+
         (SEVERITY_WARNING, "White or cottony masses on stems, leaves, or fruit"),
         (SEVERITY_WARNING, "Sticky honeydew attracting ants"),
         (SEVERITY_DANGER, "Sooty mold forming on honeydew-covered surfaces"),
@@ -231,6 +244,14 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",
         "Inspect regularly to catch and treat new infestations early"
     ]  # Recommended management steps
     
+    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
+    ("danger", "Presence of sooty mold growing on the honeydew"),
+    ("warning", "Yellowing or wilting of leaves"),
+    ("danger", "Deformed and scarred fruit"),
+    ], # Symptoms combined with warning signs
+
+    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
+      "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
 
 )
 
@@ -244,11 +265,12 @@ Pest5 = Intrusion(
     weakening the tree and promoting the growth of sooty mold. 
     Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
     [
-    (SEVERITY_WARNING, "Sticky honeydew secretion on leaves, branches, and fruit"),
-    (SEVERITY_DANGER, "Presence of sooty mold growing on the honeydew"),
-    (SEVERITY_WARNING, "Yellowing or wilting of leaves"),
-    (SEVERITY_DANGER, "Deformed and scarred fruit"),
+    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
+    ("danger", "Presence of sooty mold growing on the honeydew"),
+    ("warning", "Yellowing or wilting of leaves"),
+    ("danger", "Deformed and scarred fruit"),
     ], # Symptoms combined with warning signs
+
     ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
      "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
 )
@@ -263,10 +285,10 @@ Pest6 = Intrusion(
     weakening the tree and promoting the growth of sooty mold. 
     Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
     [
-    (SEVERITY_WARNING, "Sticky honeydew secretion on leaves, branches, and fruit"),
-    (SEVERITY_DANGER, "Presence of sooty mold growing on the honeydew"),
-    (SEVERITY_WARNING, "Yellowing or wilting of leaves"),
-    (SEVERITY_DANGER, "Deformed and scarred fruit"),
+    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
+    ("danger", "Presence of sooty mold growing on the honeydew"),
+    ("warning", "Yellowing or wilting of leaves"),
+    ("danger", "Deformed and scarred fruit"),
     ], # Symptoms combined with warning signs
     ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
      "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
@@ -282,14 +304,16 @@ Pest7 = Intrusion(
     weakening the tree and promoting the growth of sooty mold. 
     Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
     [
-    (SEVERITY_WARNING, "Sticky honeydew secretion on leaves, branches, and fruit"),
-    (SEVERITY_DANGER, "Presence of sooty mold growing on the honeydew"),
-    (SEVERITY_WARNING, "Yellowing or wilting of leaves"),
-    (SEVERITY_DANGER, "Deformed and scarred fruit"),
+    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
+    ("danger", "Presence of sooty mold growing on the honeydew"),
+    ("warning", "Yellowing or wilting of leaves"),
+    ("danger", "Deformed and scarred fruit"),
     ], # Symptoms combined with warning signs
     ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
      "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
 )
 
 
-Pestsdiseases = [Pest1, Pest2, Pest3, Pest4, Pest5, Pest6, Pest7]
+
+
+Pestsdiseases = [Pest1,Pest2,Pest3,Pest4,Pest5,Pest6,Pest7]
