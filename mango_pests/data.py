@@ -123,7 +123,7 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",  # Source Deta
         "Use forced air cooling (13–20°C) post-harvest to slow fungal development",
         "Maintain overall orchard hygiene to prevent reinfection"
     ]  # Control and management strategies
-
+    [
     ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
     ("danger", "Presence of sooty mold growing on the honeydew"),
     ("warning", "Yellowing or wilting of leaves"),
@@ -187,7 +187,7 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
         "Use pheromone or visual traps where applicable"
     ]  # Treatment & management
 
-
+    [
     ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
     ("danger", "Presence of sooty mold growing on the honeydew"),
     ("warning", "Yellowing or wilting of leaves"),
@@ -243,7 +243,7 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",
         "Promote natural predators (e.g., lady beetles, parasitic wasps)",
         "Inspect regularly to catch and treat new infestations early"
     ]  # Recommended management steps
-    
+    [
     ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
     ("danger", "Presence of sooty mold growing on the honeydew"),
     ("warning", "Yellowing or wilting of leaves"),
@@ -252,7 +252,6 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",
 
     ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
       "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
-
 )
 
 Pest5 = Intrusion(
