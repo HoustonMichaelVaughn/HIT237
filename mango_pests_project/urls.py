@@ -19,15 +19,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, re_path
-from mango_pests import views
+from mango_pests import views as v
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^$', views.home, name="home"),
-    path('about/', views.about, name="about"),
-    path('pestlist/', views.pestlist, name="pestlist"),
-    re_path(r'^pestlist/(?P<slugurl>[a-zA-Z-]+)/?$', views.pest_detail, name='pest_detail')
-    
+    re_path(r'^$', v.home, name="home"),
+    path('about/', v.AboutView.as_view(), name="about"),
+    path('pestlist/', v.PestListView.as_view(), name="pestlist"),
+    re_path(r'^pestlist/(?P<slugurl>[a-zA-Z-]+)/?$', v.PestDetailView.as_view(), name='pest_detail')
 ]
