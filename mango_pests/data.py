@@ -35,142 +35,26 @@ class Intrusion:
 
 
 Pest1 = Intrusion(
-    'A wild Mike Zebrowski', # Title
+    'A wild Mike Zebrowski',
     """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
+    It was the first royalty free image that I could find to use a temporary placeholder for images.""",
+    'images/pests/temporary-zebrowski.jpg',
     """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
     These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
     weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
+    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""",
     [
-    (SEVERITY_WARNING, "Sticky honeydew secretion on leaves, branches, and fruit"),
-    (SEVERITY_DANGER, "Presence of sooty mold growing on the honeydew"),
-    (SEVERITY_WARNING, "Yellowing or wilting of leaves"),
-    (SEVERITY_DANGER, "Deformed and scarred fruit"),
-    ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
-)
-
-Pest2 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
+        (SEVERITY_WARNING, "Sticky honeydew secretion on leaves, branches, and fruit"),
+        (SEVERITY_DANGER, "Presence of sooty mold growing on the honeydew"),
+        (SEVERITY_WARNING, "Yellowing or wilting of leaves"),
+        (SEVERITY_DANGER, "Deformed and scarred fruit"),
+    ],
     [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
-    ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
+        "Use of insecticidal soap or horticultural oils to target the pests",
+        "Apply systemic insecticides to control mealybug populations",
+        "Regularly remove infested branches and leaves",
+        "Introduce natural predators like ladybugs or parasitic wasps"
+    ]
 )
-
-Pest3 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
-    [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
-    ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
-)
-
-Pest4 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
-    [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
-    ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
-)
-
-
-Pest5 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
-    [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
-    ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
-)
-
-Pest6 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
-    [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
-    ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
-)
-
-Pest7 = Intrusion(
-    'A wild Mike Zebrowski', # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""", # Brief description
-    'images/pests/temporary-zebrowski.jpg', # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""", # Detailed description
-    [
-    ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-    ("danger", "Presence of sooty mold growing on the honeydew"),
-    ("warning", "Yellowing or wilting of leaves"),
-    ("danger", "Deformed and scarred fruit"),
-    ], # Symptoms combined with warning signs
-    ["Use of insecticidal soap or horticultural oils to target the pests", "Apply systemic insecticides to control mealybug populations",
-     "Regularly remove infested branches and leaves", "Introduce natural predators like ladybugs or parasitic wasps"] # How to treat
-)
-
-
-
-
-Pestsdiseases = [Pest1,Pest2,Pest3,Pest4,Pest5,Pest6,Pest7]
 
 
