@@ -265,4 +265,4 @@ Pest7 = Intrusion(
 )
 
 
-Pestsdiseases = [Pest1, Pest2, Pest3, Pest5, Pest6, Pest7]
+Pestsdiseases = [Pest1, Pest2, Pest3, Pest4, Pest5, Pest6, Pest7]
