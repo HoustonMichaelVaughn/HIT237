@@ -55,4 +55,6 @@ class AboutView(View):
                 "aboutmember":"Temp Text"}
             ]
         return(render(request, r'mango_pests\about.html',{"aboutcards":aboutcards}))
-
+class ReferencesView(TemplateView):
+    # Set the template to render as 'mango_pests/references.html'
+    template_name = 'mango_pests/references.html'
