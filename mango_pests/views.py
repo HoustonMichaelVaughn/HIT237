@@ -35,7 +35,8 @@ def about(request):
         {"membername":"Houston Vaughn",
          "aboutmember":"A computer science student at CDU. Teamleader for Group 7"},
         {"membername":"Neolisa De Castro",
-         "aboutmember":"Temp Text"},
+         "aboutmember":"Computer Science Student. Contacted Fellow Students to Form the Group for HIT237,  Researched and Provided NT Specific Research Materials for Mango Farm Surveillance, Involved in the Drafting of Web Application both in Conceptualization and Coding, Suggested the Inclusion of a Reference Tab to Properly Attribute Web Application Elements to Corresponding Sources
+"},
         {"membername":"Gislene Freitas De Lima Clancy",
          "aboutmember": " Computer Science student at CDU. Contributed pest research, data structuring, image integration, and helped shape user interaction flow for this project."},
         {"membername":"Dean Metcalfe",
@@ -48,7 +49,8 @@ class AboutView(View):
             {"membername":"Houston Vaughn",
                 "aboutmember":"A computer science student at CDU. Teamleader for Group 7"},
             {"membername":"Neolisa De Castro",
-                "aboutmember":"Temp Text"},
+                "aboutmember":"Computer Science Student. Contacted Fellow Students to Form the Group for HIT237,  Researched and Provided NT Specific Research Materials for Mango Farm Surveillance, Involved in the Drafting of Web Application both in Conceptualization and Coding, Suggested the Inclusion of a Reference Tab to Properly Attribute Web Application Elements to Corresponding Sources
+"},
             {"membername":"Gislene Freitas De Lima Clancy",
                 "aboutmember":"Temp Text"},
             {"membername":"Dean Metcalfe",
