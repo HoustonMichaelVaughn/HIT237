@@ -19,20 +19,6 @@ class PestDetailView(View):
                 pestdetails = pest.__dict__
                 break
         return(render(request, 'mango_pests/project_detail.html', {"pestdetails": pestdetails}))
-
-class AboutView(View):
-    def get(self, request):
-        aboutcards = [
-            {"membername":"Houston Vaughn",
-             "aboutmember":"A computer science student at CDU. Teamleader for Group 7"},
-            {"membername":"Neolisa De Castro",
-             "aboutmember":"Computer Science Student. Contacted Fellow Students to Form the Group for HIT237, Researched and Provided NT Specific Research Materials for Mango Farm Surveillance, Involved in the Drafting of Web Application both in Conceptualization and Coding, Suggested the Inclusion of a Reference Tab to Properly Attribute Web Application Elements to Corresponding Sources"},
-            {"membername":"Gislene Freitas De Lima Clancy",
-             "aboutmember":"Temp Text"},
-            {"membername":"Dean Metcalfe",
-             "aboutmember":"Temp Text"}
-        ]
-        return render(request, 'mango_pests/about.html', {"aboutcards": aboutcards})
     
 class AboutView(View):
     def get(self, request):
@@ -40,11 +26,11 @@ class AboutView(View):
             {"membername":"Houston Vaughn",
                 "aboutmember":"A computer science student at CDU. Teamleader for Group 7"},
             {"membername":"Neolisa De Castro",
-                "aboutmember":"Computer Science Student. Contacted Fellow Students to Form the Group for HIT237,  Researched and Provided NT Specific Research Materials for Mango Farm Surveillance, Involved in the Drafting of Web Application both in Conceptualization and Coding, Suggested the Inclusion of a Reference Tab to Properly Attribute Web Application Elements to Corresponding Sources"},
+                "aboutmember":"Computer Science Student."},
             {"membername":"Gislene Freitas De Lima Clancy",
-                "aboutmember":"Temp Text"},
+                "aboutmember":"A computer science student at CDU."},
             {"membername":"Dean Metcalfe",
-                "aboutmember":"Temp Text"}
+                "aboutmember":"A computer science student at CDU."}
             ]
         return(render(request, r'mango_pests\about.html',{"aboutcards":aboutcards}))
 #class ReferencesView(TemplateView):

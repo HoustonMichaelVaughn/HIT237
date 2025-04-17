@@ -145,7 +145,7 @@ Pest3 = Intrusion(
 Pest4 = Intrusion(
     'Mealybugs (Planococcus citri & Ferrisia virgata)',  # Title
     "Sap-sucking pests that excrete honeydew, potentially leading to sooty mold on mango leaves and fruit.",  # Brief description
-    'images/pests/mealybugs.png',  # PNG image path updated
+    'images/pests/mealy-bugs.png',  # image path
     """Eggs:
     - Often pink, oval-shaped, and laid in a cottony mass.
 
@@ -196,7 +196,7 @@ Pest4 = Intrusion(
 Pest5 = Intrusion(
     'Mango Stem Borer',  # Title
     """The Mango Stem Borer (Batocera rufomaculata sp.) has been observed to cause an alarming situation in old and young orchards, posing a significant threat to mango cultivation""",  # Brief description
-    'images/pests/Mango-Stem-Borer.jpg',  # Location of image
+    'images/pests/mango-stem-borer.jpg',  # image path
     """The mango stem borer is a serious pest, and the grub stage causes damage by cutting and biting fresh twigs and shoots. When a grub enters a shoot, it digs a tunnel inside the stem, causing the shoots to dry out. 
     Severe infestation affects the entire shoots and causes the tree to look like it has been burned, resulting in a significant reduction in yield. The pest's larvae live for a long time (about a year) and hibernate inside the dry shoot during the winter. 
     They activate and pupate as the weather warms up, and adults emerge and begin egg-laying during the autumn months.""",  # Detailed description
@@ -222,7 +222,7 @@ Pest5 = Intrusion(
 Pest6 = Intrusion(
     'Bacterial Black Spot',  # Title
     """The Bacterial Black Spot can potentially be more damaging to flowers than Anthracnose.""",  # Brief description
-    'images/pests/Mango Bacterial Blight Disease Fruit.jpg',  # Location of image
+    'images/pests/mango-bacterial-blight-disease-fruit.jpg',  # Location of image
     """The disease attacks through natural openings such as stomata, wax and oil glands, leaf and fruit abrasions, leaf scars, and at the apex of branches in the panicle. Damage by adverse environmental conditions such as frost and wind can also create sites for infection. 
     In young trees, the disease can cause dieback of branches.""",  # Detailed description
     [
@@ -246,7 +246,7 @@ Pest6 = Intrusion(
 Pest7 = Intrusion(
     'Sooty Mould',  # Title
     """Capnodium mangiferum (mango) Many plants develop sooty moulds when colonised by insects that produce honeydew, e.g., coconut, guava, mango, soursop and ornamentals, e.g., Frangipani.""",  # Brief description
-    'images/pests/Mango Bacterial Blight Disease Leaves.jpg',  # Location of image
+    'images/pests/mango-bacterial-blight-disease-leaves.jpg',  # Location of image
     """Sooty moulds do not attack plants. The fungi that cause sooty moulds grow on the sugary substances that are produced by insects - mostly, aphids, soft scale (not armoured scale), leafhoppers, planthoppers, psyllids and whiteflies - as they suck the sap of plants. The secretions are known as 'honeydew'. The fungi that grow on honeydew reduce the plants ability to photosynthesise and this may stunt growth, cause leaves to yellow and die early, and may reduce the quality of fruit.""",  # Detailed description
     [
         (SEVERITY_WARNING, "Black Velvety Thin Membranous covering on the leaf blade. The entire leaf blade is covered or it may be only as flakes on the leaf."),
