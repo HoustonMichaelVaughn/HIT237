@@ -1,11 +1,12 @@
 {%extends "mango_pests/base.html"%}
 {% load static %}
 
+
 {%comment%}
 Everytime I write a <div> a part of my soul dies.
-
     Sources:
     https://getbootstrap.com/docs/5.2/components/card/
+    https://getbootstrap.com/docs/5.3/forms/overview/
     TO:DO make images more responsive depending on end user agent. It's not too bad at the moment.
     IT'S REALLY BAD, FIX HOW IMAGES ARE DISPLAYED
     {%endcomment%}
@@ -21,6 +22,15 @@ Everytime I write a <div> a part of my soul dies.
         </div>
     </div>
 
+    <form method="get" class="mb-3">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search pests..."
+                    value="{{ search }}">
+            </div>
+        </div>
+    </form>
+    
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10">

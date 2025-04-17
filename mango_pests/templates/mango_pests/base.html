@@ -1,15 +1,12 @@
 {%comment%}
 Base html provides the basic layout presistent accross all pages
+block head provides the js include only for the page that needs it (project_detail.html)
 Sources:
 
 ~Navbar~
 https://pypi.org/project/django-bootstrap5/
 https://getbootstrap.com/docs/5.0/components/navbar/
 
-
-TO-DO:
-Wrestle with bootstrap, figure out how to
-"Excellent use of Django Template elements (variables, tags, filters)." for the navbar
 
 {%endcomment%}
 <!DOCTYPE html>
@@ -24,6 +21,9 @@ Wrestle with bootstrap, figure out how to
   {% load django_bootstrap5 %}
   {% bootstrap_css %}
   {% bootstrap_javascript %}
+  {%block head%}
+
+  {%endblock%}
 </head>
 
 <body>

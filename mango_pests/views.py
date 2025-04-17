@@ -1,16 +1,30 @@
 from django.shortcuts import render
+from django.http import HttpRequest
 from .data import Pestsdiseases,References
 from django.views import View
+import re
 
-# Create your views here.
+# Sources
+# https://docs.djangoproject.com/en/5.2/ref/request-response/
+# https://marketplace.visualstudio.com/items?itemName=njqdev.vscode-python-typehint
+
 
 def home(request):
     return(render(request, 'mango_pests/home.html'))
 
 class PestListView(View):
-    def get(self, request):
-        pestcards = [pest.__dict__ for pest in Pestsdiseases]
-        return(render(request, 'mango_pests/project_list.html', {"pestcards": pestcards}))
+    #   Below is a type hint to get vs to recognise request as a HttpRequest! How cool is that?
+    def get(self, request: HttpRequest):
+        search = ''
+        try:
+            search = request.GET['search'].lower()
+        except:
+            pass
+        if(search):
+            pestcards = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()]
+        else:
+            pestcards = [pest.__dict__ for pest in Pestsdiseases]
+        return(render(request, 'mango_pests/project_list.html', {"pestcards": pestcards, "search": search}))
 
 class PestDetailView(View):
     def get(self, request, slugurl):
