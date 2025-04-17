@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .data import Pestsdiseases
+from .data import Pestsdiseases,References
 from django.views import View
 
 # Create your views here.
@@ -32,7 +32,8 @@ class AboutView(View):
             {"membername":"Dean Metcalfe",
                 "aboutmember":"A computer science student at CDU."}
             ]
-        return(render(request, r'mango_pests\about.html',{"aboutcards":aboutcards}))
-#class ReferencesView(TemplateView):
-    # Set the template to render as 'mango_pests/references.html'
-#   template_name = 'mango_pests/references.html'
+        return(render(request, 'mango_pests/about.html',{"aboutcards":aboutcards}))
+    
+class ReferencesView(View):
+    def get(self, request):
+        return(render(request, 'mango_pests/references.html', {"references":References}))

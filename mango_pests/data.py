@@ -266,3 +266,15 @@ Pest7 = Intrusion(
 
 
 Pestsdiseases = [Pest1, Pest2, Pest3, Pest4, Pest5, Pest6, Pest7]
+
+class Reference:
+    def __init__(self, title, source):
+        self.title = title
+        self.source = source
+
+Ref1 = Reference("Eruvaaka. (n.d.). Mango hoppers: Integrated management of mango leaf hoppers Eruvaaka","https://english.eruvaaka.com/mango-hoppers-integrated-management-of-mango-leaf-hoppers-30919.html")
+Ref2 = Reference("Lucidcentral. (n.d.).  Mango anthracnose Lucidcentral","https://apps.lucidcentral.org/pppw_v10/text/web_full/entities/mango_anthracnose_009.html")
+Ref3 = Reference("Multiplex Group. (n.d.). Mango fruit fly a menace in king of fruits Multiplex Group","https://www.multiplexgroup.com/mang-fruit-fly-a-menace-in-king-of-fruits")
+Ref4 = Reference("ResearchGate. (2021). Mango stem borer: A serious pest and management strategies ResearchGate","https://www.researchgate.net/publication/357630765_Reviews_In_Food_And_Agriculture_RFNA_MANGO_STEM_BORER_A_SERIOUS_PEST_AND_MANAGEMENT_STRATEGIES")
+Ref5 = Reference("SPCHCMC. (n.d.). Mangoes damaging powdery mildew SPCHCMC","http://www.spchcmc.vn/EN/Plant-doctor-Detail/Mangoes-Damaging-Powdery-Mildew-5-8432.html")
+References = [Ref1, Ref2, Ref3, Ref4, Ref5]

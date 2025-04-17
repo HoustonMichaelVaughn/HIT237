@@ -23,21 +23,21 @@ Everytime I write a <div> a part of my soul dies.
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-10">
                 {% for card in pestcards %}
-                <div class="card mb-2 custom-mangoborder border-3">
+                <div class="card mb-3 shadow-sm border-danger border-2 rounded-4">
                     <div class="row g-0 align-items-center">
-                        <div class="col-md-2">
-                            <img class="img-fluid rounded" src="{% static card.image %}" alt="Card image cap">
+                        <div class="col-md-3 text-center p-2">
+                            <img src="{% static card.image %}" class="img-fluid rounded" alt="{{ card.cardtitle }}">
                         </div>
-                        <div class="col-md-3 align-items-center justify-content-center">
-                            <div class="card-body text-center">
-                                <a class="card-title mb-0 fade-text" href="{{ card.urlslug }}">{{ card.cardtitle }}</a>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
+                        <div class="col-md-9">
                             <div class="card-body">
-                                <p class="card-text fade-text">{{ card.cardtext }}</p>
+                                <h5 class="card-title">
+                                    <a href="{{ card.urlslug }}" class="text-decoration-none text-primary fw-bold">
+                                        {{ card.cardtitle }}
+                                    </a>
+                                </h5>
+                                <p class="card-text">{{ card.cardtext }}</p>
                             </div>
                         </div>
                     </div>
@@ -46,4 +46,5 @@ Everytime I write a <div> a part of my soul dies.
             </div>
         </div>
     </div>
+
     {%endblock%}
