@@ -14,7 +14,7 @@ Everytime I write a <div> a part of my soul dies.
     {%block content%}
     <div class="container">
         <div class="row justify-content-center mb-2">
-            <div class="card mb-2 w-50">
+            <div class="card mb-2 w-50 shadow-sm border-danger border-2 rounded-4">
                 <div class="card-body text-center">
                     <h6 class="card-title">Mango Pests and Diseases</h6>
                 </div>
@@ -24,7 +24,7 @@ Everytime I write a <div> a part of my soul dies.
 
     <form method="get" class="mb-3">
         <div class="row justify-content-center">
-            <div class="col-md-4">
+            <div class="col-10 col-sm-8 col-md-4">
                 <input type="text" name="search" class="form-control" placeholder="Search pests..."
                     value="{{ search }}">
             </div>
@@ -41,7 +41,7 @@ Everytime I write a <div> a part of my soul dies.
                             <img src="{% static 'images/pests/'|add:card.urlslug|add:'/'|add:card.urlslug|add:'-400w.webp' %}"
                                 srcset="{{ card.urlslug|repsrcset|safe }}"
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                alt="{{ card.cardtitle }}" class="img-fluid rounded">
+                                alt="{{ card.cardtitle }}" class="img-fluid rounded-4 px-2">
                         </div>
                         <div class="col-md-9">
                             <div class="card-body">
