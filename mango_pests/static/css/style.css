@@ -4,6 +4,7 @@
     https://www.w3schools.com/css/css_pseudo_classes.asp
     https://cssgradient.io/
     https://www.canva.com/colors/color-wheel/
+
 */
 .card:hover .fade-text {
     color: #ffa000;
@@ -36,4 +37,16 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+}
+
+/*There is a surprising lack of tutorials on how to make a fab using css and boostrap so below is A.I generated*/
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    border-radius: 50%;
+    padding: 0.75rem 1rem;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
