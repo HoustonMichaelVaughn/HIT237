@@ -6,27 +6,7 @@
     https://www.canva.com/colors/color-wheel/
 
 */
-.card:hover .fade-text {
-    color: #ffa000;
-    transition: color 0.5s ease-in-out;
-}
 
-.card .fade-text {
-    color: #000000;
-    transition: color 0.5s ease-in-out;
-}
-
-/*
-    Used for the border colouring in project_list.html
-*/
-.custom-mangoborder {
-    --bs-card-border-color: #ff5733 !important;
-}
-
-.navbar {
-    /*background: linear-gradient(180deg, #80B3FF 0%, #72A4E2 90%, #ffcc80 100%);*/
-    color: white;
-}
 
 body {
     /*background: linear-gradient(180deg, rgba(255,152,0,1) 0%, rgba(255,184,0,1) 42%, rgba(201,255,0,1) 100%);*/
