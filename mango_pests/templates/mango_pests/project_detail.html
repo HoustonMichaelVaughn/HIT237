@@ -25,8 +25,10 @@ Otherwise a standard level can be passed inside the dictionary.
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="col-md-3 mx-auto text-center mt-3">
-                    <img src="{% static pestdetails.image %}" class="img-fluid rounded"
-                        alt="{{ pestdetails.cardtitle }}">
+                    <img src="{% static 'images/pests/'|add:pestdetails.urlslug|add:'/'|add:pestdetails.urlslug|add:'-400w.webp' %}"
+                        srcset="{{ pestdetails.urlslug|repsrcset|safe }}"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" alt="{{ card.cardtitle }}"
+                        class="img-fluid rounded">
                 </div>
                 <div class="card-body">
                     <p id="summary-text" class="card-text">

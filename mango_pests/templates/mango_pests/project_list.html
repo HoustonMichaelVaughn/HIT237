@@ -1,6 +1,6 @@
 {%extends "mango_pests/base.html"%}
 {% load static %}
-
+{% load custom_filters %}
 
 {%comment%}
 Everytime I write a <div> a part of my soul dies.
@@ -30,7 +30,7 @@ Everytime I write a <div> a part of my soul dies.
             </div>
         </div>
     </form>
-    
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-10">
@@ -38,7 +38,10 @@ Everytime I write a <div> a part of my soul dies.
                 <div class="card mb-3 shadow-sm border-danger border-2 rounded-4">
                     <div class="row g-0 align-items-center">
                         <div class="col-md-3 text-center p-2">
-                            <img src="{% static card.image %}" class="img-fluid rounded" alt="{{ card.cardtitle }}">
+                            <img src="{% static 'images/pests/'|add:card.urlslug|add:'/'|add:card.urlslug|add:'-400w.webp' %}"
+                                srcset="{{ card.urlslug|repsrcset|safe }}"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                alt="{{ card.cardtitle }}" class="img-fluid rounded">
                         </div>
                         <div class="col-md-9">
                             <div class="card-body">
