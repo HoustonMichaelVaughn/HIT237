@@ -16,16 +16,14 @@ SEVERITY_DANGER = "danger"
 class Intrusion:
     # The name of the pest (Used for card and elsewhere)
     # cardtext: Text to be used for the card
-    # image: the link to the image
     # detailedinfo: Information displayed on project_detail
     # symptoms: symptoms displayed. Must be a list of tuples
     # treatments: passed as a list, used in project_detail
     # urlslug is self-made by slugger function, used for neater URLs
 
-    def __init__(self, cardtitle, cardtext, image, detailedinfo, symptoms, treatments):
+    def __init__(self, cardtitle, cardtext, detailedinfo, symptoms, treatments):
         self.cardtitle = cardtitle
         self.cardtext = cardtext
-        self.image = image
         self.detailedinfo = detailedinfo
         self.symptoms = symptoms
         self.treatments = treatments
@@ -40,7 +38,6 @@ class Intrusion:
 Pest1 = Intrusion(
     "Queensland Fruit Fly",  # Title
     "Both species can infest many commercial and native fruits, posing a serious threat to production.",  # Brief description
-    "images/pests/queensland-fruit-fly.png",  # Image path
     """Eggs:
     - Off-white in colour, about 1 mm long.
     Larvae (Immatures):
@@ -82,7 +79,6 @@ Pest1 = Intrusion(
 Pest2 = Intrusion(
     "Anthracnose",  # Title
     "A common fungal disease affecting mango leaves, twigs, and fruit at various stages of growth.",  # Brief description
-    "images/pests/anthracnose.png",  # Image path
     """Anthracnose may appear as small spots or larger brown-black lesions on leaves, stems, and fruit. Severe infections can lead to tip dieback and extensive fruit rot, both before and after harvest. High humidity, rainfall, and warm temperatures favor disease development. Spores can germinate within 24 hours in moist conditions, often overwintering in dead plant material and mummified fruit.
     Proper orchard hygiene—including pruning, removal of diseased fruit, and managing nutrition (particularly calcium) helps limit anthracnose outbreaks. Strategic fungicide applications (pre- and post-harvest) and careful post-harvest handling (ex., forced air cooling) are also recommended to reduce infection levels in fruit.
     Information source:
@@ -105,7 +101,6 @@ Pest2 = Intrusion(
 Pest3 = Intrusion(
     "Mango Fruit Borer",  # Title
     "A caterpillar pest that bores into mango fruit, causing internal damage and potential crop losses.",  # Brief description
-    "images/pests/mango-fruit-borer.png",  # Image path
     """Eggs:
     - Typically laid near the stem end of fruit or where two fruits touch.
     - Start off white and turn red by the second day, measuring around 1 mm.
@@ -150,7 +145,6 @@ Pest3 = Intrusion(
 Pest4 = Intrusion(
     "Mealy bugs",  # Title
     "Sap-sucking pests that excrete honeydew, potentially leading to sooty mold on mango leaves and fruit.",  # Brief description
-    "images/pests/mealy-bugs.png",  # image path
     """Eggs:
     - Often pink, oval-shaped, and laid in a cottony mass.
 
@@ -207,7 +201,6 @@ Pest4 = Intrusion(
 Pest5 = Intrusion(
     "Mango Stem Borer",  # Title
     """The Mango Stem Borer (Batocera rufomaculata sp.) has been observed to cause an alarming situation in old and young orchards, posing a significant threat to mango cultivation""",  # Brief description
-    "images/pests/mango-stem-borer.jpg",  # image path
     """The mango stem borer is a serious pest, and the grub stage causes damage by cutting and biting fresh twigs and shoots. When a grub enters a shoot, it digs a tunnel inside the stem, causing the shoots to dry out. 
     Severe infestation affects the entire shoots and causes the tree to look like it has been burned, resulting in a significant reduction in yield. The pest's larvae live for a long time (about a year) and hibernate inside the dry shoot during the winter. 
     They activate and pupate as the weather warms up, and adults emerge and begin egg-laying during the autumn months.""",  # Detailed description
@@ -245,7 +238,6 @@ Pest5 = Intrusion(
 Pest6 = Intrusion(
     "Bacterial Black Spot",  # Title
     """The Bacterial Black Spot can potentially be more damaging to flowers than Anthracnose.""",  # Brief description
-    "images/pests/mango-bacterial-blight-disease-fruit.jpg",  # Location of image
     """The disease attacks through natural openings such as stomata, wax and oil glands, leaf and fruit abrasions, leaf scars, and at the apex of branches in the panicle. Damage by adverse environmental conditions such as frost and wind can also create sites for infection. 
     In young trees, the disease can cause dieback of branches.""",  # Detailed description
     [
@@ -281,7 +273,6 @@ Pest6 = Intrusion(
 Pest7 = Intrusion(
     "Sooty Mould",  # Title
     """Capnodium mangiferum (mango) Many plants develop sooty moulds when colonised by insects that produce honeydew, e.g., coconut, guava, mango, soursop and ornamentals, e.g., Frangipani.""",  # Brief description
-    "images/pests/mango-bacterial-blight-disease-leaves.jpg",  # Location of image
     """Sooty moulds do not attack plants. The fungi that cause sooty moulds grow on the sugary substances that are produced by insects - mostly, aphids, soft scale (not armoured scale), leafhoppers, planthoppers, psyllids and whiteflies - as they suck the sap of plants. The secretions are known as 'honeydew'. The fungi that grow on honeydew reduce the plants ability to photosynthesise and this may stunt growth, cause leaves to yellow and die early, and may reduce the quality of fruit.""",  # Detailed description
     [
         (
