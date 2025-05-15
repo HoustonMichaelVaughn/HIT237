@@ -1,7 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.http import HttpRequest
 from .data import Pestsdiseases, References
 from django.views import View
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import PestCheck
+from .forms import PestCheckForm
 import re
 
 # Sources
@@ -75,3 +80,54 @@ class ReferencesView(View):
         return render(
             request, "mango_pests/references.html", {"references": References}
         )
+
+class PestCheckListView(LoginRequiredMixin, ListView):
+    model = PestCheck
+    template_name = 'mango_pests/record_list.html'
+
+    def get_queryset(self):
+        return PestCheck.objects.filter(farm_block__grower=self.request.user)
+
+class PestCheckCreateView(LoginRequiredMixin, CreateView):
+    model = PestCheck
+    form_class = PestCheckForm
+    template_name = 'mango_pests/record_form.html'
+    success_url = reverse_lazy('pestcheck_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Pass the user to the form for queryset filtering
+        return kwargs
+
+    def form_valid(self, form):
+        # Ensures the user owns the selected farm_block
+        farm_block = form.cleaned_data['farm_block']
+        if farm_block.grower != self.request.user:
+            form.add_error('farm_block', 'You do not own this farm block.')
+            return self.form_invalid(form)
+        return super().form_valid(form)
+
+
+class PestCheckUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = PestCheck
+    form_class = PestCheckForm
+    template_name = 'mango_pests/record_form.html'
+    success_url = reverse_lazy('pestcheck_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Pass user to limit farm_block choices
+        return kwargs
+
+    def test_func(self):
+        pest_check = self.get_object()
+        return pest_check.farm_block.grower == self.request.user
+
+class PestCheckDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = PestCheck
+    template_name = 'mango_pests/record_confirm_delete.html'
+    success_url = reverse_lazy('pestcheck_list')
+
+    def test_func(self):
+        pest_check = self.get_object()
+        return pest_check.farm_block.grower == self.request.user

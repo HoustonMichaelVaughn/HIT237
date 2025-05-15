@@ -1,0 +1,17 @@
+{% extends "mango_pests/base.html" %}
+{% block content %}
+<div class="container">
+    <h2>Confirm Deletion</h2>
+    {% if user.is_authenticated %}
+        <p>Logged in as: {{ user.username }}</p>
+    {% else %}
+        <p><a href="{% url 'login' %}?next={{ request.path }}">Login</a> to delete a record.</p>
+    {% endif %}
+    <p>Are you sure you want to delete the record for <strong>{{ object.pest.name }}</strong> checked on <strong>{{ object.date_checked }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a href="{% url 'pestcheck_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
