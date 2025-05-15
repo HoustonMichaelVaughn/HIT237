@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import FarmBlock, Pest, PestCheck
 
-# Register your models here.
+admin.site.register(FarmBlock)
+admin.site.register(Pest)
+admin.site.register(PestCheck)
