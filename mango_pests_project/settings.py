@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mango_pests',
+    'growers',
     "django_bootstrap5",
 ]
 

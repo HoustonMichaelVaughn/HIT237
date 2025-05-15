@@ -25,8 +25,6 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^$', v.home, name="home"),
-    path('about/', v.AboutView.as_view(), name="about"),
-    path('pestlist/', v.PestListView.as_view(), name="pestlist"),
-    re_path(r'^pestlist/(?P<slugurl>[a-zA-Z-]+)/?$', v.PestDetailView.as_view(), name='pest_detail')
+    path('', include('mango_pests.urls')), 
+    path('growers/', include('growers.urls'))
 ]
