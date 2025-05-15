@@ -1,6 +1,6 @@
 from re import sub
 
-# Custom Python class for pests/dieaseas
+# Custom Python class for pests/diseases
 #   Sources:
 #   https://www.w3schools.com/python/python_classes.asp
 #   https://www.w3schools.com/python/python_file_open.asp
@@ -8,76 +8,64 @@ from re import sub
 #   TO-DO:
 #   Possibly implement django model of generating slugs? See above source
 #   Investigate what will happen if images are made more responsive?
+
 SEVERITY_WARNING = "warning"
 SEVERITY_DANGER = "danger"
 
 
 class Intrusion:
-    #   I don't think we are allowed to use Django models for this class so I've made manually made
-    #   a url slug generator that way it's much nicer than %20,%20, etc
-    #   cardtitle: The name of the pest (Used for card and else where)
-    #   cardtext: Text to be used for the card
-    #   image: the link to the image (Might be refactored to make it more responsive)
-    #   detailedinfo: Information displayed on project_detail
-    #   symptoms: symptoms displayed. Must be a list of tuples
-    #   treatments: passed as a list, used in project_detail
-    #   urlslug is self made by slugger function, used for neater URLs
+    # The name of the pest (Used for card and elsewhere)
+    # cardtext: Text to be used for the card
+    # detailedinfo: Information displayed on project_detail
+    # symptoms: symptoms displayed. Must be a list of tuples
+    # treatments: passed as a list, used in project_detail
+    # urlslug is self-made by slugger function, used for neater URLs
 
-    def __init__(self, cardtitle, cardtext, image, detailedinfo, symptoms, treatments):
+    def __init__(self, cardtitle, cardtext, detailedinfo, symptoms, treatments):
         self.cardtitle = cardtitle
         self.cardtext = cardtext
-        self.image = image
         self.detailedinfo = detailedinfo
         self.symptoms = symptoms
         self.treatments = treatments
         self.urlslug = self.slugger(cardtitle)
 
+    # URL slugger method to convert cardtitle to URL-friendly slug
     def slugger(self, cardtitle):
-        return sub(r"[^A-Za-z]+", "-", cardtitle)
+        return sub(r"[^A-Za-z]+", "-", cardtitle).lower()
+    
+class Reference:
+    def __init__(self, title, source):
+        self.title = title
+        self.source = source
 
 
+# Define each pest as an instance of Intrusion
 Pest1 = Intrusion(
-    "Queensland Fruit Fly (Bactrocera tryoni) & Jarvis’ Fruit Fly (Bactrocera jarvisi)",  # Title
+    "Queensland Fruit Fly",  # Title
     "Both species can infest many commercial and native fruits, posing a serious threat to production.",  # Brief description
-    "images/pests/queensland-fruit-fly.png",  # AI-generated PNG image
     """Eggs:
-- Off-white in colour, about 1 mm long.
-
-Larvae (Immatures):
-- Pale (white to cream) maggots with a dark, hook-like feeding mouthpart.
-- Can reach about 8 mm in length.
-
-Adults:
-- Typically exhibit red-brown or yellow-brown coloration with notable yellow markings.
-- Usually measure 9–10 mm long.
-
-Life Cycle:
-- Females lay small clusters of roughly 6–10 eggs just under the fruit’s skin.
-- Eggs hatch in ~1–2 days; larvae feed for around a week before pupating.
-- Adults emerge after 10–12 days in the pupal stage and can live for several months if conditions allow.
-
-Damage:
-- Sting or puncture marks on fruit surface.
-- Larvae tunnel through pulp, causing premature fruit drop and decay.
-- Fruits nearing ripeness are at higher risk of infestation.
-
-Management & Control:
-- Observe ICA (Interstate Certification Assurance) rules for moving produce.
-- Remove and destroy fallen fruit to limit breeding.
-- Monitor with traps; note male lures alone do not eradicate the population.
-- Use bait sprays or other approved pest control methods as needed.
-
-Disclaimer:
-Information is based on common best practices and may vary with local conditions.
-
-Image Note:
-This image is **AI-generated** for educational illustration, based on the original **public domain photograph (Image No. K9588-6) by Scott Bauer,
- USDA Agricultural Research Service**. Actual species appearance may vary.
-
-Information source:
-Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes*. 
-Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
-""",  # Detailed description
+    - Off-white in colour, about 1 mm long.
+    Larvae (Immatures):
+    - Pale (white to cream) maggots with a dark, hook-like feeding mouthpart.
+    - Can reach about 8 mm in length.
+    Adults:
+    - Typically exhibit red-brown or yellow-brown coloration with notable yellow markings.
+    - Usually measure 9–10 mm long.
+    Life Cycle:
+    - Females lay small clusters of roughly 6–10 eggs just under the fruit’s skin.
+    - Eggs hatch in ~1–2 days; larvae feed for around a week before pupating.
+    - Adults emerge after 10–12 days in the pupal stage and can live for several months if conditions allow.
+    Damage:
+    - Sting or puncture marks on fruit surface.
+    - Larvae tunnel through pulp, causing premature fruit drop and decay.
+    - Fruits nearing ripeness are at higher risk of infestation.
+    Management & Control:
+    - Observe ICA (Interstate Certification Assurance) rules for moving produce.
+    - Remove and destroy fallen fruit to limit breeding.
+    - Monitor with traps; note male lures alone do not eradicate the population.
+    - Use bait sprays or other approved pest control methods as needed.
+    Information source:
+    Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes*.""",  # Detailed description
     [
         (SEVERITY_WARNING, "Small sting or puncture marks on fruit surface"),
         (SEVERITY_DANGER, "Larval tunneling and fruit decay"),
@@ -94,22 +82,12 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
 )
 
 Pest2 = Intrusion(
-    "Anthracnose (Colletotrichum gloeosporioides)",  # Title
+    "Anthracnose",  # Title
     "A common fungal disease affecting mango leaves, twigs, and fruit at various stages of growth.",  # Brief description
-    "images/diseases/anthracnose.png",  # Image
-    """Anthracnose may appear as small spots or larger brown-black lesions on leaves, stems, and fruit. 
-Severe infections can lead to tip dieback and extensive fruit rot, both before and after harvest. 
-High humidity, rainfall, and warm temperatures favor disease development. Spores can germinate 
-within 24 hours in moist conditions, often overwintering in dead plant material and mummified fruit.
-
-Proper orchard hygiene—including pruning, removal of diseased fruit, and managing 
-nutrition (particularly calcium) helps limit anthracnose outbreaks. Strategic fungicide 
-applications (pre- and post-harvest) and careful post-harvest handling (ex., forced air cooling) 
-are also recommended to reduce infection levels in fruit.
-
-Information source:
-Northern Territory Government. (2010). Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes. 
-Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",  # Source Detailed description
+    """Anthracnose may appear as small spots or larger brown-black lesions on leaves, stems, and fruit. Severe infections can lead to tip dieback and extensive fruit rot, both before and after harvest. High humidity, rainfall, and warm temperatures favor disease development. Spores can germinate within 24 hours in moist conditions, often overwintering in dead plant material and mummified fruit.
+    Proper orchard hygiene—including pruning, removal of diseased fruit, and managing nutrition (particularly calcium) helps limit anthracnose outbreaks. Strategic fungicide applications (pre- and post-harvest) and careful post-harvest handling (ex., forced air cooling) are also recommended to reduce infection levels in fruit.
+    Information source:
+    Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes*.""",  # Detailed description
     [
         (SEVERITY_WARNING, "Small dark lesions on leaves or fruit surface"),
         (SEVERITY_WARNING, "Leaf spots coalescing, causing partial defoliation"),
@@ -126,43 +104,30 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).""",  # Source Deta
 )
 
 Pest3 = Intrusion(
-    "Mango Fruit Borer (Citripestis eutraphera)",  # Title
+    "Mango Fruit Borer",  # Title
     "A caterpillar pest that bores into mango fruit, causing internal damage and potential crop losses.",  # Brief description
-    "images/pests/mango-fruit-borer.png",  # PNG format
     """Eggs:
-- Typically laid near the stem end of fruit or where two fruits touch.
-- Start off white and turn red by the second day, measuring around 1 mm.
-
-Larvae (Immatures):
-- Pale pink at first with a dark head, maturing into pinkish-brown or reddish caterpillars.
-- Often develop dark bands across the body and can reach up to 15 mm in length.
-
-Adults:
-- Dark brown forewings, lighter hindwings with grey borders.
-- Wing span is around 24 mm in females and 20 mm in males.
-
-Life Cycle:
-- Eggs hatch in 2–3 days.
-- Larvae feed for about 14 days before pupating.
-- Adults emerge after another 14 days and live for up to 10 days.
-
-Damage:
-- Larvae bore into fruit after initial surface feeding, often leaving wet frass near the entry point.
-- Internal tunneling causes decay, fruit drop, and makes fruit unmarketable.
-
-Monitoring & Management:
-- Check fruit (including fallen ones) for entry holes or visible frass.
-- Remove infested fruit immediately to reduce spread.
-- Use targeted insecticides if infestations are severe, especially at early larval stages.
-
-Image Note:
-This image is AI-generated for educational illustration purposes. It is based on real symptoms of the mango fruit borer (*Citripestis eutraphera*), 
-but actual species appearance and damage may vary in natural conditions.
-
-Information source:
-Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes*. 
-Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
-""",  # Detailed description
+    - Typically laid near the stem end of fruit or where two fruits touch.
+    - Start off white and turn red by the second day, measuring around 1 mm.
+    Larvae (Immatures):
+    - Pale pink at first with a dark head, maturing into pinkish-brown or reddish caterpillars.
+    - Often develop dark bands across the body and can reach up to 15 mm in length.
+    Adults:
+    - Dark brown forewings, lighter hindwings with grey borders.
+    - Wing span is around 24 mm in females and 20 mm in males.
+    Life Cycle:
+    - Eggs hatch in 2–3 days.
+    - Larvae feed for about 14 days before pupating.
+    - Adults emerge after another 14 days and live for up to 10 days.
+    Damage:
+    - Larvae bore into fruit after initial surface feeding, often leaving wet frass near the entry point.
+    - Internal tunneling causes decay, fruit drop, and makes fruit unmarketable.
+    Monitoring & Management:
+    - Check fruit (including fallen ones) for entry holes or visible frass.
+    - Remove infested fruit immediately to reduce spread.
+    - Use targeted insecticides if infestations are severe, especially at early larval stages.
+    Information source:
+    Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes*.""",  # Detailed description
     [
         (
             SEVERITY_WARNING,
@@ -181,124 +146,192 @@ Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
     ],  # Treatment & management
 )
 
+
 Pest4 = Intrusion(
-    "Mealybugs (Planococcus citri & Ferrisia virgata)",  # Title
+    "Mealy bugs",  # Title
     "Sap-sucking pests that excrete honeydew, potentially leading to sooty mold on mango leaves and fruit.",  # Brief description
-    "images/pests/mealybugs.png",  # PNG image path updated
     """Eggs:
-- Often pink, oval-shaped, and laid in a cottony mass.
+    - Often pink, oval-shaped, and laid in a cottony mass.
 
-Immatures (Crawlers & Juveniles):
-- Citrus mealybug juveniles: Yellowish, oval, and mobile yet smaller than adults.
-- Striped mealybug juveniles: Yellow with a powdery coating; stripes become more apparent as they mature.
+    Immatures (Crawlers & Juveniles):
+    - Citrus mealybug juveniles: Yellowish, oval, and mobile yet smaller than adults.
+    - Striped mealybug juveniles: Yellow with a powdery coating; stripes become more apparent as they mature.
 
-Adults:
-- Citrus mealybug females: Wingless, oval, covered in white, filamentous wax on the body edges (males are small and winged).
-- Striped mealybug females: Typically show two dark stripes on the back, encased in a white waxy coating with long, white filaments on the edges and tails.
-- Adult sizes range from about 2–5 mm.
+    Adults:
+    - Citrus mealybug females: Wingless, oval, covered in white, filamentous wax on the body edges (males are small and winged).
+    - Striped mealybug females: Typically show two dark stripes on the back, encased in a white waxy coating with long, white filaments on the edges and tails.
+    - Adult sizes range from about 2–5 mm.
 
-Life Cycle:
-- Eggs hatch within 1–2 days. Crawlers search for feeding sites on stems, leaves, or fruit.
-- They molt through several stages before becoming adults, taking up to about 42 days from egg to maturity.
-- Males do not feed once they have wings and primarily serve for reproduction.
+    Life Cycle:
+    - Eggs hatch within 1–2 days. Crawlers search for feeding sites on stems, leaves, or fruit.
+    - They molt through several stages before becoming adults, taking up to about 42 days from egg to maturity.
+    - Males do not feed once they have wings and primarily serve for reproduction.
 
-Damage:
-- Mealybugs feed on sap from leaves, flowers, stems, and fruit, causing stunted growth, yellowing or leaf/fruit drop.
-- Infested plant surfaces may develop white waxy deposits and become prone to sooty mold (due to honeydew secretions).
-- Ants often protect mealybugs, feeding on their honeydew.
+    Damage:
+    - Mealybugs feed on sap from leaves, flowers, stems, and fruit, causing stunted growth, yellowing or leaf/fruit drop.
+    - Infested plant surfaces may develop white waxy deposits and become prone to sooty mold (due to honeydew secretions).
+    - Ants often protect mealybugs, feeding on their honeydew.
 
-Management:
-- Monitor for mealybug presence in fruit and on leaf undersides.
-- Prune heavily infested branches.
-- Use insecticidal soap or systemic insecticides for high infestation levels.
-
-Information source:
-Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes*. 
-Department of Resources, Darwin, NT (ISBN 978-0-7245-7200-7).
-""",  # Detailed description
+    Information source:
+    Northern Territory Government. (2010). *Field Guide to Pests, Beneficials, Diseases and Disorders of Mangoes*.""",  # Detailed description
     [
-        (SEVERITY_WARNING, "Sticky honeydew secretion on leaves, branches, and fruit"),
-        (SEVERITY_WARNING, "Yellowing or wilting of leaves"),
-        (SEVERITY_DANGER, "Deformed and scarred fruit"),
-        (SEVERITY_DANGER, "Presence of sooty mold growing on honeydew"),
-    ],  # Symptoms
+        (SEVERITY_WARNING, "White or cottony masses on stems, leaves, or fruit"),
+        (SEVERITY_WARNING, "Sticky honeydew attracting ants"),
+        (SEVERITY_DANGER, "Sooty mold forming on honeydew-covered surfaces"),
+        (SEVERITY_DANGER, "Significant yellowing, leaf drop, or fruit deformities"),
+        (
+            SEVERITY_WARNING,
+            "Leaf Hoppers will be present in large numbers on the flowers & new leaf flushes",
+        ),
+        (SEVERITY_WARNING, "Browning and Drying of Flowers"),
+        (
+            SEVERITY_DANGER,
+            "Decreased percentage of fruit set and ultimately reduced production.",
+        ),
+    ],  # Symptoms with severity indicators
     [
-        "Use insecticidal soap or horticultural oils to target the pests",
+        "Reduce ant populations that protect mealybugs for their honeydew",
+        "Wash or wipe off small infestations with soapy water or horticultural oils",
+        "Use systemic insecticides if populations are extensive",
+        "Promote natural predators (e.g., lady beetles, parasitic wasps)",
+        "Inspect regularly to catch and treat new infestations early",
+        "Use of insecticidal soap or horticultural oils to target the pests",
         "Apply systemic insecticides to control mealybug populations",
         "Regularly remove infested branches and leaves",
         "Introduce natural predators like ladybugs or parasitic wasps",
-    ],  # Treatments & Control methods
+    ],  # Combined symptoms and treatments
 )
 
 
 Pest5 = Intrusion(
-    "A wild Mike Zebrowski",  # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""",  # Brief description
-    "images/pests/temporary-zebrowski.jpg",  # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""",  # Detailed description
+    "Mango Stem Borer",  # Title
+    """The Mango Stem Borer (Batocera rufomaculata sp.) has been observed to cause an alarming situation in old and young orchards, posing a significant threat to mango cultivation""",  # Brief description
+    """The mango stem borer is a serious pest, and the grub stage causes damage by cutting and biting fresh twigs and shoots. When a grub enters a shoot, it digs a tunnel inside the stem, causing the shoots to dry out. 
+    Severe infestation affects the entire shoots and causes the tree to look like it has been burned, resulting in a significant reduction in yield. The pest's larvae live for a long time (about a year) and hibernate inside the dry shoot during the winter. 
+    They activate and pupate as the weather warms up, and adults emerge and begin egg-laying during the autumn months.""",  # Detailed description
     [
-        ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-        ("danger", "Presence of sooty mold growing on the honeydew"),
-        ("warning", "Yellowing or wilting of leaves"),
-        ("danger", "Deformed and scarred fruit"),
+        (
+            SEVERITY_WARNING,
+            "Tunnels can be found in the tree's periphery or deep within the trunk.",
+        ),
+        (
+            SEVERITY_DANGER,
+            "Early on, the damage is not evident, but the leaking of sticky fluid from various spots on the tree trunk and branches can be seen.",
+        ),
+        (SEVERITY_WARNING, "A limb or two begins to shed leaves and dry up."),
+        (
+            SEVERITY_DANGER,
+            "A hole with seeping sap and frass on the bark are visible indications in advanced stages of illness.",
+        ),
+        (
+            SEVERITY_WARNING,
+            "Branches turn yellow, followed by drying and dieback of terminal shoots and branches.",
+        ),
+        (SEVERITY_DANGER, "Tree Death."),
     ],  # Symptoms combined with warning signs
     [
-        "Use of insecticidal soap or horticultural oils to target the pests",
-        "Apply systemic insecticides to control mealybug populations",
-        "Regularly remove infested branches and leaves",
-        "Introduce natural predators like ladybugs or parasitic wasps",
+        "Destruction of infected branches",
+        "Sanitation of orchard farm",
+        "Extracting grubs.",
+        "Integrated Pest Management Programs in Mango Orchards using Chemical and Biological Agents",
+        "The orchard should be tilled or hoed three times during winter- 15cm deep in soil.",
+        "Host-Plant Resistance - cultivating Mango species that are resistant to Stem Borer infestation",
+        "Passing X-Rays through the trunk or stem of a Mango Tree.",
     ],  # How to treat
 )
 
 Pest6 = Intrusion(
-    "A wild Mike Zebrowski",  # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""",  # Brief description
-    "images/pests/temporary-zebrowski.jpg",  # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""",  # Detailed description
+    "Bacterial Black Spot",  # Title
+    """The Bacterial Black Spot can potentially be more damaging to flowers than Anthracnose.""",  # Brief description
+    """The disease attacks through natural openings such as stomata, wax and oil glands, leaf and fruit abrasions, leaf scars, and at the apex of branches in the panicle. Damage by adverse environmental conditions such as frost and wind can also create sites for infection. 
+    In young trees, the disease can cause dieback of branches.""",  # Detailed description
     [
-        ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-        ("danger", "Presence of sooty mold growing on the honeydew"),
-        ("warning", "Yellowing or wilting of leaves"),
-        ("danger", "Deformed and scarred fruit"),
+        (
+            SEVERITY_WARNING,
+            "Leaf lesions consist of black, raised, angular areas, restricted by the veins and frequently surrounded by a yellow margin.",
+        ),
+        (
+            SEVERITY_DANGER,
+            "Elongated stem cankers occur on the bark and can cause terminal dieback.",
+        ),
+        (
+            SEVERITY_WARNING,
+            "Fruit lesions consist of individual or multiple star-shaped cracks, often appearing with anthracnose lesions in a tearstain pattern.",
+        ),
+        (
+            SEVERITY_DANGER,
+            "Unlike anthracnose, bacterial lesions do not expand as the fruit ripen.",
+        ),
     ],  # Symptoms combined with warning signs
     [
-        "Use of insecticidal soap or horticultural oils to target the pests",
-        "Apply systemic insecticides to control mealybug populations",
-        "Regularly remove infested branches and leaves",
-        "Introduce natural predators like ladybugs or parasitic wasps",
+        "From pinnacle emergence, apply copper fungicide registered for control of bacterial leaf spot every three weeks.",
+        "From fruit set until harvest, copper fungicide every 14–28 days depending on the weather. In dry seasons, fewer sprays are needed, saving time and pesticide.",
+        "New flush growth should be sprayed during autumn. This prevents a build-up of disease on young foliage.",
+        "Postharvest treatments will not provide complete disease control. It is important to follow field spray recommendations to reduce the level of postharvest disease",
+        "Cool fruit promptly following harvest.",
+        "Site selection and planting density are important in disease control.",
+        "Pruning trees is extremely important. This should be done to remove all sources of inoculum and to maximize air circulation and penetration of sunlight.",
+        "Apply fertilizer sparingly and with caution.",
     ],  # How to treat
 )
 
 Pest7 = Intrusion(
-    "A wild Mike Zebrowski",  # Title
-    """Mike Zebrowski is a figment of my imagination. 
-    It was the first royalty free image that I could find to use a temporary placeholder for images.""",  # Brief description
-    "images/pests/temporary-zebrowski.jpg",  # Location of image
-    """The mango mealybug is a common pest that affects mango trees, causing significant damage to both the fruit and foliage. 
-    These pests secrete a waxy coating that protects them while they feed on the plant's sap,  
-    weakening the tree and promoting the growth of sooty mold. 
-    Mango mealybugs are typically found in clusters on the leaves, branches, and fruits of mango trees.""",  # Detailed description
+    "Sooty Mould",  # Title
+    """Capnodium mangiferum (mango) Many plants develop sooty moulds when colonised by insects that produce honeydew, e.g., coconut, guava, mango, soursop and ornamentals, e.g., Frangipani.""",  # Brief description
+    """Sooty moulds do not attack plants. The fungi that cause sooty moulds grow on the sugary substances that are produced by insects - mostly, aphids, soft scale (not armoured scale), leafhoppers, planthoppers, psyllids and whiteflies - as they suck the sap of plants. The secretions are known as 'honeydew'. The fungi that grow on honeydew reduce the plants ability to photosynthesise and this may stunt growth, cause leaves to yellow and die early, and may reduce the quality of fruit.""",  # Detailed description
     [
-        ("warning", "Sticky honeydew secretion on leaves, branches, and fruit"),
-        ("danger", "Presence of sooty mold growing on the honeydew"),
-        ("warning", "Yellowing or wilting of leaves"),
-        ("danger", "Deformed and scarred fruit"),
+        (
+            SEVERITY_WARNING,
+            "Black Velvety Thin Membranous covering on the leaf blade. The entire leaf blade is covered or it may be only as flakes on the leaf.",
+        ),
+        (
+            SEVERITY_DANGER,
+            "In severe cases, the tree completely turns black with mould on the entire surface of twigs and leaves.",
+        ),
+        (
+            SEVERITY_WARNING,
+            "The affected leaves curl and shrivel under dry conditions.",
+        ),
+        (
+            SEVERITY_DANGER,
+            "The fungus multiplies on the ‘honey dew’ secreted by the insects and spreads on the plant surface, making it black and ugly owing to the masses of black spores on the leaf surface. The severity of incidence is dependent upon the sugary secretion by the insects.",
+        ),
+        (
+            SEVERITY_WARNING,
+            "During flowering time, its attack results in reduced fruit set and sometimes causes fruit fall. It is also noticed on fruits of late mango varieties",
+        ),
     ],  # Symptoms combined with warning signs
     [
-        "Use of insecticidal soap or horticultural oils to target the pests",
-        "Apply systemic insecticides to control mealybug populations",
-        "Regularly remove infested branches and leaves",
-        "Introduce natural predators like ladybugs or parasitic wasps",
+        "Pour Hot Water over Ants Nests that are close to Mango Trees",
+        "Prune Branches to prevent access for Ants and other harmful Insects",
+        "Use Soap Sprays to kill Sap Sucking Insects",
+        "Use Oil and Dishsoap Spray on Infested Leaves",
+        "Synthetic pyrethroid insecticides to kill ants; these insecticides may also be tried against scale insects as they are likely to be effective against the crawlers - crawlers are the active nymphs which spread infestations to new plants and/or new gardens.",
     ],  # How to treat
 )
 
 
 Pestsdiseases = [Pest1, Pest2, Pest3, Pest4, Pest5, Pest6, Pest7]
+
+
+Ref1 = Reference(
+    "Eruvaaka. (n.d.). Mango hoppers: Integrated management of mango leaf hoppers Eruvaaka",
+    "https://english.eruvaaka.com/mango-hoppers-integrated-management-of-mango-leaf-hoppers-30919.html",
+)
+Ref2 = Reference(
+    "Lucidcentral. (n.d.).  Mango anthracnose Lucidcentral",
+    "https://apps.lucidcentral.org/pppw_v10/text/web_full/entities/mango_anthracnose_009.html",
+)
+Ref3 = Reference(
+    "Multiplex Group. (n.d.). Mango fruit fly a menace in king of fruits Multiplex Group",
+    "https://www.multiplexgroup.com/mang-fruit-fly-a-menace-in-king-of-fruits",
+)
+Ref4 = Reference(
+    "ResearchGate. (2021). Mango stem borer: A serious pest and management strategies ResearchGate",
+    "https://www.researchgate.net/publication/357630765_Reviews_In_Food_And_Agriculture_RFNA_MANGO_STEM_BORER_A_SERIOUS_PEST_AND_MANAGEMENT_STRATEGIES",
+)
+Ref5 = Reference(
+    "SPCHCMC. (n.d.). Mangoes damaging powdery mildew SPCHCMC",
+    "http://www.spchcmc.vn/EN/Plant-doctor-Detail/Mangoes-Damaging-Powdery-Mildew-5-8432.html",
+)
+References = [Ref1, Ref2, Ref3, Ref4, Ref5]

@@ -1,18 +1,17 @@
 {%extends "mango_pests/base.html"%}
 {% load static %}
+{% load custom_filters %}
 
 {%comment%}
-Everytime I write a <div> a part of my soul dies.
-
     Sources:
     https://getbootstrap.com/docs/5.2/components/card/
-    TO:DO make images more responsive depending on end user agent. It's not too bad at the moment.
+    https://getbootstrap.com/docs/5.3/forms/overview/
     {%endcomment%}
 
     {%block content%}
     <div class="container">
         <div class="row justify-content-center mb-2">
-            <div class="card mb-2 w-50">
+            <div class="card mb-2 w-50 shadow-sm border-danger border-2 rounded-4">
                 <div class="card-body text-center">
                     <h6 class="card-title">Mango Pests and Diseases</h6>
                 </div>
@@ -20,23 +19,45 @@ Everytime I write a <div> a part of my soul dies.
         </div>
     </div>
 
+    <form method="get" class="mb-3">
+        <div class="row justify-content-center">
+            <div class="col-10 col-sm-8 col-md-4">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search pests..."
+                        value="{{ search }}">
+                    <button type="submit" class="btn btn-primary">
+                        Search
+                    </button>
+                    {% if search %}
+                    <a href="{% url 'pestlist' %}" class="btn btn-outline-secondary">
+                        Clear
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
+
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-10">
                 {% for card in pestcards %}
-                <div class="card mb-2 custom-mangoborder border-3">
+                <div class="card mb-3 shadow-sm border-danger border-2 rounded-4">
                     <div class="row g-0 align-items-center">
-                        <div class="col-md-2">
-                            <img class="img-fluid rounded" src="{% static card.image %}" alt="Card image cap">
+                        <div class="col-md-3 text-center p-2">
+                            <img src="{% static 'images/pests/'|add:card.urlslug|add:'/'|add:card.urlslug|add:'-400w.webp' %}"
+                                srcset="{{ card.urlslug|repsrcset|safe }}"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                alt="{{ card.cardtitle }}" class="img-fluid rounded-4 px-2">
                         </div>
-                        <div class="col-md-3 align-items-center justify-content-center">
-                            <div class="card-body text-center">
-                                <a class="card-title mb-0 fade-text" href="{{ card.urlslug }}">{{ card.cardtitle }}</a>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
+                        <div class="col-md-9">
                             <div class="card-body">
-                                <p class="card-text fade-text">{{ card.cardtext }}</p>
+                                <h5 class="card-title">
+                                    <a href="{{ card.urlslug }}" class="text-decoration-none text-primary fw-bold">
+                                        {{ card.cardtitle }}
+                                    </a>
+                                </h5>
+                                <p class="card-text">{{ card.cardtext }}</p>
                             </div>
                         </div>
                     </div>
@@ -45,4 +66,5 @@ Everytime I write a <div> a part of my soul dies.
             </div>
         </div>
     </div>
+
     {%endblock%}

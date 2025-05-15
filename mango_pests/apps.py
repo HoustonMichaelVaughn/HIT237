@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class MangoPestsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'mango_pests'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "mango_pests"

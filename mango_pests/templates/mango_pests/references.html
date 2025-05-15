@@ -1,0 +1,31 @@
+{%extends "mango_pests/base.html"%}
+{%comment%}
+# https://getbootstrap.com/docs/4.0/components/list-group/
+{%endcomment%}
+
+
+{%block content%}
+
+<div class="container">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-danger border-2 rounded-4">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">References</h4>
+                    <ul class="list-group list-group-flush">
+                        {% for reference in references %}
+                        <li class="list-group-item">
+                            <p class="mb-1 fw-bold">{{ reference.title }}</p>
+                            <a href="{{ reference.source }}" target="_blank"
+                                class="text-decoration-none small text-muted">
+                                {{ reference.source }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
