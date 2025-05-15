@@ -83,7 +83,7 @@ class ReferencesView(View):
 
 class PestCheckListView(LoginRequiredMixin, ListView):
     model = PestCheck
-    template_name = 'mango_pests/record_list.html'
+    template_name = 'mango_pests/pestcheck_list.html'
 
     def get_queryset(self):
         return PestCheck.objects.filter(farm_block__grower=self.request.user)
@@ -91,7 +91,7 @@ class PestCheckListView(LoginRequiredMixin, ListView):
 class PestCheckCreateView(LoginRequiredMixin, CreateView):
     model = PestCheck
     form_class = PestCheckForm
-    template_name = 'mango_pests/record_form.html'
+    template_name = 'mango_pests/pestcheck_form.html'
     success_url = reverse_lazy('pestcheck_list')
 
     def get_form_kwargs(self):
@@ -111,7 +111,7 @@ class PestCheckCreateView(LoginRequiredMixin, CreateView):
 class PestCheckUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = PestCheck
     form_class = PestCheckForm
-    template_name = 'mango_pests/record_form.html'
+    template_name = 'mango_pests/pestcheck_form.html'
     success_url = reverse_lazy('pestcheck_list')
 
     def get_form_kwargs(self):
@@ -125,7 +125,7 @@ class PestCheckUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PestCheckDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = PestCheck
-    template_name = 'mango_pests/record_confirm_delete.html'
+    template_name = 'mango_pests/pestcheck_confirm_delete.html'
     success_url = reverse_lazy('pestcheck_list')
 
     def test_func(self):
