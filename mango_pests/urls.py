@@ -1,6 +1,8 @@
 from django.urls import path, re_path
 from . import views
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, LoginView
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic.edit import CreateView
 from .views import (
     PestCheckListView,
     PestCheckCreateView,
@@ -24,5 +26,15 @@ urlpatterns = [
     path("records/<int:pk>/edit/", PestCheckUpdateView.as_view(), name="pestcheck_edit"),
     path("records/<int:pk>/delete/", PestCheckDeleteView.as_view(), name="pestcheck_delete"),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
-
+    path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path(
+        'register/',
+        CreateView.as_view(
+            template_name='registration/register.html',
+            form_class=UserCreationForm,
+            success_url='/login/'
+        ),
+        name='register'
+    ),
 ]
+
