@@ -1,16 +1,13 @@
 /*
-    Used for the project_list transistions
+    Used for the project_list transitions
     Sources:
     https://www.w3schools.com/css/css_pseudo_classes.asp
     https://cssgradient.io/
     https://www.canva.com/colors/color-wheel/
-
 */
 
-
 body {
-    /*background: linear-gradient(180deg, rgba(255,152,0,1) 0%, rgba(255,184,0,1) 42%, rgba(201,255,0,1) 100%);*/
-    /*background: linear-gradient(to bottom, #ffcc80, #ffb74d, #ff9800);*/
+    /* Gis: Orange-yellow mango gradient for happy vibes */
     background: linear-gradient(to bottom, rgba(255, 204, 128, 1) 0%, rgba(255, 183, 77, 1) 70%, rgba(255, 167, 38, 1) 80%, rgba(255, 152, 0, 1) 100%);
     background-attachment: fixed;
     color: #333;
@@ -19,7 +16,7 @@ body {
     padding: 0;
 }
 
-/*There is a surprising lack of tutorials on how to make a fab using css and boostrap so below is A.I generated*/
+/* Floating Action Button (FAB) - not used everywhere but leaving it here */
 .fab {
     position: fixed;
     bottom: 20px;
@@ -29,4 +26,44 @@ body {
     padding: 0.75rem 1rem;
     font-size: 1.25rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Navbar link styles: bigger, easier to tap for growers */
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    padding: 0.75rem 1rem;
+    line-height: 1.5;
+    transition: border-bottom 0.2s;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 3px;
+}
+
+/* On hover: underline shows up for all nav links */
+.navbar-nav .nav-link:hover {
+    border-bottom: 2px solid #bbb;
+}
+
+/* Active nav tab: bold and obvious (deep green underline for mango style!) */
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+    color: #222;
+    border-bottom: 4px solid #005c1a;
+    text-decoration: none; /* removes default underline, using border instead */
+}
+/* Gislene: Navbar underline stays for the active tab, shows on hover for others */
+.navbar-nav .nav-link {
+  border-bottom: 2px solid transparent;
+  padding-bottom: 3px;
+  color: #444;         /*  preferred text colour */
+  transition: border-bottom 0.2s;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+  border-bottom: 2px solid #ff9800; /* thin orange underline on hover */
+}
+
+/* Make the current/active tab bold with a THICK underline */
+.navbar-nav .nav-link.active {
+  border-bottom: 4px solid #ff9800; 
 }

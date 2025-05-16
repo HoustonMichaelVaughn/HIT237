@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from . import views
+from django.contrib.auth.views import LogoutView
 from .views import (
     PestCheckListView,
     PestCheckCreateView,
@@ -22,4 +23,6 @@ urlpatterns = [
     path("records/create/", PestCheckCreateView.as_view(), name="pestcheck_create"),
     path("records/<int:pk>/edit/", PestCheckUpdateView.as_view(), name="pestcheck_edit"),
     path("records/<int:pk>/delete/", PestCheckDeleteView.as_view(), name="pestcheck_delete"),
+    path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
+
 ]

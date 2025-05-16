@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mango_pests',
-    'growers',
     "django_bootstrap5",
 ]
 
@@ -126,3 +125,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/growers/profile/'
+
+
+from django.urls import reverse_lazy
+
+# Redirect users here when LoginRequiredMixin kicks in
+LOGIN_URL = reverse_lazy('login')

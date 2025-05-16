@@ -1,71 +1,77 @@
-{%comment%}
-Base html provides the basic layout presistent accross all pages
-block head provides the js include only for the page that needs it (project_detail.html)
-Sources:
+{# Base template for all pages #}
+{% load django_bootstrap5 static %}
 
-~Navbar~
-https://pypi.org/project/django-bootstrap5/
-https://getbootstrap.com/docs/5.0/components/navbar/
-
-
-{%endcomment%}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mango Pests</title>
-  {% load static %}
-  <link rel="stylesheet" href={%static 'css/style.css'%}>
-  {% load django_bootstrap5 %}
-  {% bootstrap_css %}
-  {% bootstrap_javascript %}
-  {%block head%}
+  <title>{% block title %}Mango Pests{% endblock %}</title>
 
-  {%endblock%}
+  {# I’m including Bootstrap CSS via django-bootstrap5 #}
+  {% bootstrap_css %}
+
+  {# My custom stylesheet comes AFTER Bootstrap so my rules win #}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  {# Per-page head (if needed) #}
+  {% block head %}{% endblock %}
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{%url 'home' %}">BioMangoes</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  {# Fixed top navbar #}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home' %}">BioMangoes</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mb-2 mb-lg-0">
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          {# Shows underline under the tab where the user is! #}
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+            <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'home' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'pestlist' %}">Pestlist</a>
+            <a class="nav-link{% if request.resolver_match.url_name == 'pestcheck_list' %} active{% endif %}" href="{% url 'pestcheck_list' %}">Pest Checks</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'about' %}">About</a>
+            <a class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}" href="{% url 'about' %}">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'references' %}">References</a>
+            <a class="nav-link{% if request.resolver_match.url_name == 'references' %} active{% endif %}" href="{% url 'references' %}">References</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'register' %}">Register</a>
-          </li>
+          {% if user.is_authenticated %}
+            {# Logout placeholder enable if I wire it up! #}
+            <li class="nav-item"><span class="nav-link text-muted" style="pointer-events:none;">Logout</span></li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link{% if request.resolver_match.url_name == 'login' %} active{% endif %}" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link{% if request.resolver_match.url_name == 'register' %} active{% endif %}" href="{% url 'register' %}">Register</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>
   </nav>
 
+  
+  {# Main content area with Bootstrap container #}
+  <div class="container my-5" style="padding-top: 60px;">
+    {% block content %}{% endblock %}
+  </div>
 
-  <main>
-    {% block content %}
+  {# I’m including Bootstrap JS bundle at the end of body #}
+  {% bootstrap_javascript %}
 
-    {% endblock %}
-  </main>
-
+  <script>
+    // I’m initializing Bootstrap tooltips for helper icons
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.forEach(function (el) {
+      new bootstrap.Tooltip(el)
+    })
+  </script>
 </body>
-
 </html>
