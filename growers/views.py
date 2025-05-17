@@ -6,9 +6,11 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterUserForm
 
+#   Add authetnication form
+
 class Login(LoginView):
     template_name = "growers/login.html"
-
+    
 class RegisterUser(FormView):
     template_name = "growers/register.html"
     success_url = reverse_lazy("login")
