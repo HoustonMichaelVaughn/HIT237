@@ -1,0 +1,6 @@
+# Stop annoying Python bytecode caches
+__pycache__/
+*.py[cod]
+
+# Stop annoying the local SQLite DB
+db.sqlite3
