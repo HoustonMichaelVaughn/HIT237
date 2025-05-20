@@ -50,7 +50,7 @@ body {
     border-bottom: 4px solid #005c1a;
     text-decoration: none; /* removes default underline, using border instead */
 }
-/* Gislene: Navbar underline stays for the active tab, shows on hover for others */
+/* Gis: Navbar underline stays for the active tab, shows on hover for others */
 .navbar-nav .nav-link {
   border-bottom: 2px solid transparent;
   padding-bottom: 3px;
@@ -67,3 +67,44 @@ body {
 .navbar-nav .nav-link.active {
   border-bottom: 4px solid #ff9800; 
 }
+/* badge colours for traffic-light status (used in dashboard and maybe elsewhere in the project) */
+/* Neolisa: you can use .badge-green, .badge-yellow, .badge-red in the summary view */
+
+.badge-green {
+  background-color: #4CAF50;      /* this one is the good news badge */
+  color: #fff;
+  font-weight: 600;
+  padding: 0.3em 0.75em;
+  border-radius: 0.5rem;          
+  display: inline-block;
+  margin-bottom: 0.5em;
+}
+
+.badge-yellow {
+  background-color: #FFEB3B;      /* yellow for not enough trees checked */
+  color: #333;
+  font-weight: 600;
+  padding: 0.3em 0.75em;
+  border-radius: 0.5rem;
+  display: inline-block;
+  margin-bottom: 0.5em;
+}
+
+.badge-red {
+  background-color: #F44336;      /* red = pest found, clearly bad */
+  color: #fff;
+  font-weight: 600;
+  padding: 0.3em 0.75em;
+  border-radius: 0.5rem;
+  display: inline-block;
+  margin-bottom: 0.5em;
+}
+
+/* tooltip icon – used for little help notes next to form labels */
+.tooltip-icon {
+  cursor: help;
+  font-size: 1rem;
+  vertical-align: middle;
+  color: #1976d2;   /* I think this is  just enough to stand out as a hint */
+}
+
