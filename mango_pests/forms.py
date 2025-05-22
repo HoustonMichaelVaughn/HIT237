@@ -23,7 +23,9 @@ class PestCheckForm(forms.ModelForm):
             'date_checked',
             'part_of_plant',
             'infestation_level',
-            'path_pattern',   # ← added this one 
+            'path_pattern',
+            'num_trees',
+            'positives',
             'notes',
         ]
 
