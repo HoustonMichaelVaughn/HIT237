@@ -4,3 +4,5 @@ __pycache__/
 
 # Stop annoying the local SQLite DB
 db.sqlite3
+
+*.bundle
