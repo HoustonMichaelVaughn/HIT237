@@ -1,6 +1,13 @@
 from django.contrib.auth.models import User 
 from django.db import models
 
+# Path Pattern Choice
+PATH_CHOICES = [
+    ("ZigZag", "Zig-Zag between rows"),
+    ("Cross",  "Cross-row random sample"),
+    ("Edge",   "Edge perimeter only"),
+]
+
 class FarmBlock(models.Model):
     grower = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -27,6 +34,14 @@ class PestCheck(models.Model):
     num_trees = models.PositiveIntegerField(help_text="Total number of trees checked.") 
     positives = models.PositiveIntegerField(help_text="Number of trees with visible pest signs.")
     notes = models.TextField(blank=True)
+
+    # New Field: Path Pattern 
+    path_pattern = models.CharField(
+        max_length=20,
+        choices=PATH_CHOICES,
+        default="ZigZag",
+        help_text="Pick your walk pattern through the block."
+    )
 
     def __str__(self):
         return f"{self.pest.name} at {self.farm_block.name} on {self.date_checked}"

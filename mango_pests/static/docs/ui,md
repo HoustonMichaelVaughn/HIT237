@@ -1,0 +1,14 @@
+# Badge Classes
+
+Use these CSS helpers to display traffic-light status indicators:
+
+- **`.badge-green`** – High confidence (≥90%)  
+- **`.badge-yellow`** – Low sample or uncertain result  
+- **`.badge-red`** – Pest found
+
+## Example
+
+```html
+<span class="badge-green">✔ No pests</span>
+<span class="badge-yellow">⚠ Low sample</span>
+<span class="badge-red">✖ Pest found</span>

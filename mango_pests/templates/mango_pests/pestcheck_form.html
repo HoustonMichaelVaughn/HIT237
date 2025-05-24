@@ -28,7 +28,13 @@
 
           {{ field }}  {# each widget gets .form-control via forms.py #}
 
-          {% if field.help_text %}
+          {% if field.name == 'path_pattern' %}
+            <small id="pathHelp" class="form-text text-muted">
+              📌 This shows how the grower walked through the block — helps confirm sample method.
+            </small>
+          {% endif %}
+
+          {% if field.help_text and field.name != 'path_pattern' %}
             <div class="form-text">{{ field.help_text }}</div>
           {% endif %}
           {% for err in field.errors %}

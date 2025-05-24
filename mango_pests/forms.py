@@ -1,19 +1,17 @@
 from django import forms
-from .models import PestCheck, FarmBlock
+from .models import PestCheck, FarmBlock, PATH_CHOICES
 
 class PestCheckForm(forms.ModelForm):
-    # I’m adding a dropdown so growers can pick their inspection pattern
-    INSPECTION_PATTERN_CHOICES = [
-        ('W', 'W-pattern sweep'),
-        ('Z', 'Z-pattern sweep'),
-        ('R', 'Random spots'),
-    ]
+    # >>> these share PATH_CHOICES so it stays in sync with the entire model
     path_pattern = forms.ChoiceField(
-        choices=INSPECTION_PATTERN_CHOICES,
-        label="Inspection Pattern",
-        help_text="Choose how you walked through the block.",
-        widget=forms.Select(attrs={'class': 'form-select'})
-    )
+    choices=PATH_CHOICES,
+    label="Inspection Pattern",
+    widget=forms.Select(attrs={
+        'class': 'form-control',
+        'aria-describedby': 'pathHelp'
+    })
+)
+
 
     class Meta:
         model = PestCheck
