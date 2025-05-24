@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Farm Surveillance Summary</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }  /* Basic styling */
+        .status { font-size: 24px; }  /* Style for overall status */
+        .badge { font-size: 18px; margin-right: 10px; }  /* Style for traffic light badges */
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Farm Surveillance Summary</h1>
+    <p>Overall Status: <span class="status">{{ overall_status }}</span></p>  <!-- Display overall status -->
+    <p>Total Checks: {{ total_checks }}</p>  <!-- Total number of checks -->
+    <p>Pests Found: {{ pest_checks }}</p>  <!-- Number of pest detections -->
+    <h2>Recent Pest Checks</h2>
+    <!-- Table of recent checks -->
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Confidence</th>
+            <th>Sample Count</th>
+            <th>Pests Found</th>
+            <th>Status</th>
+        </tr>
+        {% for record, status in records %}
+        <tr>
+            <td>{{ record.check_date }}</td>
+            <td>{{ record.confidence }}%</td>
+            <td>{{ record.sample_count }}</td>
+            <td>{{ record.pests_found|yesno:"Yes,No" }}</td>  <!-- Convert boolean to Yes/No -->
+            <td><span class="badge">{{ status }}</span></td>  <!-- Traffic light badge -->
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- Navigation links -->
+    <a href="{% url 'farm:recent_checks' %}">View All Checks</a> | 
+    <a href="{% url 'farm:add_check' %}">Add New Check</a> | 
+    <a href="{% url 'farm:download_csv' %}"><button>Download CSV</button></a>
+</body>
+</html>
