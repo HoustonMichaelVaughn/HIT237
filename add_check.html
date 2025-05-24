@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Surveillance Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }  /* Basic styling */
+        table { border-collapse: collapse; }
+        td { padding: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Add Surveillance Check</h1>
+    <!-- Form to add new check, submits to add_check view -->
+    <form action="{% url 'farm:add_check' %}" method="post" novalidate>
+        {% csrf_token %}  <!-- CSRF token for security -->
+        <table>
+            {{ form.as_table }}  <!-- Render form as table -->
+        </table>
+        <input type="submit" value="Add Check">  <!-- Submit button -->
+    </form>
+    <a href="{% url 'farm:summary' %}">Back to Summary</a>  <!-- Navigation link -->
+</body>
+</html>
