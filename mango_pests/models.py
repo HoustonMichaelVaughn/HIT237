@@ -8,11 +8,18 @@ class FarmBlock(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.grower.username})"
+    
+class PlantType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Pest(models.Model):
     name = models.CharField(max_length=100)
     scientific_name = models.CharField(max_length=150, blank=True)
     description = models.TextField()
+    plant_type = models.ForeignKey(PlantType, on_delete=models.CASCADE, related_name='pests')
     image = models.ImageField(upload_to='pests/', blank=True, null=True)
 
     def __str__(self):

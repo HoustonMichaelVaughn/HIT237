@@ -11,4 +11,5 @@ urlpatterns = [
         name="pest_detail",
     ),
     path("references/", views.ReferencesView.as_view(), name="references"),
+    path("pest/new/", views.create_pest, name="create_pest"),
 ]

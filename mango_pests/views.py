@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.http import HttpRequest
 from .data import Pestsdiseases, References
 from django.views import View
-import re
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import PestForm
 
 # Sources
 # https://docs.djangoproject.com/en/5.2/ref/request-response/
@@ -75,3 +77,14 @@ class ReferencesView(View):
         return render(
             request, "mango_pests/references.html", {"references": References}
         )
+
+@login_required
+def create_pest(request):
+    if request.method == "POST":
+        form = PestForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("pestlist") 
+    else:
+        form = PestForm()
+    return render(request, "mango_pests/pest_form.html", {"form": form})
