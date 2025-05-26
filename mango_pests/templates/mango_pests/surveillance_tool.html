@@ -1,0 +1,25 @@
+{% extends "mango_pests/base.html" %}
+{% block content %}
+<h2>Surveillance Effort Tool</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Calculate</button>
+</form>
+
+{% if result %}
+  <hr>
+  <h3>Results</h3>
+  <p><strong>Pest:</strong> {{ result.pest.name }}</p>
+  <p><strong>Required trees to check (no positives):</strong> {{ result.required_n }}</p>
+  <p><strong>Total you've already checked (with no positives):</strong> {{ result.total_checked }}</p>
+
+  {% if result.achieved_confidence %}
+    <p><strong>Confidence achieved so far:</strong> {{ result.achieved_confidence|floatformat:2 }}</p>
+  {% else %}
+    <p><em>Insufficient data to estimate confidence.</em></p>
+  {% endif %}
+{% endif %}
+
+{% endblock %}

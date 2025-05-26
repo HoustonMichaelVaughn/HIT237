@@ -30,8 +30,16 @@ class PestCheck(models.Model):
     pest = models.ForeignKey(Pest, on_delete=models.CASCADE)
     date_checked = models.DateField()
     part_of_plant = models.CharField(max_length=100)
-    infestation_level = models.TextField(blank=True) 
+    num_trees_checked = models.PositiveIntegerField()
+    num_positive = models.PositiveIntegerField()
     notes = models.TextField(blank=True)
+
+    @property
+    def confidence_score(self):
+        """Calculates and returns a simple confidence percentage"""
+        if self.num_trees_checked == 0:
+            return None  # Avoid division by zero
+        return round((self.num_positive / self.num_trees_checked) * 100, 1)
 
     def __str__(self):
         return f"{self.pest.name} at {self.farm_block.name} on {self.date_checked}"

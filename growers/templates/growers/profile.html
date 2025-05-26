@@ -1,5 +1,93 @@
 {% extends "mango_pests/base.html" %}
 {% block content %}
 <h2>Welcome, {{ user.username }}!</h2>
-<p>Email: {{ user.email }}</p>
+
+<h3>Your Farm Blocks</h3>
+<ul>
+  {% for block in farm_blocks %}
+    <li>
+      {{ block.name }} — {{ block.location_description }}
+      —
+      <a href="{% url 'edit_farm_block' block.pk %}">Edit</a> |
+      <a href="{% url 'delete_farm_block' block.pk %}">Delete</a>
+    </li>
+  {% empty %}
+    <li>You haven't added any farm blocks yet.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'add_farm_block' %}">+ Add Farm Block</a>
+
+<h3>Recent Pest Checks</h3>
+<ul>
+{% for check in recent_pest_checks %}
+  <li>
+    {{ check.pest.name }} on {{ check.date_checked }} ({{ check.farm_block.name }})<br>
+    Trees Checked: {{ check.num_trees_checked }} |
+    Positives: {{ check.num_positive }} |
+    Confidence (1% prevalence):
+    {% if check.num_trees_checked < 10 %}
+      <small class="text-danger">Too few trees checked to assess confidence.</small>
+    {% elif check.confidence_score != None %}
+      <span class="badge 
+        {% if check.confidence_score >= 70 %}
+          bg-danger
+        {% elif check.confidence_score >= 30 %}
+          bg-warning
+        {% else %}
+          bg-success
+        {% endif %}
+      ">
+        {{ check.confidence_score|floatformat:2 }}%
+      </span>
+    {% else %}
+      <span class="text-muted">N/A</span>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'create_pest_check' %}">+ Add Pest Check</a>
+
+<h3>Check My Surveillance Confidence</h3>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Evaluate Surveillance Effort</button>
+</form>
+
+{% if surveillance_result %}
+  <hr>
+  <h4>Confidence Summary for {{ surveillance_result.pest.name }}</h4>
+  <p><strong>Total trees checked (0 positives):</strong> {{ surveillance_result.total_checked }}</p>
+  {% if surveillance_result.confidence %}
+    <p><strong>Confidence that pest is not present at 1% prevalence:</strong>
+       {{ surveillance_result.confidence|floatformat:2 }}%</p>
+  {% else %}
+    <p class="text-muted">
+  You have not conducted any pest checks for {{ surveillance_result.pest.name }} where zero pests were found.
+  Surveillance confidence cannot be calculated without at least one check showing 0 positives.
+</p>
+  {% endif %}
+{% endif %}
+
+<hr>
+<h3>How Many Trees Should I Check?</h3>
+
+<form method="post">
+  {% csrf_token %}
+  {{ sample_form.as_p }}
+  <button type="submit">Calculate Required Sample Size</button>
+</form>
+
+{% if sample_size_result %}
+  <hr>
+  <p>
+    To be <strong>{{ sample_size_result.confidence|floatformat:2 }}</strong> confident that a pest is not present
+    at a prevalence of <strong>{{ sample_size_result.prevalence|floatformat:4 }}</strong>,
+    you must check at least <strong>{{ sample_size_result.required_n }}</strong> trees (with 0 positives).
+  </p>
+{% endif %}
+
+
 {% endblock %}

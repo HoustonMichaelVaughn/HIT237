@@ -1,0 +1,32 @@
+{% extends "mango_pests/base.html" %}
+{% block content %}
+<h2>Detection Confidence Report</h2>
+
+{% if data %}
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Pest</th>
+        <th>Farm Block</th>
+        <th>Date Checked</th>
+        <th>Trees Checked</th>
+        <th>Confidence (1% Prevalence)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in data %}
+        <tr>
+          <td>{{ row.pest_name }}</td>
+          <td>{{ row.farm_block }}</td>
+          <td>{{ row.date }}</td>
+          <td>{{ row.trees_checked }}</td>
+          <td>{{ row.confidence_95|floatformat:2 }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No relevant pest checks found.</p>
+{% endif %}
+
+{% endblock %}

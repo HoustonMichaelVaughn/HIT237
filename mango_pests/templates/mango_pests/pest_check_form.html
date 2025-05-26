@@ -1,0 +1,11 @@
+{% extends "mango_pests/base.html" %}
+
+
+{%block content%}
+<h2>Log a New Pest Check</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Submit</button>
+</form>
+{%endblock%}
