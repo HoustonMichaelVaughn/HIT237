@@ -24,32 +24,6 @@ from django.urls import reverse_lazy
 def home(request):
     return render(request, "mango_pests/home.html")
 
-def detection_confidence_report(request):
-    # Get relevant pest checks (only where no positives were found)
-    checks = PestCheck.objects.filter(num_positive=0)
-
-    if not checks.exists():
-        return render(request, "mango_pests/detection_report.html", {"data": None})
-
-    # Prepare data for pandas
-    data = [{
-        "pest_name": check.pest.name,
-        "farm_block": check.farm_block.name,
-        "date": check.date_checked,
-        "trees_checked": check.num_trees_checked
-    } for check in checks]
-
-    df = pd.DataFrame(data)
-
-    # Calculate detection confidence assuming 1% prevalence
-    assumed_prevalence = 0.01
-    df['confidence_95'] = (1 - (1 - assumed_prevalence) ** df['trees_checked']).round(4)
-
-    # Convert to records for template
-    records = df.to_dict(orient='records')
-
-    return render(request, "mango_pests/detection_report.html", {"data": records})
-
 class FarmBlockUpdateView(LoginRequiredMixin, UpdateView):
     model = FarmBlock
     form_class = FarmBlockForm
@@ -158,6 +132,18 @@ def add_farm_block(request):
         form = FarmBlockForm()
     return render(request, "mango_pests/farm_block_form.html", {"form": form})
 
+@login_required
+def create_pest_check(request):
+    if request.method == "POST":
+        form = PestCheckForm(request.POST, user=request.user)
+        if form.is_valid():
+            pest_check = form.save(commit=False)
+            pest_check.save()
+            return redirect("profile")
+    else:
+        form = PestCheckForm(user=request.user)
+    return render(request, "mango_pests/pest_check_form.html", {"form": form})
+
 class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
     model = PestCheck
     form_class = PestCheckForm
@@ -186,16 +172,3 @@ class PestCheckDeleteView(LoginRequiredMixin, DeleteView):
         if obj.farm_block.grower != self.request.user:
             raise Http404("You do not have permission to delete this pest check.")
         return obj
-
-
-@login_required
-def create_pest_check(request):
-    if request.method == "POST":
-        form = PestCheckForm(request.POST, user=request.user)
-        if form.is_valid():
-            pest_check = form.save(commit=False)
-            pest_check.save()
-            return redirect("profile")
-    else:
-        form = PestCheckForm(user=request.user)
-    return render(request, "mango_pests/pest_check_form.html", {"form": form})
