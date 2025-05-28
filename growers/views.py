@@ -52,7 +52,7 @@ def profile_view(request):
         pest = form.cleaned_data['pest']
         checks = PestCheck.objects.filter(
             pest=pest,
-            num_positive=0,
+            positives=0,
             farm_block__grower=request.user
         )
         total_checked = sum(c.num_trees_checked for c in checks)

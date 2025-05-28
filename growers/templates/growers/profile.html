@@ -48,56 +48,56 @@
 
   <!-- Pest Checks Table -->
   <h3>Recent Pest Checks</h3>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Pest</th>
-      <th>Date</th>
-      <th>Block</th>
-      <th>Trees Checked</th>
-      <th>Positives</th>
-      <th>Confidence</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for check in recent_pest_checks %}
-    <tr>
-      <td>{{ check.pest.name }}</td>
-      <td>{{ check.date_checked|date:"d/m/Y" }}</td>
-      <td>{{ check.farm_block.name }}</td>
-      <td>{{ check.num_trees_checked }}</td>
-      <td>{{ check.num_positive }}</td>
-      <td>
-        {% if check.num_trees_checked < 10 %}
-          <span class="text-danger small">Too few trees</span>
-        {% elif check.confidence_score != None %}
-          <span class="badge 
-            {% if check.confidence_score >= 70 %}
-              bg-danger
-            {% elif check.confidence_score >= 30 %}
-              bg-warning
-            {% else %}
-              bg-success
-            {% endif %}
-          ">
-            {{ check.confidence_score|floatformat:2 }}%
-          </span>
-        {% else %}
-          <span class="text-muted">N/A</span>
-        {% endif %}
-      </td>
-      <td>
-        <a href="{% url 'edit_pest_check' check.pk %}" class="btn btn-sm btn-warning">Edit</a>
-        <a href="{% url 'delete_pest_check' check.pk %}" class="btn btn-sm btn-danger">Delete</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Pest</th>
+        <th>Date</th>
+        <th>Block</th>
+        <th>Trees Checked</th>
+        <th>Positives</th>
+        <th>Confidence</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for check in recent_pest_checks %}
+      <tr>
+        <td>{{ check.pest.name }}</td>
+        <td>{{ check.date_checked|date:"d/m/Y" }}</td>
+        <td>{{ check.farm_block.name }}</td>
+        <td>{{ check.num_trees }}</td>
+        <td>{{ check.positives }}</td>
+        <td>
+          {% if check.num_trees < 10 %}
+            <span class="text-danger small">Too few trees</span>
+          {% elif check.confidence_score != None %}
+            <span class="badge 
+              {% if check.confidence_score >= 70 %}
+                bg-danger
+              {% elif check.confidence_score >= 30 %}
+                bg-warning
+              {% else %}
+                bg-success
+              {% endif %}
+            ">
+              {{ check.confidence_score|floatformat:2 }}%
+            </span>
+          {% else %}
+            <span class="text-muted">N/A</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'edit_pest_check' check.pk %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'delete_pest_check' check.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   <a href="{% url 'create_pest_check' %}" class="btn btn-primary mb-4">+ Add Pest Check</a>
 
-  <!-- Dropdown for Confidence Calculator -->
+  <!-- Confidence Calculator -->
   <div class="accordion mb-3" id="dashboardAccordion">
     <div class="accordion-item">
       <h3 class="accordion-header" id="headingConfidence">
@@ -128,7 +128,7 @@
       </div>
     </div>
 
-    <!-- Dropdown for Sample Size Calculator -->
+    <!-- Sample Size Calculator -->
     <div class="accordion-item">
       <h3 class="accordion-header" id="headingSampleSize">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSampleSize" aria-expanded="false" aria-controls="collapseSampleSize">
