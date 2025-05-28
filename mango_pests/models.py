@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User 
 from django.db import models
+from math import exp
 
 class FarmBlock(models.Model):
     grower = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -36,10 +37,10 @@ class PestCheck(models.Model):
 
     @property
     def confidence_score(self):
-        """Calculates and returns a simple confidence percentage"""
-        if self.num_trees_checked == 0:
-            return None  # Avoid division by zero
-        return round((self.num_positive / self.num_trees_checked) * 100, 1)
-
-    def __str__(self):
-        return f"{self.pest.name} at {self.farm_block.name} on {self.date_checked}"
+        if self.num_trees_checked == 0 or self.num_positive is None:
+            return None
+        if self.num_positive > 0:
+            return 0.0
+        prevalence = 0.01
+        confidence = 1 - exp(-prevalence * self.num_trees_checked)
+        return round(confidence * 100, 2)

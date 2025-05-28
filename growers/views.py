@@ -56,7 +56,7 @@ def profile_view(request):
             farm_block__grower=request.user
         )
         total_checked = sum(c.num_trees_checked for c in checks)
-        confidence = 1 - (1 - 0.01) ** total_checked if total_checked > 0 else None
+        confidence = 100 * (1 - (1 - 0.01) ** total_checked) if total_checked > 0 else None
         surveillance_result = {
             'pest': pest,
             'total_checked': total_checked,

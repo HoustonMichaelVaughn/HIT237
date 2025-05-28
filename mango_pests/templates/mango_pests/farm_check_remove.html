@@ -1,0 +1,18 @@
+{% extends "mango_pests/base.html" %}
+{% block content %}
+<div class="container my-4">
+  <div class="card border-danger">
+    <div class="card-header bg-danger text-white">
+      <h4>Confirm Deletion</h4>
+    </div>
+    <div class="card-body">
+      <p>{{ confirm_message }}</p>
+      <form method="post" class="d-inline">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, delete</button>
+        <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

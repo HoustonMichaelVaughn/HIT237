@@ -20,13 +20,17 @@ class SampleSizeForm(forms.Form):
         max_value=0.9999,
         required=True
     )
-    
+
 class PestCheckForm(forms.ModelForm):
+    date_checked = forms.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=forms.DateInput(format='%d/%m/%Y', attrs={'type': 'text'})
+    )
+     
     class Meta:
         model = PestCheck
         fields = ['farm_block', 'pest', 'date_checked', 'part_of_plant',
                   'num_trees_checked', 'num_positive', 'notes']
-
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)

@@ -1,158 +1,100 @@
-from django.shortcuts import render
-from django.http import HttpRequest
-from .data import Pestsdiseases, References
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404, HttpRequest
 from django.views import View
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .forms import PestForm
-from .forms import FarmBlockForm
-from django.http import Http404
-from .forms import PestCheckForm  
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import UpdateView, DeleteView
-from .models import FarmBlock, PestCheck
 from django.urls import reverse_lazy
 
+from .data import Pestsdiseases, References
+from .forms import PestForm, FarmBlockForm, PestCheckForm
+from .models import FarmBlock, PestCheck
 
 
-
-# Sources
-# https://docs.djangoproject.com/en/5.2/ref/request-response/
-# https://marketplace.visualstudio.com/items?itemName=njqdev.vscode-python-typehint
-
-
+# Static Views
 def home(request):
     return render(request, "mango_pests/home.html")
 
-class FarmBlockUpdateView(LoginRequiredMixin, UpdateView):
-    model = FarmBlock
-    form_class = FarmBlockForm
-    template_name = "mango_pests/farm_block_form.html"
-
-    def get_queryset(self):
-        return FarmBlock.objects.filter(grower=self.request.user)
-
-    def get_success_url(self):
-        return reverse_lazy("profile")
-
-class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
-    model = FarmBlock
-    template_name = "mango_pests/farm_block_confirm_delete.html"
-    success_url = reverse_lazy("profile")
-
-    def get_queryset(self):
-        return FarmBlock.objects.filter(grower=self.request.user)
-
-
 class PestListView(View):
-    #   Below is a type hint to get vs to recognise request as a HttpRequest! How cool is that?
     def get(self, request: HttpRequest):
-        search = ""
-        try:
-            search = request.GET["search"].lower()
-        except:
-            pass
-        if search:
-            pestcards = [
-                pest.__dict__
-                for pest in Pestsdiseases
-                if search in pest.cardtitle.lower()
-            ]
-        else:
-            pestcards = [pest.__dict__ for pest in Pestsdiseases]
-        return render(
-            request,
-            "mango_pests/project_list.html",
-            {"pestcards": pestcards, "search": search},
-        )
-
+        search = request.GET.get("search", "").lower()
+        pestcards = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()] if search else [pest.__dict__ for pest in Pestsdiseases]
+        return render(request, "mango_pests/project_list.html", {"pestcards": pestcards, "search": search})
 
 class PestDetailView(View):
     def get(self, request, slugurl):
-        for pest in Pestsdiseases:
-            if pest.urlslug == slugurl:
-                pestdetails = pest.__dict__
-                break
-        return render(
-            request, "mango_pests/project_detail.html", {"pestdetails": pestdetails}
-        )
-
+        pestdetails = next((pest.__dict__ for pest in Pestsdiseases if pest.urlslug == slugurl), None)
+        return render(request, "mango_pests/project_detail.html", {"pestdetails": pestdetails})
 
 class AboutView(View):
     def get(self, request):
         aboutcards = [
-            {
-                "membername": "Houston Vaughn",
-                "aboutmember": "A computer science student at CDU. Teamleader for Group 7",
-            },
-            {
-                "membername": "Neolisa De Castro",
-                "aboutmember": "Computer Science Student.",
-            },
-            {
-                "membername": "Gislene Freitas De Lima Clancy",
-                "aboutmember": "A computer science student at CDU.",
-            },
-            {
-                "membername": "Dean Metcalfe",
-                "aboutmember": "A computer science student at CDU.",
-            },
+            {"membername": "Houston Vaughn", "aboutmember": "A computer science student at CDU. Teamleader for Group 7"},
+            {"membername": "Neolisa De Castro", "aboutmember": "Computer Science Student."},
+            {"membername": "Gislene Freitas De Lima Clancy", "aboutmember": "A computer science student at CDU."},
+            {"membername": "Dean Metcalfe", "aboutmember": "A computer science student at CDU."},
         ]
         return render(request, "mango_pests/about.html", {"aboutcards": aboutcards})
 
-
 class ReferencesView(View):
     def get(self, request):
-        return render(
-            request, "mango_pests/references.html", {"references": References}
-        )
-    
-# Each user can have their own pests
+        return render(request, "mango_pests/references.html", {"references": References})
+
+# CRUD Views (shared template logic)
+
 @login_required
 def create_pest(request):
-    if request.method == "POST":
-        form = PestForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("pestlist") 
-    else:
-        form = PestForm()
-    return render(request, "mango_pests/pest_form.html", {"form": form})
+    form = PestForm(request.POST or None, request.FILES or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("pestlist")
+    return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Add Pest", "button_label": "Create"})
 
 @login_required
 def add_farm_block(request):
-    if request.method == "POST":
-        form = FarmBlockForm(request.POST)
-        if form.is_valid():
-            farm_block = form.save(commit=False)
-            farm_block.grower = request.user
-            farm_block.save()
-            return redirect("profile")
-    else:
-        form = FarmBlockForm()
-    return render(request, "mango_pests/farm_block_form.html", {"form": form})
+    form = FarmBlockForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        farm_block = form.save(commit=False)
+        farm_block.grower = request.user
+        farm_block.save()
+        return redirect("profile")
+    return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Add Farm Block", "button_label": "Create"})
 
 @login_required
 def create_pest_check(request):
-    if request.method == "POST":
-        form = PestCheckForm(request.POST, user=request.user)
-        if form.is_valid():
-            pest_check = form.save(commit=False)
-            pest_check.save()
-            return redirect("profile")
-    else:
-        form = PestCheckForm(user=request.user)
-    return render(request, "mango_pests/pest_check_form.html", {"form": form})
+    form = PestCheckForm(request.POST or None, user=request.user)
+    if request.method == "POST" and form.is_valid():
+        pest_check = form.save()
+        return redirect("profile")
+    return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Log New Pest Check", "button_label": "Create"})
+
+# Update Views
+class FarmBlockUpdateView(LoginRequiredMixin, UpdateView):
+    model = FarmBlock
+    form_class = FarmBlockForm
+    template_name = "mango_pests/farm_check_add.html"
+
+    def get_queryset(self):
+        return FarmBlock.objects.filter(grower=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Edit Farm Block \"{self.object.name}\""
+        context["button_label"] = "Save Changes"
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("profile")
 
 class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
     model = PestCheck
     form_class = PestCheckForm
-    template_name = "mango_pests/pest_check_form.html"
-    success_url = "/growers/profile/"
+    template_name = "mango_pests/farm_check_add.html"
+    success_url = reverse_lazy("profile")
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user  # Pass user for farm block filtering
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_object(self, queryset=None):
@@ -160,15 +102,39 @@ class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
         if obj.farm_block.grower != self.request.user:
             raise Http404("You do not have permission to edit this pest check.")
         return obj
-    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Edit Pest Check"
+        context["button_label"] = "Save Changes"
+        return context
+
+# Delete Views
+class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
+    model = FarmBlock
+    template_name = "mango_pests/farm_check_remove.html"
+    success_url = reverse_lazy("profile")
+
+    def get_queryset(self):
+        return FarmBlock.objects.filter(grower=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["confirm_message"] = f"Are you sure you want to delete the farm block \"{self.object.name}\"?"
+        return context
 
 class PestCheckDeleteView(LoginRequiredMixin, DeleteView):
     model = PestCheck
-    template_name = "mango_pests/pest_check_confirm_delete.html"
-    success_url = "/growers/profile/"
+    template_name = "mango_pests/farm_check_remove.html"
+    success_url = reverse_lazy("profile")
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         if obj.farm_block.grower != self.request.user:
             raise Http404("You do not have permission to delete this pest check.")
         return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["confirm_message"] = "Are you sure you want to delete this pest check?"
+        return context

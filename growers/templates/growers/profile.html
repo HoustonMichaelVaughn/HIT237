@@ -1,93 +1,156 @@
 {% extends "mango_pests/base.html" %}
 {% block content %}
-<h2>Welcome, {{ user.username }}!</h2>
+<div class="container my-4">
+  <h2 class="mb-4">Welcome, {{ user.username }}!</h2>
 
-<h3>Your Farm Blocks</h3>
-<ul>
-  {% for block in farm_blocks %}
-    <li>
-      {{ block.name }} — {{ block.location_description }}
-      —
-      <a href="{% url 'edit_farm_block' block.pk %}">Edit</a> |
-      <a href="{% url 'delete_farm_block' block.pk %}">Delete</a>
-    </li>
-  {% empty %}
-    <li>You haven't added any farm blocks yet.</li>
-  {% endfor %}
-</ul>
-<a href="{% url 'add_farm_block' %}">+ Add Farm Block</a>
+  <!-- Grower Stats Overview -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">Farm Blocks</h5>
+          <p class="card-text">{{ farm_blocks|length }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <h5 class="card-title">Pest Checks</h5>
+          <p class="card-text">{{ recent_pest_checks|length }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<h3>Recent Pest Checks</h3>
-<ul>
-{% for check in recent_pest_checks %}
-  <li>
-    {{ check.pest.name }} on {{ check.date_checked }} ({{ check.farm_block.name }})<br>
-    Trees Checked: {{ check.num_trees_checked }} |
-    Positives: {{ check.num_positive }} |
-    Confidence (1% prevalence):
-    {% if check.num_trees_checked < 10 %}
-      <small class="text-danger">Too few trees checked to assess confidence.</small>
-    {% elif check.confidence_score != None %}
-      <span class="badge 
-        {% if check.confidence_score >= 70 %}
-          bg-danger
-        {% elif check.confidence_score >= 30 %}
-          bg-warning
+  <!-- Farm Blocks Table -->
+  <h3>Your Farm Blocks</h3>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr><th>Name</th><th>Location</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for block in farm_blocks %}
+      <tr>
+        <td>{{ block.name }}</td>
+        <td>{{ block.location_description }}</td>
+        <td>
+          <a href="{% url 'edit_farm_block' block.pk %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'delete_farm_block' block.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">You haven't added any farm blocks yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4">+ Add Farm Block</a>
+
+  <!-- Pest Checks Table -->
+  <h3>Recent Pest Checks</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Pest</th>
+      <th>Date</th>
+      <th>Block</th>
+      <th>Trees Checked</th>
+      <th>Positives</th>
+      <th>Confidence</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for check in recent_pest_checks %}
+    <tr>
+      <td>{{ check.pest.name }}</td>
+      <td>{{ check.date_checked|date:"d/m/Y" }}</td>
+      <td>{{ check.farm_block.name }}</td>
+      <td>{{ check.num_trees_checked }}</td>
+      <td>{{ check.num_positive }}</td>
+      <td>
+        {% if check.num_trees_checked < 10 %}
+          <span class="text-danger small">Too few trees</span>
+        {% elif check.confidence_score != None %}
+          <span class="badge 
+            {% if check.confidence_score >= 70 %}
+              bg-danger
+            {% elif check.confidence_score >= 30 %}
+              bg-warning
+            {% else %}
+              bg-success
+            {% endif %}
+          ">
+            {{ check.confidence_score|floatformat:2 }}%
+          </span>
         {% else %}
-          bg-success
+          <span class="text-muted">N/A</span>
         {% endif %}
-      ">
-        {{ check.confidence_score|floatformat:2 }}%
-      </span>
-    {% else %}
-      <span class="text-muted">N/A</span>
-    {% endif %}
-  </li>
-{% endfor %}
-</ul>
+      </td>
+      <td>
+        <a href="{% url 'edit_pest_check' check.pk %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'delete_pest_check' check.pk %}" class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  <a href="{% url 'create_pest_check' %}" class="btn btn-primary mb-4">+ Add Pest Check</a>
 
-<a href="{% url 'create_pest_check' %}">+ Add Pest Check</a>
+  <!-- Dropdown for Confidence Calculator -->
+  <div class="accordion mb-3" id="dashboardAccordion">
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="headingConfidence">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfidence" aria-expanded="false" aria-controls="collapseConfidence">
+          Check My Surveillance Confidence
+        </button>
+      </h3>
+      <div id="collapseConfidence" class="accordion-collapse collapse" aria-labelledby="headingConfidence" data-bs-parent="#dashboardAccordion">
+        <div class="accordion-body">
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-secondary">Evaluate Surveillance Effort</button>
+          </form>
 
-<h3>Check My Surveillance Confidence</h3>
+          {% if surveillance_result %}
+            <div class="alert alert-info mt-3">
+              <h5>Confidence Summary for {{ surveillance_result.pest.name }}</h5>
+              <p><strong>Total trees checked (0 positives):</strong> {{ surveillance_result.total_checked }}</p>
+              {% if surveillance_result.confidence %}
+              <p><strong>Confidence (1% prevalence):</strong> {{ surveillance_result.confidence|floatformat:2 }}%</p>
+              {% else %}
+              <p class="text-muted">Insufficient data to calculate confidence.</p>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Evaluate Surveillance Effort</button>
-</form>
+    <!-- Dropdown for Sample Size Calculator -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="headingSampleSize">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSampleSize" aria-expanded="false" aria-controls="collapseSampleSize">
+          How Many Trees Should I Check?
+        </button>
+      </h3>
+      <div id="collapseSampleSize" class="accordion-collapse collapse" aria-labelledby="headingSampleSize" data-bs-parent="#dashboardAccordion">
+        <div class="accordion-body">
+          <form method="post">
+            {% csrf_token %}
+            {{ sample_form.as_p }}
+            <button type="submit" class="btn btn-secondary">Calculate Required Sample Size</button>
+          </form>
 
-{% if surveillance_result %}
-  <hr>
-  <h4>Confidence Summary for {{ surveillance_result.pest.name }}</h4>
-  <p><strong>Total trees checked (0 positives):</strong> {{ surveillance_result.total_checked }}</p>
-  {% if surveillance_result.confidence %}
-    <p><strong>Confidence that pest is not present at 1% prevalence:</strong>
-       {{ surveillance_result.confidence|floatformat:2 }}%</p>
-  {% else %}
-    <p class="text-muted">
-  You have not conducted any pest checks for {{ surveillance_result.pest.name }} where zero pests were found.
-  Surveillance confidence cannot be calculated without at least one check showing 0 positives.
-</p>
-  {% endif %}
-{% endif %}
-
-<hr>
-<h3>How Many Trees Should I Check?</h3>
-
-<form method="post">
-  {% csrf_token %}
-  {{ sample_form.as_p }}
-  <button type="submit">Calculate Required Sample Size</button>
-</form>
-
-{% if sample_size_result %}
-  <hr>
-  <p>
-    To be <strong>{{ sample_size_result.confidence|floatformat:2 }}</strong> confident that a pest is not present
-    at a prevalence of <strong>{{ sample_size_result.prevalence|floatformat:4 }}</strong>,
-    you must check at least <strong>{{ sample_size_result.required_n }}</strong> trees (with 0 positives).
-  </p>
-{% endif %}
-
-
+          {% if sample_size_result %}
+            <div class="alert alert-success mt-3">
+              <p>To be <strong>{{ sample_size_result.confidence|floatformat:2 }}</strong>% confident that a pest is not present at a prevalence of <strong>{{ sample_size_result.prevalence|floatformat:4 }}</strong>, you must check at least <strong>{{ sample_size_result.required_n }}</strong> trees with 0 positives.</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
