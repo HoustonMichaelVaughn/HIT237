@@ -37,8 +37,27 @@ class RegisterUser(FormView):
 
 @login_required
 def profile_view(request):
+    #  All farm blocks and pest checks for this user
     farm_blocks = FarmBlock.objects.filter(grower=request.user)
-    recent_pest_checks = PestCheck.objects.filter(farm_block__grower=request.user).order_by('-date_checked')[:5]
+    all_checks  = PestCheck.objects.filter(
+        farm_block__grower=request.user
+    ).order_by('-date_checked')
+
+    # Status filter via ?status=
+    status = request.GET.get("status", "all")
+    if status == "high":
+        all_checks = all_checks.filter(confidence__gte=0.9)
+    elif status == "medium":
+        all_checks = all_checks.filter(confidence__gte=0.5, confidence__lt=0.9)
+    elif status == "low":
+        all_checks = all_checks.filter(confidence__lt=0.5)
+
+    # Totals for summary cards
+    total_blocks = farm_blocks.count()
+    total_checks = all_checks.count()
+
+    #  Keep only the 5 most recent for the table
+    recent_pest_checks = all_checks[:5]
 
     # Two separate forms with different prefixes
     form = PestSelectionForm(request.POST or None, prefix='surv')
@@ -73,11 +92,17 @@ def profile_view(request):
             'required_n': required_n,
         }
 
+    # computing sample_size_result
     return render(request, "growers/profile.html", {
-        "farm_blocks": farm_blocks,
-        "recent_pest_checks": recent_pest_checks,
-        "form": form,
+        "farm_blocks":         farm_blocks,
+        "recent_pest_checks":  recent_pest_checks,
+        "status_filter":       status,
+        "total_blocks":        total_blocks,
+        "total_checks":        total_checks,
+        "form":                form,
         "surveillance_result": surveillance_result,
-        "sample_form": sample_form,
-        "sample_size_result": sample_size_result
+        "sample_form":         sample_form,
+        "sample_size_result":  sample_size_result,
     })
+
+

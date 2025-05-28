@@ -1,6 +1,7 @@
 {% extends "mango_pests/base.html" %}
 {% block content %}
 <div class="container my-4">
+
   <h2 class="mb-4">Welcome, {{ user.username }}!</h2>
 
   <!-- Grower Stats Overview -->
@@ -9,7 +10,7 @@
       <div class="card text-white bg-primary">
         <div class="card-body">
           <h5 class="card-title">Farm Blocks</h5>
-          <p class="card-text">{{ farm_blocks|length }}</p>
+          <p class="card-text">{{ total_blocks }}</p>
         </div>
       </div>
     </div>
@@ -17,7 +18,7 @@
       <div class="card text-white bg-success">
         <div class="card-body">
           <h5 class="card-title">Pest Checks</h5>
-          <p class="card-text">{{ recent_pest_checks|length }}</p>
+          <p class="card-text">{{ total_checks }}</p>
         </div>
       </div>
     </div>
@@ -46,15 +47,29 @@
   </table>
   <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4">+ Add Farm Block</a>
 
-  <!-- Pest Checks Table -->
+  <!-- Recent Pest Checks -->
   <h3>Recent Pest Checks</h3>
+
+  <!-- Confidence‐filter dropdown -->
+  <form method="get" class="mb-3">
+    <label for="status">Show checks with confidence:</label>
+    <select name="status" id="status"
+            onchange="this.form.submit()"
+            class="form-control w-auto d-inline-block">
+      <option value="all"    {% if status_filter == "all"    %}selected{% endif %}>All</option>
+      <option value="high"   {% if status_filter == "high"   %}selected{% endif %}>High (≥ 90%)</option>
+      <option value="medium" {% if status_filter == "medium" %}selected{% endif %}>Medium (50–89%)</option>
+      <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (< 50%)</option>
+    </select>
+  </form>
+
   <table class="table table-striped">
     <thead>
       <tr>
         <th>Pest</th>
         <th>Date</th>
         <th>Block</th>
-        <th>Trees Checked</th>
+        <th>Trees</th>
         <th>Positives</th>
         <th>Confidence</th>
         <th>Actions</th>
@@ -62,65 +77,68 @@
     </thead>
     <tbody>
       {% for check in recent_pest_checks %}
-      <tr>
-        <td>{{ check.pest.name }}</td>
-        <td>{{ check.date_checked|date:"d/m/Y" }}</td>
-        <td>{{ check.farm_block.name }}</td>
-        <td>{{ check.num_trees }}</td>
-        <td>{{ check.positives }}</td>
-        <td>
-          {% if check.num_trees < 10 %}
-            <span class="text-danger small">Too few trees</span>
-          {% elif check.confidence_score != None %}
-            <span class="badge 
-              {% if check.confidence_score >= 70 %}
-                bg-danger
-              {% elif check.confidence_score >= 30 %}
-                bg-warning
-              {% else %}
-                bg-success
-              {% endif %}
+        <tr>
+          <td>{{ check.pest.name }}</td>
+          <td>{{ check.date_checked }}</td>
+          <td>{{ check.farm_block.name }}</td>
+          <td>{{ check.num_trees }}</td>
+          <td>{{ check.positives }}</td>
+          <td>
+            <span class="
+              {% if check.confidence >= 0.9 %}badge-green
+              {% elif check.confidence >= 0.5 %}badge-yellow
+              {% else %}badge-red{% endif %}
             ">
-              {{ check.confidence_score|floatformat:2 }}%
+              {{ check.confidence|floatformat:0 }}%
             </span>
-          {% else %}
-            <span class="text-muted">N/A</span>
-          {% endif %}
-        </td>
-        <td>
-          <a href="{% url 'edit_pest_check' check.pk %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'delete_pest_check' check.pk %}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-      </tr>
+          </td>
+          <td>
+            <a href="{% url 'edit_pest_check' check.id %}"   class="btn btn-sm btn-link">Edit</a>
+            <a href="{% url 'delete_pest_check' check.id %}" class="btn btn-sm btn-link text-danger">Delete</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="text-center">No pest checks found.</td></tr>
       {% endfor %}
     </tbody>
   </table>
-  <a href="{% url 'create_pest_check' %}" class="btn btn-primary mb-4">+ Add Pest Check</a>
+
+  <div class="mt-3">
+    <a href="{% url 'create_pest_check' %}" class="btn btn-primary">+ Add Pest Check</a>
+    <a href="{% url 'add_farm_block'   %}" class="btn btn-secondary ml-2">+ Add Farm Block</a>
+  </div>
 
   <!-- Confidence Calculator -->
   <div class="accordion mb-3" id="dashboardAccordion">
     <div class="accordion-item">
       <h3 class="accordion-header" id="headingConfidence">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfidence" aria-expanded="false" aria-controls="collapseConfidence">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse" data-bs-target="#collapseConfidence"
+                aria-expanded="false" aria-controls="collapseConfidence">
           Check My Surveillance Confidence
         </button>
       </h3>
-      <div id="collapseConfidence" class="accordion-collapse collapse" aria-labelledby="headingConfidence" data-bs-parent="#dashboardAccordion">
+      <div id="collapseConfidence" class="accordion-collapse collapse"
+           aria-labelledby="headingConfidence" data-bs-parent="#dashboardAccordion">
         <div class="accordion-body">
           <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-secondary">Evaluate Surveillance Effort</button>
+            <button type="submit" class="btn btn-secondary">
+              Evaluate Surveillance Effort
+            </button>
           </form>
 
           {% if surveillance_result %}
             <div class="alert alert-info mt-3">
               <h5>Confidence Summary for {{ surveillance_result.pest.name }}</h5>
-              <p><strong>Total trees checked (0 positives):</strong> {{ surveillance_result.total_checked }}</p>
+              <p><strong>Total trees checked (0 positives):</strong>
+                 {{ surveillance_result.total_checked }}</p>
               {% if surveillance_result.confidence %}
-              <p><strong>Confidence (1% prevalence):</strong> {{ surveillance_result.confidence|floatformat:2 }}%</p>
+                <p><strong>Confidence (1% prevalence):</strong>
+                   {{ surveillance_result.confidence|floatformat:2 }}%</p>
               {% else %}
-              <p class="text-muted">Insufficient data to calculate confidence.</p>
+                <p class="text-muted">Insufficient data to calculate confidence.</p>
               {% endif %}
             </div>
           {% endif %}
@@ -131,26 +149,40 @@
     <!-- Sample Size Calculator -->
     <div class="accordion-item">
       <h3 class="accordion-header" id="headingSampleSize">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSampleSize" aria-expanded="false" aria-controls="collapseSampleSize">
+        <button class="accordion-button collapsed" type="button"
+                data-bs-toggle="collapse" data-bs-target="#collapseSampleSize"
+                aria-expanded="false" aria-controls="collapseSampleSize">
           How Many Trees Should I Check?
         </button>
       </h3>
-      <div id="collapseSampleSize" class="accordion-collapse collapse" aria-labelledby="headingSampleSize" data-bs-parent="#dashboardAccordion">
+      <div id="collapseSampleSize" class="accordion-collapse collapse"
+           aria-labelledby="headingSampleSize" data-bs-parent="#dashboardAccordion">
         <div class="accordion-body">
           <form method="post">
             {% csrf_token %}
             {{ sample_form.as_p }}
-            <button type="submit" class="btn btn-secondary">Calculate Required Sample Size</button>
+            <button type="submit" class="btn btn-secondary">
+              Calculate Required Sample Size
+            </button>
           </form>
 
           {% if sample_size_result %}
             <div class="alert alert-success mt-3">
-              <p>To be <strong>{{ sample_size_result.confidence|floatformat:2 }}</strong>% confident that a pest is not present at a prevalence of <strong>{{ sample_size_result.prevalence|floatformat:4 }}</strong>, you must check at least <strong>{{ sample_size_result.required_n }}</strong> trees with 0 positives.</p>
+              <p>To be <strong>
+                  {{ sample_size_result.confidence|floatformat:2 }}
+                </strong>% confident that a pest is not present at a prevalence
+                of <strong>
+                  {{ sample_size_result.prevalence|floatformat:4 }}
+                </strong>, you must check at least
+                <strong>{{ sample_size_result.required_n }}</strong> trees
+                with 0 positives.
+              </p>
             </div>
           {% endif %}
         </div>
       </div>
     </div>
   </div>
+
 </div>
 {% endblock %}
