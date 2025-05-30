@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 
 from mango_pests.models import FarmBlock, PestCheck
 from .forms import RegisterUserForm
-from mango_pests.forms import PestSelectionForm, SampleSizeForm  # Ensure SampleSizeForm is in your forms
+from mango_pests.forms import PestSelectionForm, SampleSizeForm  # Ensure SampleSizeForm is in your forms because this form class is what renders and processes the “How Many Trees Should I Check?” calculator
 
 import math
 
