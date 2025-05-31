@@ -50,7 +50,7 @@
   <!-- Recent Pest Checks -->
   <h3>Recent Pest Checks</h3>
 
-  <!-- Confidence‐filter dropdown -->
+  <!-- Confidence-filter dropdown -->
   <form method="get" class="mb-3">
     <label for="status">Show checks with confidence:</label>
     <select name="status" id="status"
@@ -64,49 +64,77 @@
   </form>
 
   <table class="table table-striped">
-    <thead>
+ <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Pest</th>
+      <th>Date</th>
+      <th>Block</th>
+      <th>Trees</th>
+      <th>Positives</th>
+      <th>Confidence</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for check in recent_pest_checks %}
       <tr>
-        <th>Pest</th>
-        <th>Date</th>
-        <th>Block</th>
-        <th>Trees</th>
-        <th>Positives</th>
-        <th>Confidence</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for check in recent_pest_checks %}
-        <tr>
-          <td>{{ check.pest.name }}</td>
-          <td>{{ check.date_checked }}</td>
-          <td>{{ check.farm_block.name }}</td>
-          <td>{{ check.num_trees }}</td>
-          <td>{{ check.positives }}</td>
-          <td>
-            <span class="
-              {% if check.confidence >= 0.9 %}badge-green
-              {% elif check.confidence >= 0.5 %}badge-yellow
-              {% else %}badge-red{% endif %}
-            ">
-              {{ check.confidence|floatformat:0 }}%
-            </span>
-          </td>
-          <td>
-            <a href="{% url 'edit_pest_check' check.id %}"   class="btn btn-sm btn-link">Edit</a>
-            <a href="{% url 'delete_pest_check' check.id %}" class="btn btn-sm btn-link text-danger">Delete</a>
-          </td>
-        </tr>
-      {% empty %}
-        <tr><td colspan="7" class="text-center">No pest checks found.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        <td>{{ check.pest.name }}</td>
+        <td>{{ check.date_checked }}</td>
+        <td>{{ check.farm_block.name }}</td>
+        <td>{{ check.num_trees }}</td>
+        <td>{{ check.positives }}</td>
 
-  <div class="mt-3">
-    <a href="{% url 'create_pest_check' %}" class="btn btn-primary">+ Add Pest Check</a>
-    <a href="{% url 'add_farm_block'   %}" class="btn btn-secondary ml-2">+ Add Farm Block</a>
+        <!-- UPDATED “Confidence” COLUMN -->
+        <td>
+          {% if check.positives > 0 %}
+            <!-- If any positives were found, show a red “0%” -->
+            <span class="badge bg-danger">0%</span>
+          {% else %}
+            {% with pct=check.confidence|floatformat:0 %}
+              {% if pct|floatformat:0 >= 90 %}
+                <!-- Zero positives & ≥90% confidence → green badge -->
+                <span class="badge bg-success">{{ pct }}&#37;</span>
+              {% else %}
+                <!-- Zero positives & <90% confidence → yellow badge -->
+                <span class="badge bg-warning text-dark">{{ pct }}&#37;</span>
+              {% endif %}
+            {% endwith %}
+          {% endif %}
+        </td>
+        <!-- END UPDATED “Confidence” COLUMN -->
+
+        <td>
+          <a href="{% url 'edit_pest_check' check.id %}" class="btn btn-sm btn-link">Edit</a>
+          <a href="{% url 'delete_pest_check' check.id %}" class="btn btn-sm btn-link text-danger">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="text-center">No pest checks found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="mt-3">
+  <a href="{% url 'create_pest_check' %}" class="btn btn-primary">+ Add Pest Check</a>
+  <a href="{% url 'add_farm_block'   %}" class="btn btn-secondary ml-2">+ Add Farm Block</a>
+</div>
+
+    <!-- Neolisa Idea-Badge Preview Section -->
+<div class="mt-5 mb-4 p-3 border rounded bg-light">
+  <h5>Sampling Status Badges</h5>
+  <div class="mb-3">
+    <span class="badge bg-success me-2">
+      Green Badge (conf ≥ 90%)
+    </span>
+    <span class="badge bg-warning text-dark me-2">
+      Yellow Badge (low sample)
+    </span>
+    <span class="badge bg-danger">
+      Red Badge (pest found)
+    </span>
   </div>
+</div>
 
   <!-- Confidence Calculator -->
   <div class="accordion mb-3" id="dashboardAccordion">
@@ -185,4 +213,16 @@
   </div>
 
 </div>
+
+<!-- Initialize Bootstrap tooltips -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script>
 {% endblock %}
