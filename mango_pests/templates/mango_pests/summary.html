@@ -1,0 +1,39 @@
+{% extends 'mango_pests/base.html' %}
+{% block content %}
+    <h2>Pest Surveillance Summary</h2>
+    <!-- Overall status -->
+    <p>Overall Status: {{ overall_status }}</p>
+    <!-- Total checks -->
+    <p>Total Checks: {{ total_checks }}</p>
+    <!-- Pest positives -->
+    <p>Pest Positives: {{ pest_checks }}</p>
+    <!-- Table for recent checks -->
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Farm Block</th>
+            <th>Pest</th>
+            <th>Part of Plant</th>
+            <th>Confidence</th>
+            <th>Trees Checked</th>
+            <th>Positives</th>
+            <th>Status</th>
+        </tr>
+        {% for record, status in records %}
+        <tr>
+            <td>{{ record.date_checked }}</td>
+            <td>{{ record.farm_block.name }}</td>
+            <td>{{ record.pest.name }}</td>
+            <td>{{ record.part_of_plant }}</td>
+            <td>{{ record.confidence|floatformat:2 }}%</td>
+            <td>{{ record.num_trees }}</td>
+            <td>{{ record.positives }}</td>
+            <td>{{ status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <!-- CSV download button -->
+    <form method="get" action="{% url 'surveillance:download_csv' %}">
+        <button type="submit">Download CSV</button>
+    </form>
+{% endblock %}

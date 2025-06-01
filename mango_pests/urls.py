@@ -1,4 +1,5 @@
 from django.urls import path, re_path
+from mango_pests.surveillance.views import summary_view
 from . import views
 
 
@@ -19,4 +20,5 @@ urlpatterns = [
     path("pestcheck/<int:pk>/delete/", views.PestCheckDeleteView.as_view(), name="delete_pest_check"),
     path("farmblock/<int:pk>/edit/", views.FarmBlockUpdateView.as_view(), name="edit_farm_block"),
     path("farmblock/<int:pk>/delete/", views.FarmBlockDeleteView.as_view(), name="delete_farm_block"),
+    path("surveillance/summary/", summary_view, name="surveillance-summary"),
 ]

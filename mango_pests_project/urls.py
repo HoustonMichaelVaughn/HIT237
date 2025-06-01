@@ -7,5 +7,6 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('mango_pests.urls')), 
-    path('growers/', include('growers.urls'))
+    path('growers/', include('growers.urls')),
+    path("surveillance/", include("mango_pests.surveillance.urls", namespace="surveillance")),
 ]
