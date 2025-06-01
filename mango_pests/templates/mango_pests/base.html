@@ -1,14 +1,11 @@
-{%comment%}
-Base html provides the basic layout presistent accross all pages
-block head provides the js include only for the page that needs it (project_detail.html)
+{% comment %}
+Base html provides the basic layout persistent across all pages.
+block head provides the JS include only for pages that need it (e.g. project_detail.html).
 Sources:
-
-~Navbar~
-https://pypi.org/project/django-bootstrap5/
-https://getbootstrap.com/docs/5.0/components/navbar/
-
-
-{%endcomment%}
+  ~Navbar~
+  https://pypi.org/project/django-bootstrap5/
+  https://getbootstrap.com/docs/5.0/components/navbar/
+{% endcomment %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,65 +14,128 @@ https://getbootstrap.com/docs/5.0/components/navbar/
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mango Pests</title>
   {% load static %}
-  <link rel="stylesheet" href={%static 'css/style.css'%}>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% load django_bootstrap5 %}
   {% bootstrap_css %}
   {% bootstrap_javascript %}
-  {%block head%}
-
-  {%endblock%}
+  {% block head %}{% endblock %}
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light mb-5">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{%url 'home' %}">BioMangoes</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="{% url 'home' %}">BioMangoes</a>
+      <button class="navbar-toggler" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-<ul class="navbar-nav mb-2 mb-lg-0">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'pestlist' %}">Pestlist</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'about' %}">About</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'references' %}">References</a>
-  </li>
+        <ul class="navbar-nav mb-2 mb-lg-0">
 
-  {% if user.is_authenticated %}
-<form action="{% url 'logout' %}" method="post" style="display:inline;">
-  {% csrf_token %}
-  <button class="nav-link btn btn-link" type="submit">Logout ({{ user.username }})</button>
-</form>
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="{% url 'profile' %}">Profile</a>
-  </li>
-  {% else %}
-    <li class="nav-item">
-      <a class="nav-link active" href="{% url 'login' %}">Login</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" href="{% url 'register' %}">Register</a>
-    </li>
-  {% endif %}
-</ul>
+          <!-- Home -->
+          <li class="nav-item">
+            <a
+              class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+              {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}
+              href="{% url 'home' %}"
+            >
+              Home
+            </a>
+          </li>
 
+          <!-- Pestlist -->
+          <li class="nav-item">
+            <a
+              class="nav-link {% if request.resolver_match.url_name == 'pestlist' %}active{% endif %}"
+              {% if request.resolver_match.url_name == 'pestlist' %}aria-current="page"{% endif %}
+              href="{% url 'pestlist' %}"
+            >
+              Pestlist
+            </a>
+          </li>
+
+          <!-- About -->
+          <li class="nav-item">
+            <a
+              class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+              {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}
+              href="{% url 'about' %}"
+            >
+              About
+            </a>
+          </li>
+
+          <!-- References -->
+          <li class="nav-item">
+            <a
+              class="nav-link {% if request.resolver_match.url_name == 'references' %}active{% endif %}"
+              {% if request.resolver_match.url_name == 'references' %}aria-current="page"{% endif %}
+              href="{% url 'references' %}"
+            >
+              References
+            </a>
+          </li>
+
+          {% if user.is_authenticated %}
+            <!-- Logout (as a form button) -->
+            <li class="nav-item">
+              <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button
+                  class="nav-link btn btn-link {% if request.resolver_match.url_name == 'logout' %}active{% endif %}"
+                  type="submit"
+                  {% if request.resolver_match.url_name == 'logout' %}aria-current="page"{% endif %}
+                >
+                  Logout ({{ user.username }})
+                </button>
+              </form>
+            </li>
+            <!-- Profile -->
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}
+                href="{% url 'profile' %}"
+              >
+                Profile
+              </a>
+            </li>
+          {% else %}
+            <!-- Login -->
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+                {% if request.resolver_match.url_name == 'login' %}aria-current="page"{% endif %}
+                href="{% url 'login' %}"
+              >
+                Login
+              </a>
+            </li>
+            <!-- Register -->
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}"
+                {% if request.resolver_match.url_name == 'register' %}aria-current="page"{% endif %}
+                href="{% url 'register' %}"
+              >
+                Register
+              </a>
+            </li>
+          {% endif %}
+
+        </ul>
       </div>
     </div>
   </nav>
 
-
+  
   <main>
-    {% block content %}
-
-    {% endblock %}
+    {% block content %}{% endblock %}
   </main>
 
 </body>

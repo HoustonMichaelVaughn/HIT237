@@ -1,7 +1,10 @@
 from django.contrib import admin
-from .models import FarmBlock, Pest, PestCheck, PlantType
+from django.contrib.admin.sites import AlreadyRegistered
+from .models import PlantType, Pest, FarmBlock, PestCheck
 
-admin.site.register(FarmBlock)
-admin.site.register(Pest)
-admin.site.register(PestCheck)
-admin.site.register(PlantType)
+for model in (PlantType, Pest, FarmBlock, PestCheck):
+    try:
+        admin.site.register(model)
+    except AlreadyRegistered:
+        # if some other admin.py already registered it, this will just skip it
+        pass

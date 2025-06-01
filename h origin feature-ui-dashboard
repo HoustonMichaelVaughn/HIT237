@@ -1,0 +1,187 @@
+* [33m8cbe51c[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature-ui-dashboard[m[33m)[m Add PlantType and Pest entries with dummy FarmBlocks for testing
+* [33m79fd3d6[m[33m ([m[1;31morigin/feature-ui-dashboard[m[33m)[m Add confidence-filter dropdown and dynamic pest-checks table to profile
+* [33ma9082d4[m[33m ([m[1;31morigin/houston-database[m[33m, [m[1;32mhouston-database[m[33m)[m Implemented forms for UI-GISLENE
+* [33ma0732be[m Interactive tools
+* [33m3c73500[m Removing irrelevant files
+* [33m148d2aa[m - Implemented Per-Check Confidence Display On the profile page, each pest check now shows a confidence score. Based on 1% prevalence using a binomial detection model. -Built a Tool to Evaluate Surveillance Effort (Retrospective) Allows growers to select a pest. Aggregates all checks with 0 positives. Calculates how confident they can be that the pest is not present. Integrated into the profile page. -Built a Tool to Plan Surveillance Effort (Prospective) growers enter desired confidence and prevalence. System calculates how many trees they must check to meet that threshold.
+* [33m277cd66[m Added PlantType and easily modifiable list of pests
+* [33mfebfc5e[m Login/Register/Logout works.
+* [33m07d3819[m Note..
+[31m|[m * [33md2da828[m[33m ([m[1;32mui-polish-gislene[m[33m)[m task(ui): remove old PNG and add corrected WEBP image
+[31m|[m * [33m7d17909[m[33m ([m[1;31morigin/ui-polish-gislene[m[33m)[m task(ui): final polish on pestcheck form, add badge doc and orchard-map placeholder
+[31m|[m * [33m4373261[m task: ignore all .bundle backup files
+[31m|[m *   [33m24237ea[m Merge branch 'dean-crud-form' into ui-polish-gislene
+[31m|[m [33m|[m[34m\[m  
+[31m|[m [33m|[m * [33m688914b[m[33m ([m[1;31morigin/dean-crud-form[m[33m, [m[1;32mdean-crud-form[m[33m)[m added num_trees & positives fields and confidence calculation to forms & models.py
+[31m|[m * [34m|[m [33m54e42bb[m task: remove tracked bytecode and __pycache__ directories
+[31m|[m [34m|[m[34m/[m  
+[31m|[m [34m|[m * [33m93ffb14[m[33m ([m[1;31morigin/dashboard-draft[m[33m)[m Create views.py
+[31m|[m [34m|[m * [33med36ce9[m Create forms.py
+[31m|[m [34m|[m * [33m2089c07[m Create models.py
+[31m|[m [34m|[m * [33m4daf062[m Create urls.py
+[31m|[m [34m|[m * [33m5df9fd1[m Create recent_checks.html
+[31m|[m [34m|[m * [33ma2bb9f1[m Create summary.html
+[31m|[m [34m|[m * [33m2bc9968[m Create add_check.html
+[31m|[m [34m|[m [35m|[m * [33m590bef3[m[33m ([m[1;32mbackup-before-revert[m[33m)[m task: finalise VS Code python.analysis.extraPaths setting
+[31m|[m [34m|[m [35m|[m * [33m6ac55d9[m task: finalise PestCheck views and CSV export helper module
+[31m|[m [34m|[m [35m|[m * [33m0824323[m task: finalise pestcheck and surveillance URL patterns
+[31m|[m [34m|[m [35m|[m * [33m7b8c170[m task: relocate surveillance templates into app folder
+[31m|[m [34m|[m [35m|[m * [33m38ec8b3[m task: relocate surveillance templates into app folder
+[31m|[m [34m|[m [35m|[m * [33m1256b68[m feat: import surveillance templates from dashboard-draft
+[31m|[m [34m|[m [35m|[m * [33ma542496[m feat: pull in Neolisas surveillance templates
+[31m|[m [34m|[m [35m|[m * [33m6a78bf5[m chore: remove tracked bytecode and apply .gitignore
+[31m|[m [34m|[m [35m|[m * [33mba5ea61[m chore: ignore __pycache__ and .pyc files
+[31m|[m [34m|[m [35m|[m[34m/[m  
+[31m|[m [34m|[m[34m/[m[35m|[m   
+[31m|[m * [35m|[m [33m4865396[m ui: final badge and tooltip styles added with notes for Neolisa
+[31m|[m * [35m|[m [33md626cbb[m chore: remove leftover ignored files
+[31m|[m * [35m|[m [33mf0a161b[m anyway apply .gitignore to remove caches and DB from tracking
+[31m|[m * [35m|[m [33m48249fa[m[33m ([m[1;32mtemp-houston-patch[m[33m)[m Merged growers backend with Gislene UI modifications
+[31m|[m * [35m|[m [33md386027[m UI/UX: added persistent active-tab underlines, wired login/register templates, polished styles
+[31m|[m * [35m|[m [33m708f392[m UI/UX updates: navbar feedback, form polish, global styles for accessibility
+[31m|[m * [35m|[m [33mad69874[m update template names/views
+[31m|[m * [35m|[m [33m19ba9b1[m Implement PestCheck CRUD Functionality with User Access Control
+[31m|[m * [35m|[m   [33m527eaf8[m Merge houston-database into dean-crud-form
+[31m|[m [1;31m|[m[31m\[m [35m\[m  
+[31m|[m [1;31m|[m[31m/[m [35m/[m  
+[31m|[m[31m/[m[1;31m|[m [35m|[m   
+* [1;31m|[m [35m|[m [33m0bdb11f[m Removed temp file.
+* [1;31m|[m [35m|[m [33me83bc3d[m Added 'growers' app for registration, login, and profile views Implemented RegisterUserForm and class-based views Created login and register templates under growers/ Linked login flow with LOGIN_REDIRECT_URL to /growers/profile/ Added FarmBlock, Pest, and PestCheck models to mango_pests Registered new models in Django admin Updated project URLs to include growers routes
+* [1;31m|[m [35m|[m   [33m06911b1[m Merge branch 'main' into houston-database for up to date changes
+[1;33m|[m[35m\[m [1;31m\[m [35m\[m  
+[1;33m|[m [35m|[m [1;31m|[m[35m/[m  
+[1;33m|[m [35m|[m[35m/[m[1;31m|[m   
+* [35m|[m [1;31m|[m [33m668ad77[m New branch for database feature
+* [35m|[m [1;31m|[m [33mb8aefa1[m New branch for database feature
+[1;34m|[m [35m|[m * [33ma384ce9[m Create new branch and draft files
+[1;34m|[m [35m|[m[35m/[m  
+[1;34m|[m * [33m960dccd[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Removed unused CSS
+[1;34m|[m * [33m504f6ea[m Just re-arranged...
+[1;34m|[m * [33m635526e[m Removed image in intrusion class. No longer needed as slug url handles that.
+[1;34m|[m * [33m2427ae7[m Formatting changes...
+[1;34m|[m * [33m9584e7a[m -Added FAB partly made using AI because documentation is lacking -Added search and clear buttons for pest/diasese searching for functionality and user experience.
+[1;34m|[m * [33mdd4c4a4[m -Added consistent themeing throughout the webpage -Ensured search bar displays properly on mobile
+[1;34m|[m * [33m6e74abe[m -Added responsive images to help mobile friendliness -Added customer filter to generate srcsets -Organised images, generated apropriate image variants for srcsets
+[1;34m|[m * [33m26a7f52[m Features added to demonstrate Django proficency: -Added a search bar to the pests section. -Added a custom filter for the pruposes of truncating. -Tidied up some html, wrestled with different bootstrap classes until it looked right. -Added javascript for the expandText function. -Added bloch head in base so project_details can include javascript.
+[1;34m|[m * [33m5b48487[m Fixed project list, fixed base.html, fixed refrences, added reference class, add refrenceview class
+[1;34m|[m * [33mf5b0b83[m Renamed images for clearer understanding. Fixed urls.py so that it's only on the app level.
+[1;34m|[m * [33md909c68[m TODO
+[1;34m|[m * [33m538ca6e[m Fixed images.
+[1;34m|[m * [33mf589d21[m Ahhhh fixing
+[1;34m|[m *   [33m5ca7e32[m Merge pull request #16 from HoustonMichaelVaughn/lisafoodie-patch-5
+[1;34m|[m [1;35m|[m[1;36m\[m  
+[1;34m|[m [1;35m|[m * [33m62c5a94[m Update views.py
+[1;34m|[m [1;35m|[m[1;34m/[m  
+[1;34m|[m[1;34m/[m[1;35m|[m   
+[1;34m|[m * [33mc7e74a5[m Merge pull request #15 from HoustonMichaelVaughn/lisafoodie-patch-4
+[1;34m|[m[1;34m/[m[32m|[m 
+[1;34m|[m * [33m77060c8[m Update urls.py
+[1;34m|[m * [33m9d6edb8[m Update views.py
+[1;34m|[m * [33m6d1b5a1[m Update references.html
+[1;34m|[m * [33m79cafae[m Create references.html
+[1;34m|[m[1;34m/[m  
+*   [33ma30b221[m Merge pull request #14 from HoustonMichaelVaughn/Houston-Vaughn
+[33m|[m[34m\[m  
+[33m|[m * [33m3aa8e1d[m Formatted data.py and fixed issue with tuples.
+[33m|[m[33m/[m  
+*   [33meb2d93b[m Merge pull request #12 from HoustonMichaelVaughn/lisafoodie-patch-2
+[35m|[m[36m\[m  
+[35m|[m *   [33m35605bc[m Merge branch 'main' into lisafoodie-patch-2
+[35m|[m [1;31m|[m[35m\[m  
+[35m|[m [1;31m|[m[35m/[m  
+[35m|[m[35m/[m[1;31m|[m   
+* [1;31m|[m   [33m160a485[m Merge pull request #13 from HoustonMichaelVaughn/Houston-Vaughn
+[1;33m|[m[1;34m\[m [1;31m\[m  
+[1;33m|[m * [1;31m|[m [33md29e538[m Fix tuple's on Gislene.
+[1;33m|[m[1;33m/[m [1;31m/[m  
+* [1;31m|[m   [33mcfe349d[m Merge pull request #11 from HoustonMichaelVaughn/gislene-joined
+[1;35m|[m[1;36m\[m [1;31m\[m  
+[1;35m|[m * [1;31m|[m [33maf22ece[m Update views.py
+[1;35m|[m * [1;31m|[m   [33m4b72b8d[m[33m ([m[1;32mgislene-joined[m[33m)[m Add 4 pests/diseases with images and about info update (Gislene)
+[1;35m|[m [31m|[m[1;35m\[m [1;31m\[m  
+[1;35m|[m [31m|[m[1;35m/[m [1;31m/[m  
+[1;35m|[m[1;35m/[m[31m|[m [1;31m|[m   
+[1;35m|[m * [1;31m|[m [33m864d1d8[m Add 4 pests/diseases with images and about info update (Gislene)
+[1;35m|[m [32m|[m * [33m7c49cf5[m Update data.py
+[1;35m|[m [32m|[m[1;35m/[m  
+[1;35m|[m[1;35m/[m[32m|[m   
+* [32m|[m   [33m25c76ca[m Merge pull request #9 from HoustonMichaelVaughn/fix-state
+[33m|[m[34m\[m [32m\[m  
+[33m|[m * [32m\[m   [33m44b2bd3[m Merge remote-tracking branch 'origin/main' into Houston-Vaughn
+[33m|[m [35m|[m[33m\[m [32m\[m  
+[33m|[m [35m|[m[33m/[m [32m/[m  
+[33m|[m[33m/[m[35m|[m [32m|[m   
+* [35m|[m [32m|[m   [33meffa8a2[m Merge pull request #8 from HoustonMichaelVaughn/Houston-Vaughn
+[32m|[m[1;32m\[m [35m\[m [32m\[m  
+[32m|[m [1;32m|[m[32m_[m[35m|[m[32m/[m  
+[32m|[m[32m/[m[1;32m|[m [35m|[m   
+[32m|[m [1;32m|[m * [33m46c2ca3[m Add back base template
+[32m|[m [1;32m|[m[1;32m/[m  
+[32m|[m *   [33me53389f[m Merge branch 'main' into Houston-Vaughn
+[32m|[m [1;33m|[m[32m\[m  
+[32m|[m [1;33m|[m[32m/[m  
+[32m|[m[32m/[m[1;33m|[m   
+* [1;33m|[m   [33m85410c6[m Merge pull request #7 from HoustonMichaelVaughn/TemplatefillIn
+[1;35m|[m[1;36m\[m [1;33m\[m  
+[1;35m|[m * [1;33m|[m [33m52b3318[m Added templates for teammembers to fill in.
+[1;35m|[m [1;36m|[m * [33m38efaf2[m Prioritise edits
+[1;35m|[m [1;36m|[m *   [33ma44503c[m Merge remote-tracking branch 'origin/draft-14-April' into Houston-Vaughn. Prioritise edits.
+[1;35m|[m [1;36m|[m [31m|[m[32m\[m  
+[1;35m|[m [1;36m|[m [31m|[m * [33m2928b0a[m Add files via upload
+[1;35m|[m [1;36m|[m [31m|[m * [33m0882aad[m Create cbv_urls.py
+[1;35m|[m [1;36m|[m [31m|[m * [33mc2487b7[m Update cbv_views.py
+[1;35m|[m [1;36m|[m [31m|[m * [33m316927c[m Update cbv_views.py
+[1;35m|[m [1;36m|[m [31m|[m * [33m30fe912[m Create cbv_views.py
+[1;35m|[m [1;36m|[m[1;35m_[m[31m|[m[1;35m/[m  
+[1;35m|[m[1;35m/[m[1;36m|[m [31m|[m   
+* [1;36m|[m [31m|[m   [33med771c6[m Merge reviewed draft urls.py pull request to main
+[33m|[m[34m\[m [1;36m\[m [31m\[m  
+[33m|[m * [1;36m|[m [31m|[m [33mbadf80d[m Created new draft branch, created draft app-level urls.py and updated project-level urls.py
+[33m|[m[33m/[m [1;36m/[m [31m/[m  
+* [1;36m|[m [31m|[m [33m113db38[m Merge pull request #5 from HoustonMichaelVaughn/Houston-Vaughn
+[35m|[m[1;36m\[m[1;36m|[m [31m|[m 
+* [1;36m|[m [31m|[m   [33ma9db627[m Merge pull request #4 from HoustonMichaelVaughn/Houston-Vaughn
+[1;31m|[m[1;32m\[m [1;36m\[m [31m\[m  
+* [1;32m\[m [1;36m\[m [31m\[m   [33mb134696[m Pest class & Url Slug
+[1;33m|[m[1;34m\[m [1;32m\[m [1;36m\[m [31m\[m  
+* [1;34m\[m [1;32m\[m [1;36m\[m [31m\[m   [33meeefb06[m Merge pull request #2 from HoustonMichaelVaughn/Houston-Vaughn
+[1;35m|[m[1;36m\[m [1;34m\[m [1;32m\[m [1;36m\[m [31m\[m  
+[1;35m|[m [1;36m|[m [1;34m|[m [1;32m|[m [1;36m|[m * [33m78f7931[m -Removed FBVs -Fixed bug where elements of dictionary weren't displaying. Now uses list of tuples -Thrown in templates for data.py for team members to edit when they are ready.
+[1;35m|[m [1;36m|[m [1;34m|[m [1;32m|[m [1;36m|[m[1;36m/[m  
+[1;35m|[m [1;36m|[m [1;34m|[m [1;32m|[m * [33m2ba1314[m Cleaning up
+[1;35m|[m [1;36m|[m [1;34m|[m [1;32m|[m * [33mb152764[m Updated file paths to use forward slashes for cross-platform compatibility and renamed pestlist_about to pest_detail
+[1;35m|[m [1;36m|[m [1;34m|[m [1;32m|[m[1;32m/[m  
+[1;35m|[m [1;36m|[m [1;34m|[m * [33m2eba7e6[m Added some colour, Open to change
+[1;35m|[m [1;36m|[m [1;34m|[m[1;34m/[m  
+[1;35m|[m [1;36m|[m * [33mb424e03[m Implemented pest class Demonstrated a temporary example of using the pest class
+[1;35m|[m [1;36m|[m * [33m2e6a59c[m Created a basic class. I honestly don't think anything other than this is needed.
+[1;35m|[m [1;36m|[m[1;36m/[m  
+[1;35m|[m * [33m1b40401[m Just added a temp image. Nothing to write home about.
+[1;35m|[m * [33m1751334[m Implemented css for border colour of cards and fade in fade out of text for cards.
+[1;35m|[m * [33mdcd04ed[m Added Mike Zebrowski as a temporary placeholder for images.
+[1;35m|[m * [33m52e9907[m Modification to project_list.html which allows centering of text.
+[1;35m|[m * [33m436a3d5[m Added about page layout, added project_list layout, temporary images
+[1;35m|[m[1;35m/[m  
+* [33m3a49611[m Added static .js. Nothing fantastic
+*   [33mc861022[m Merge pull request #1 from HoustonMichaelVaughn/gislene-joined
+[31m|[m[32m\[m  
+[31m|[m * [33mb440470[m Added Gislene to ADDYOURNAMEHERE.TXT
+[31m|[m[31m/[m  
+* [33m59bb685[m Made a basic about page, did some reorganising, added static files for css, added proper links to about and home for the navbar.
+* [33m51dbdaf[m Fixed comment in base.html
+* [33m02938a3[m Added path to about in url and view
+* [33m11a83f7[m Added javascript (bootstrap)
+* [33m77bd033[m Changed the home template to comply with MVC
+* [33m3443a3f[m Removed search bar because I am NOT programming that
+* [33ma5cd18c[m Start building base template from which all other's will extend. Implemented bootstrap. Next step, use django to take the base navbar and make it cool with Python stuff.
+* [33mcd470a3[m Update ADDYOURNAMEHERE.TXT
+* [33me3a9c66[m Update ADDYOURNAMEHERE.TXT
+* [33mf27c534[m Formatting the readme.md
+* [33m98f6e50[m Basic structure for Assesment 2
+* [33m8fce3bc[m Further changes
+*   [33meb18a77[m Merge branch 'master'
+[33m|[m[34m\[m  
+[33m|[m * [33m791fccd[m Commit change
+* [33m57f41fb[m Running the server for first time
+* [33m4ecef85[m Cleaned up the directory
+* [33ma10da0e[m first commit
