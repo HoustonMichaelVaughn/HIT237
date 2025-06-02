@@ -1,0 +1,11 @@
+{% if surveillance_result %}
+<div class="alert alert-info mt-3">
+  <h5>Confidence Summary for {{ surveillance_result.pest.name }}</h5>
+  <p><strong>Total trees checked (0 positives):</strong> {{ surveillance_result.total_checked }}</p>
+  {% if surveillance_result.confidence %}
+    <p><strong>Confidence (1% prevalence):</strong> {{ surveillance_result.confidence|floatformat:2 }}%</p>
+  {% else %}
+    <p class="text-muted">Insufficient data to calculate confidence.</p>
+  {% endif %}
+</div>
+{% endif %}

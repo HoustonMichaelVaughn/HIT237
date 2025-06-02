@@ -21,4 +21,6 @@ urlpatterns = [
     path("farmblock/<int:pk>/edit/", views.FarmBlockUpdateView.as_view(), name="edit_farm_block"),
     path("farmblock/<int:pk>/delete/", views.FarmBlockDeleteView.as_view(), name="delete_farm_block"),
     path("surveillance/summary/", summary_view, name="surveillance-summary"),
+    path('ajax/confidence/', views.ajax_confidence_result, name='confidence_check'),
+    path('ajax/sample/', views.ajax_sample_result, name='sample_check'),
 ]

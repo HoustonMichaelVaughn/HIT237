@@ -4,8 +4,11 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import UpdateView, DeleteView
+from mango_pests.forms import PestSelectionForm, SampleSizeForm
+import math
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-
+from django.http import HttpResponse
 from .data import Pestsdiseases, References
 from .forms import PestForm, FarmBlockForm, PestCheckForm
 from .models import FarmBlock, PestCheck
@@ -138,3 +141,53 @@ class PestCheckDeleteView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["confirm_message"] = "Are you sure you want to delete this pest check?"
         return context
+
+def ajax_confidence_result(request):
+    form = PestSelectionForm(request.POST or None, prefix='surv')
+    result_html = ""
+
+    if form.is_valid():
+        pest = form.cleaned_data['pest']
+        checks = PestCheck.objects.filter(
+            pest=pest,
+            positives=0,
+            farm_block__grower=request.user
+        )
+        total_checked = sum(c.num_trees for c in checks)
+        if total_checked > 0:
+            confidence = 100 * (1 - (1 - 0.01) ** total_checked)
+        else:
+            confidence = None
+
+        result_html = render_to_string("mango_pests/partials/confidence_result.html", {
+            "surveillance_result": {
+                "pest": pest,
+                "total_checked": total_checked,
+                "confidence": confidence,
+            }
+        })
+
+    return HttpResponse(result_html)
+
+def ajax_sample_result(request):
+    form = SampleSizeForm(request.POST or None, prefix='sample')
+    result_html = ""
+
+    if form.is_valid():
+        p = form.cleaned_data['prevalence']
+        c_val = form.cleaned_data['confidence']
+
+        if p > 0 and c_val > 0:
+            required_n = math.ceil(math.log(1 - c_val) / math.log(1 - p))
+        else:
+            required_n = None
+
+        result_html = render_to_string("mango_pests/partials/sample_size_result.html", {
+            "sample_size_result": {
+                "prevalence": p,
+                "confidence": c_val,
+                "required_n": required_n,
+            }
+        })
+
+    return HttpResponse(result_html)

@@ -1,0 +1,9 @@
+{% if sample_size_result %}
+<div class="alert alert-success mt-3">
+  <p>
+    To be <strong>{{ sample_size_result.confidence|floatformat:2 }}</strong>% confident that a pest is not present
+    at a prevalence of <strong>{{ sample_size_result.prevalence|floatformat:4 }}</strong>,
+    you must check at least <strong>{{ sample_size_result.required_n }}</strong> trees with 0 positives.
+  </p>
+</div>
+{% endif %}

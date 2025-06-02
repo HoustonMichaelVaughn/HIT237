@@ -1,9 +1,7 @@
-{%extends "mango_pests/base.html"%}
+{% extends "mango_pests/base.html" %}
 
 {% block content %}
-<form method="post">
-{% csrf_token %}
-{{form.as_p}}
-<button type="submit">Login</button>
-</form>
+  {% with title="Login" submit_label="Login" submit_class="btn-success" max_width="400px" %}
+  {% include "growers/components/form_card.html" %}
+{% endwith %}
 {% endblock %}

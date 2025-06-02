@@ -1,11 +1,7 @@
 {% extends "mango_pests/base.html" %}
 
 {% block content %}
-    <h2>Register Farmer</h2>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn-primary">Register</button>
-    </form>
+  {% with title="Register New Grower" submit_label="Register" submit_class="btn-primary" max_width="500px" %}
+    {% include "growers/components/form_card.html" %}
+  {% endwith %}
 {% endblock %}
