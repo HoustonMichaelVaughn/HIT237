@@ -10,6 +10,41 @@ from .forms import RegisterUserForm
 from mango_pests.forms import PestSelectionForm, SampleSizeForm 
 
 import math
+import csv
+from django.http import HttpResponse
+
+@login_required
+def export_csv(request):
+    """
+    Export all PestCheck rows for the logged-in grower as a CSV.
+    """
+    #This is to  create the HTTP response with a CSV MIME type
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="pest_checks.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow([
+        'Pest',
+        'Date Checked',
+        'Block',
+        'Trees Checked',
+        'Positives',
+        'Confidence (%)'
+    ])
+
+    # and this  filter the PestCheck objects by the grower (user)
+    checks = PestCheck.objects.filter(farm_block__grower=request.user)
+    for check in checks:
+        writer.writerow([
+            check.pest.name,
+            check.date_checked,
+            check.farm_block.name,
+            check.num_trees,
+            check.positives,
+            check.confidence_score or 0,
+        ])
+
+    return response
 
 class Login(DjangoLoginView):
     template_name = "growers/login.html"
