@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.sites import AlreadyRegistered
-from .models import PlantType, Pest, FarmBlock, PestCheck
+
+from .models import FarmBlock, Pest, PestCheck, PlantType
 
 for model in (PlantType, Pest, FarmBlock, PestCheck):
     try:

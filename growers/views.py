@@ -1,15 +1,17 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.views import LoginView as DjangoLoginView
-from django.views.generic.edit import FormView
+import math
+
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView as DjangoLoginView
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
 
+from mango_pests.forms import PestSelectionForm, SampleSizeForm
 from mango_pests.models import FarmBlock, PestCheck
-from .forms import RegisterUserForm
-from mango_pests.forms import PestSelectionForm, SampleSizeForm 
 
-import math
+from .forms import RegisterUserForm
+
 
 class Login(DjangoLoginView):
     template_name = "growers/login.html"
@@ -18,6 +20,7 @@ class Login(DjangoLoginView):
         if request.user.is_authenticated:
             return redirect("profile")
         return super().dispatch(request, *args, **kwargs)
+
 
 class RegisterUser(FormView):
     template_name = "growers/register.html"
@@ -40,23 +43,23 @@ def profile_view(request):
     # A)Fetch all FarmBlock and PestCheck objects for this user,
     #    then compute a “confidence” value (0–100) on each PestCheck in Python.
     farm_blocks = FarmBlock.objects.filter(grower=request.user)
-    raw_checks_qs = PestCheck.objects.filter(
-        farm_block__grower=request.user
-    ).order_by('-date_checked')
+    raw_checks_qs = PestCheck.objects.filter(farm_block__grower=request.user).order_by(
+        "-date_checked"
+    )
 
     # A1) Build a new list `all_checks` so that each PestCheck has `.confidence` attached
     all_checks = []
     for c in raw_checks_qs:
-        n = getattr(c, 'num_trees', 0)
+        n = getattr(c, "num_trees", 0)
         # If there were zero positives, compute binomial confidence at 1% prevalence
-        if getattr(c, 'positives', 0) == 0 and n > 0:
+        if getattr(c, "positives", 0) == 0 and n > 0:
             computed_conf = 100 * (1 - (1 - 0.01) ** n)
         else:
             # If positives > 0 (or n == 0), treat confidence as 0
             computed_conf = 0.0
 
         # Attach attribute to this instance for later use
-        setattr(c, 'confidence', computed_conf)
+        setattr(c, "confidence", computed_conf)
         all_checks.append(c)
 
     # B) Read the “status” GET parameter (default = "all")
@@ -65,24 +68,17 @@ def profile_view(request):
     # C) Manually filter the Python list by the computed `.confidence` property
     if status == "high":
         # Keep only those checks whose confidence ≥ 90
-        filtered_checks = [
-            c for c in all_checks
-            if getattr(c, 'confidence', 0) >= 90
-        ]
+        filtered_checks = [c for c in all_checks if getattr(c, "confidence", 0) >= 90]
     elif status == "medium":
         # Keep only those checks with 50 ≤ confidence < 90
         filtered_checks = [
-            c for c in all_checks
-            if 50 <= getattr(c, 'confidence', 0) < 90
+            c for c in all_checks if 50 <= getattr(c, "confidence", 0) < 90
         ]
     elif status == "low":
         # Keep only those checks with confidence < 50
-        filtered_checks = [
-            c for c in all_checks
-            if getattr(c, 'confidence', 0) < 50
-        ]
+        filtered_checks = [c for c in all_checks if getattr(c, "confidence", 0) < 50]
     else:
-        # “all” or any other value → show all checks in this case 
+        # “all” or any other value → show all checks in this case
         filtered_checks = list(all_checks)
 
     # D) Totals for summary cards
@@ -94,22 +90,21 @@ def profile_view(request):
 
     # Fetch all pests for display in dashboard
     from mango_pests.models import Pest
+
     pests = Pest.objects.all()
 
     # F) Two separate forms with prefixes (for the calculators)
-    form        = PestSelectionForm(request.POST or None, prefix='surv')
-    sample_form = SampleSizeForm(request.POST or None, prefix='sample')
+    form = PestSelectionForm(request.POST or None, prefix="surv")
+    sample_form = SampleSizeForm(request.POST or None, prefix="sample")
 
     surveillance_result = None
-    sample_size_result  = None
+    sample_size_result = None
 
     # G) If “Check My Surveillance Confidence” form was submitted:
-    if 'surv-pest' in request.POST and form.is_valid():
-        pest = form.cleaned_data['pest']
+    if "surv-pest" in request.POST and form.is_valid():
+        pest = form.cleaned_data["pest"]
         checks = PestCheck.objects.filter(
-            pest=pest,
-            positives=0,
-            farm_block__grower=request.user
+            pest=pest, positives=0, farm_block__grower=request.user
         )
         total_checked = sum(c.num_trees for c in checks)
         if total_checked > 0:
@@ -118,37 +113,39 @@ def profile_view(request):
         else:
             confidence = None
         surveillance_result = {
-            'pest': pest,
-            'total_checked': total_checked,
-            'confidence': confidence,
+            "pest": pest,
+            "total_checked": total_checked,
+            "confidence": confidence,
         }
 
     # H) If “How Many Trees Should I Check?” form was submitted:
-    if 'sample-prevalence' in request.POST and sample_form.is_valid():
-        p = sample_form.cleaned_data['prevalence']   # e.g. 0.01
-        c_val = sample_form.cleaned_data['confidence']  # e.g. 0.95
+    if "sample-prevalence" in request.POST and sample_form.is_valid():
+        p = sample_form.cleaned_data["prevalence"]  # e.g. 0.01
+        c_val = sample_form.cleaned_data["confidence"]  # e.g. 0.95
         if p > 0 and c_val > 0:
             required_n = math.ceil(math.log(1 - c_val) / math.log(1 - p))
         else:
             required_n = None
         sample_size_result = {
-            'prevalence': p,
-            'confidence': c_val,
-            'required_n': required_n,
+            "prevalence": p,
+            "confidence": c_val,
+            "required_n": required_n,
         }
 
     # I) Render the template with all context
-    return render(request, "growers/profile.html", {
-        "farm_blocks":         farm_blocks,
-        "recent_pest_checks":  recent_pest_checks,
-        "status_filter":       status,
-        "total_blocks":        total_blocks,
-        "total_checks":        total_checks,
-        "form":                form,
-        "surveillance_result": surveillance_result,
-        "sample_form":         sample_form,
-        "sample_size_result":  sample_size_result,
-        "pests":               pests,
-    })
-
-
+    return render(
+        request,
+        "growers/profile.html",
+        {
+            "farm_blocks": farm_blocks,
+            "recent_pest_checks": recent_pest_checks,
+            "status_filter": status,
+            "total_blocks": total_blocks,
+            "total_checks": total_checks,
+            "form": form,
+            "surveillance_result": surveillance_result,
+            "sample_form": sample_form,
+            "sample_size_result": sample_size_result,
+            "pests": pests,
+        },
+    )
