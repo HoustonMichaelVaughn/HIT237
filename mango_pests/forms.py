@@ -2,6 +2,7 @@ from django import forms
 
 from mango_pests.models import Pest
 
+from .data import Pestsdiseases
 from .models import PATH_CHOICES, FarmBlock, Pest, PestCheck
 
 
@@ -52,6 +53,13 @@ class PestCheckForm(forms.ModelForm):
             self.fields["farm_block"].queryset = FarmBlock.objects.filter(grower=user)
         else:
             self.fields["farm_block"].queryset = FarmBlock.objects.none()
+        # Patch pest queryset to include static pests as choices
+        db_pests = list(Pest.objects.all())
+        static_pests = [
+            (f"static::{i}", p.cardtitle) for i, p in enumerate(Pestsdiseases)
+        ]
+        db_choices = [(p.pk, p.name) for p in db_pests]
+        self.fields["pest"].choices = db_choices + static_pests
 
 
 class PestSelectionForm(forms.Form):

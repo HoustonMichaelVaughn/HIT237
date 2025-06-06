@@ -9,6 +9,7 @@ from django.views.generic.edit import FormView
 
 from mango_pests.forms import PestSelectionForm, SampleSizeForm
 from mango_pests.models import FarmBlock, PestCheck
+from mango_pests.data import Pestsdiseases  # <-- import static pests
 
 from .forms import RegisterUserForm
 
@@ -88,10 +89,21 @@ def profile_view(request):
     # E) Only show the first 5 in the Recent Pest Checks table
     recent_pest_checks = filtered_checks[:5]
 
-    # Fetch all pests for display in dashboard
+    # Fetch all pests for display in dashboard (DB + static)
     from mango_pests.models import Pest
 
-    pests = Pest.objects.all()
+    db_pests = list(Pest.objects.all())
+    # Wrap static pests as dicts with DB-like fields for template compatibility
+    static_pests = [
+        type('StaticPest', (), {
+            'name': p.cardtitle,
+            'scientific_name': getattr(p, 'scientific_name', ''),
+            'description': p.detailedinfo,
+            'plant_type': type('PlantType', (), {'name': 'Mango'})(),
+            'is_static': True
+        })() for p in Pestsdiseases
+    ]
+    pests = db_pests + static_pests
 
     # F) Two separate forms with prefixes (for the calculators)
     form = PestSelectionForm(request.POST or None, prefix="surv")
