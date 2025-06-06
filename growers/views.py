@@ -92,6 +92,10 @@ def profile_view(request):
     # E) Only show the first 5 in the Recent Pest Checks table
     recent_pest_checks = filtered_checks[:5]
 
+    # Fetch all pests for display in dashboard
+    from mango_pests.models import Pest
+    pests = Pest.objects.all()
+
     # F) Two separate forms with prefixes (for the calculators)
     form        = PestSelectionForm(request.POST or None, prefix='surv')
     sample_form = SampleSizeForm(request.POST or None, prefix='sample')
@@ -144,6 +148,7 @@ def profile_view(request):
         "surveillance_result": surveillance_result,
         "sample_form":         sample_form,
         "sample_size_result":  sample_size_result,
+        "pests":               pests,
     })
 
 

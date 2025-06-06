@@ -10,10 +10,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from .data import Pestsdiseases, References
-from mango_pests.data import Pestsdiseases
-from mango_pests.models import Pest
 from .forms import PestForm, FarmBlockForm, PestCheckForm
-from .models import FarmBlock, PestCheck
+from .models import FarmBlock, PestCheck, Pest
 
 
 # Static Views
@@ -21,28 +19,10 @@ def home(request):
     return render(request, "mango_pests/home.html")
 
 class PestListView(View):
-    def get(self, request):
+    def get(self, request: HttpRequest):
         search = request.GET.get("search", "").lower()
-
-        pestcards = [
-            pest.__dict__ for pest in Pestsdiseases
-            if search in pest.cardtitle.lower()
-        ] if search else [pest.__dict__ for pest in Pestsdiseases]
-
-        user_pests = Pest.objects.filter(owner=request.user) if request.user.is_authenticated else []
-        for p in user_pests:
-            pestcards.append({
-                "cardtitle": p.name,
-                "cardsubtitle": p.scientific_name,
-                "cardtext": p.description[:150] + "...",
-                "img": p.image.url if p.image else "default.jpg",
-                "link": "#",  # Update if you have pest detail pages
-            })
-
-        return render(request, "mango_pests/project_list.html", {
-            "pestcards": pestcards,
-            "search": search,
-        })
+        pestcards = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()] if search else [pest.__dict__ for pest in Pestsdiseases]
+        return render(request, "mango_pests/project_list.html", {"pestcards": pestcards, "search": search})
 
 class PestDetailView(View):
     def get(self, request, slugurl):
@@ -70,29 +50,8 @@ def create_pest(request):
     form = PestForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
         form.save()
-        return redirect("pestlist")
+        return redirect("profile")
     return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Add Pest", "button_label": "Create"})
-
-
-@login_required
-def edit_pest(request, pk):
-    pest = get_object_or_404(Pest, pk=pk, owner=request.user)
-    if request.method == "POST":
-        form = PestForm(request.POST, request.FILES, instance=pest)
-        if form.is_valid():
-            form.save()
-            return redirect("pestlist")
-    else:
-        form = PestForm(instance=pest)
-    return render(request, "mango_pests/farm_check_add.html", {"form": form, "edit": True})
-
-@login_required
-def delete_pest(request, pk):
-    pest = get_object_or_404(Pest, pk=pk, owner=request.user)
-    if request.method == "POST":
-        pest.delete()
-        return redirect("pestlist")
-    return render(request, "mango_pests/pest_confirm_delete.html", {"pest": pest})
 
 @login_required
 def add_farm_block(request):
@@ -153,6 +112,18 @@ class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
         context["button_label"] = "Save Changes"
         return context
 
+class PestUpdateView(LoginRequiredMixin, UpdateView):
+    model = Pest
+    form_class = PestForm
+    template_name = "mango_pests/farm_check_add.html"
+    success_url = reverse_lazy("profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Edit Pest '{self.object.name}'"
+        context["button_label"] = "Save Changes"
+        return context
+
 # Delete Views
 class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
     model = FarmBlock
@@ -181,6 +152,16 @@ class PestCheckDeleteView(LoginRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["confirm_message"] = "Are you sure you want to delete this pest check?"
+        return context
+
+class PestDeleteView(LoginRequiredMixin, DeleteView):
+    model = Pest
+    template_name = "mango_pests/farm_check_remove.html"
+    success_url = reverse_lazy("profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["confirm_message"] = f"Are you sure you want to delete the pest '{self.object.name}'?"
         return context
 
 def ajax_confidence_result(request):
