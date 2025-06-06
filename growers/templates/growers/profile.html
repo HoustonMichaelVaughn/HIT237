@@ -26,13 +26,15 @@
 
   <!-- Farm Blocks Table -->
   <h3>Your Farm Blocks</h3>
-  <form method="get" class="mb-2" hx-get="{% url 'farm_block_list' %}" hx-target="#farm-blocks-table" hx-swap="innerHTML">
+  <form method="get"
+        class="mb-2"
+        hx-get="{% url 'farm_block_list' %}"
+        hx-target="#farm-blocks-table"
+        hx-swap="innerHTML">
     <div class="input-group w-50 mb-2">
-      <input type="text" name="fb_search" class="form-control" placeholder="Search farm blocks..." value="{{ fb_search }}">
+      <input type="text" name="fb_search" id="fbSearchInput" class="form-control" placeholder="Search farm blocks..." value="{{ fb_search }}">
       <button type="submit" class="btn btn-primary">Search</button>
-      {% if fb_search %}
-      <a href="?" class="btn btn-outline-secondary">Clear</a>
-      {% endif %}
+      <button type="button" id="clearFbSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'farm_block_list' %}', {target: '#farm-blocks-table', swap: 'innerHTML'});">Clear</button>
     </div>
   </form>
   <div id="farm-blocks-table">
@@ -43,24 +45,27 @@
 
   <!-- Recent Pest Checks -->
   <h3>Recent Pest Checks</h3>
-  <form method="get" class="mb-2" hx-get="{% url 'pest_check_list' %}" hx-target="#recent-pest-checks-table" hx-swap="innerHTML">
+  <form method="get"
+        class="mb-2"
+        hx-get="{% url 'pest_check_list' %}"
+        hx-target="#recent-pest-checks-table"
+        hx-swap="innerHTML">
     <div class="input-group w-50 mb-2">
-      <input type="text" name="pc_search" class="form-control" placeholder="Search pest checks..." value="{{ pc_search }}">
+      <input type="text" name="pc_search" id="pcSearchInput" class="form-control" placeholder="Search pest checks..." value="{{ pc_search }}">
       <button type="submit" class="btn btn-primary">Search</button>
-      {% if pc_search %}
-      <a href="?" class="btn btn-outline-secondary">Clear</a>
-      {% endif %}
+      <button type="button" id="clearPcSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'pest_check_list' %}', {target: '#recent-pest-checks-table', swap: 'innerHTML'});">Clear</button>
     </div>
   </form>
-  <form method="get" class="mb-3">
+  <form method="get" class="mb-3"
+        hx-get="{% url 'pest_check_list' %}"
+        hx-target="#recent-pest-checks-table"
+        hx-swap="innerHTML">
     <label for="status">Show checks with confidence:</label>
-    <select name="status" id="status"
-            onchange="this.form.submit()"
-            class="form-control w-auto d-inline-block">
+    <select name="status" id="status" class="form-control w-auto d-inline-block">
       <option value="all"    {% if status_filter == "all"    %}selected{% endif %}>All</option>
       <option value="high"   {% if status_filter == "high"   %}selected{% endif %}>High (≥ 90%)</option>
       <option value="medium" {% if status_filter == "medium" %}selected{% endif %}>Medium (50–89%)</option>
-      <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (< 50%)</option>
+      <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (&lt; 50%)</option>
     </select>
   </form>
   <div id="recent-pest-checks-table">
@@ -144,15 +149,16 @@
     </div>
   </div>
 
-  <!-- Pests Table -->
   <h3>Your Pests</h3>
-  <form method="get" class="mb-2">
+  <form method="get"
+        class="mb-2"
+        hx-get="{% url 'pest_list' %}"
+        hx-target="#pests-table"
+        hx-swap="innerHTML">
     <div class="input-group w-50 mb-2">
-      <input type="text" name="pest_search" class="form-control" placeholder="Search pests..." value="{{ pest_search }}">
+      <input type="text" name="pest_search" id="pestSearchInput" class="form-control" placeholder="Search pests..." value="{{ pest_search }}">
       <button type="submit" class="btn btn-primary">Search</button>
-      {% if pest_search %}
-      <a href="?" class="btn btn-outline-secondary">Clear</a>
-      {% endif %}
+      <button type="button" id="clearPestSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'pest_list' %}', {target: '#pests-table', swap: 'innerHTML'});">Clear</button>
     </div>
   </form>
   <div id="pests-table">
@@ -184,13 +190,13 @@
     <nav>
       <ul class="pagination">
         {% if pests.has_previous %}
-          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}">Previous</a></li>
+          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="#">Previous</a></li>
         {% endif %}
         {% for num in pests.paginator.page_range %}
-          <li class="page-item {% if pests.number == num %}active{% endif %}"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ num }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ num }}">{{ num }}</a></li>
+          <li class="page-item {% if pests.number == num %}active{% endif %}"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ num }}" hx-target="#pests-table" hx-swap="innerHTML" href="#">{{ num }}</a></li>
         {% endfor %}
         {% if pests.has_next %}
-          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}">Next</a></li>
+          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="#">Next</a></li>
         {% endif %}
       </ul>
     </nav>
@@ -211,6 +217,23 @@
     tooltipTriggerList.forEach(function (tooltipTriggerEl) {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
+  });
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("pestSearchInput");
+    const clearBtn = document.getElementById("clearPestSearchBtn");
+
+    function toggleClearButton() {
+      clearBtn.disabled = !input.value.trim();
+    }
+
+    // Initial check
+    toggleClearButton();
+
+    // Update on input
+    input.addEventListener("input", toggleClearButton);
   });
 </script>
 {% endblock %}
