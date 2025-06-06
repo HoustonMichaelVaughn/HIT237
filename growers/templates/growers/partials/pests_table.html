@@ -1,0 +1,43 @@
+{# Partial for AJAX pests table and pagination #}
+<div id="pests-table">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr><th>Name</th><th>Scientific Name</th><th>Plant Type</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for pest in pests %}
+      <tr>
+        <td>{{ pest.name }}</td>
+        <td>{% if pest.scientific_name %}{{ pest.scientific_name }}{% else %}-{% endif %}</td>
+        <td>{{ pest.plant_type.name }}</td>
+        <td>
+          {% if not pest.is_static %}
+            <a href="{% url 'edit_pest' pest.pk %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'delete_pest' pest.pk %}" class="btn btn-sm btn-danger">Delete</a>
+          {% else %}
+            <span class="badge bg-info">Base Pest</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No pests added yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if pests.paginator.num_pages > 1 %}
+  <nav>
+    <ul class="pagination">
+      {% if pests.has_previous %}
+        <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      {% for num in pests.paginator.page_range %}
+        <li class="page-item {% if pests.number == num %}active{% endif %}"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ num }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ num }}">{{ num }}</a></li>
+      {% endfor %}
+      {% if pests.has_next %}
+        <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+  <a href="{% url 'create_pest' %}" class="btn btn-primary mb-4 me-2">+ Add Pest</a>
+</div>

@@ -26,7 +26,7 @@
 
   <!-- Farm Blocks Table -->
   <h3>Your Farm Blocks</h3>
-  <form method="get" class="mb-2">
+  <form method="get" class="mb-2" hx-get="{% url 'farm_block_list' %}" hx-target="#farm-blocks-table" hx-swap="innerHTML">
     <div class="input-group w-50 mb-2">
       <input type="text" name="fb_search" class="form-control" placeholder="Search farm blocks..." value="{{ fb_search }}">
       <button type="submit" class="btn btn-primary">Search</button>
@@ -35,46 +35,15 @@
       {% endif %}
     </div>
   </form>
-  <table class="table table-bordered table-hover">
-    <thead>
-      <tr><th>Name</th><th>Location</th><th>Actions</th></tr>
-    </thead>
-    <tbody>
-      {% for block in farm_blocks %}
-      <tr>
-        <td>{{ block.name }}</td>
-        <td>{{ block.location_description }}</td>
-        <td>
-          <a href="{% url 'edit_farm_block' block.pk %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'delete_farm_block' block.pk %}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="3">You haven't added any farm blocks yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% if farm_blocks.paginator.num_pages > 1 %}
-  <nav>
-    <ul class="pagination">
-      {% if farm_blocks.has_previous %}
-        <li class="page-item"><a class="page-link" href="?fb_search={{ fb_search }}&fb_page={{ farm_blocks.previous_page_number }}">Previous</a></li>
-      {% endif %}
-      {% for num in farm_blocks.paginator.page_range %}
-        <li class="page-item {% if farm_blocks.number == num %}active{% endif %}"><a class="page-link" href="?fb_search={{ fb_search }}&fb_page={{ num }}">{{ num }}</a></li>
-      {% endfor %}
-      {% if farm_blocks.has_next %}
-        <li class="page-item"><a class="page-link" href="?fb_search={{ fb_search }}&fb_page={{ farm_blocks.next_page_number }}">Next</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-  {% endif %}
+  <div id="farm-blocks-table">
+    {% include "growers/partials/farm_blocks_table.html" %}
+  </div>
   <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4 me-2">+ Add Farm Block</a>
   <a href="{% url 'create_pest_check' %}" class="btn btn-secondary mb-4">+ Add Pest Check</a>
 
   <!-- Recent Pest Checks -->
   <h3>Recent Pest Checks</h3>
-  <form method="get" class="mb-2">
+  <form method="get" class="mb-2" hx-get="{% url 'pest_check_list' %}" hx-target="#recent-pest-checks-table" hx-swap="innerHTML">
     <div class="input-group w-50 mb-2">
       <input type="text" name="pc_search" class="form-control" placeholder="Search pest checks..." value="{{ pc_search }}">
       <button type="submit" class="btn btn-primary">Search</button>
@@ -94,64 +63,9 @@
       <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (< 50%)</option>
     </select>
   </form>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Pest</th>
-        <th>Date</th>
-        <th>Block</th>
-        <th>Trees</th>
-        <th>Positives</th>
-        <th>Confidence</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for check in recent_pest_checks %}
-      <tr>
-        <td>{{ check.pest.name }}</td>
-        <td>{{ check.date_checked }}</td>
-        <td>{{ check.farm_block.name }}</td>
-        <td>{{ check.num_trees }}</td>
-        <td>{{ check.positives }}</td>
-        <td>
-          {% if check.positives > 0 %}
-            <span class="badge bg-danger">0%</span>
-          {% else %}
-            {% with pct=check.confidence|floatformat:0 %}
-              {% if pct|floatformat:0 >= 90 %}
-                <span class="badge bg-success">{{ pct }}&#37;</span>
-              {% else %}
-                <span class="badge bg-warning text-dark">{{ pct }}&#37;</span>
-              {% endif %}
-            {% endwith %}
-          {% endif %}
-        </td>
-        <td>
-          <a href="{% url 'edit_pest_check' check.id %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'delete_pest_check' check.id %}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="7" class="text-center">No pest checks found.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% if recent_pest_checks.paginator.num_pages > 1 %}
-  <nav>
-    <ul class="pagination">
-      {% if recent_pest_checks.has_previous %}
-        <li class="page-item"><a class="page-link" href="?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.previous_page_number }}">Previous</a></li>
-      {% endif %}
-      {% for num in recent_pest_checks.paginator.page_range %}
-        <li class="page-item {% if recent_pest_checks.number == num %}active{% endif %}"><a class="page-link" href="?pc_search={{ pc_search }}&pc_page={{ num }}">{{ num }}</a></li>
-      {% endfor %}
-      {% if recent_pest_checks.has_next %}
-        <li class="page-item"><a class="page-link" href="?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.next_page_number }}">Next</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-  {% endif %}
+  <div id="recent-pest-checks-table">
+    {% include "growers/partials/pest_checks_table.html" %}
+  </div>
 
   <!-- Sampling Badge Legend -->
   <div class="mt-5 mb-4 p-3 border rounded bg-light">
@@ -241,46 +155,48 @@
       {% endif %}
     </div>
   </form>
-  <table class="table table-bordered table-hover">
-    <thead>
-      <tr><th>Name</th><th>Scientific Name</th><th>Plant Type</th><th>Actions</th></tr>
-    </thead>
-    <tbody>
-      {% for pest in pests %}
-      <tr>
-        <td>{{ pest.name }}</td>
-        <td>{% if pest.scientific_name %}{{ pest.scientific_name }}{% else %}-{% endif %}</td>
-        <td>{{ pest.plant_type.name }}</td>
-        <td>
-          {% if not pest.is_static %}
-            <a href="{% url 'edit_pest' pest.pk %}" class="btn btn-sm btn-warning">Edit</a>
-            <a href="{% url 'delete_pest' pest.pk %}" class="btn btn-sm btn-danger">Delete</a>
-          {% else %}
-            <span class="badge bg-info">Base Pest</span>
-          {% endif %}
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="4">No pests added yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% if pests.paginator.num_pages > 1 %}
-  <nav>
-    <ul class="pagination">
-      {% if pests.has_previous %}
-        <li class="page-item"><a class="page-link" href="?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}">Previous</a></li>
-      {% endif %}
-      {% for num in pests.paginator.page_range %}
-        <li class="page-item {% if pests.number == num %}active{% endif %}"><a class="page-link" href="?pest_search={{ pest_search }}&pest_page={{ num }}">{{ num }}</a></li>
-      {% endfor %}
-      {% if pests.has_next %}
-        <li class="page-item"><a class="page-link" href="?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}">Next</a></li>
-      {% endif %}
-    </ul>
-  </nav>
-  {% endif %}
-  <a href="{% url 'create_pest' %}" class="btn btn-primary mb-4 me-2">+ Add Pest</a>
+  <div id="pests-table">
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr><th>Name</th><th>Scientific Name</th><th>Plant Type</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for pest in pests %}
+        <tr>
+          <td>{{ pest.name }}</td>
+          <td>{% if pest.scientific_name %}{{ pest.scientific_name }}{% else %}-{% endif %}</td>
+          <td>{{ pest.plant_type.name }}</td>
+          <td>
+            {% if not pest.is_static %}
+              <a href="{% url 'edit_pest' pest.pk %}" class="btn btn-sm btn-warning">Edit</a>
+              <a href="{% url 'delete_pest' pest.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            {% else %}
+              <span class="badge bg-info">Base Pest</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No pests added yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if pests.paginator.num_pages > 1 %}
+    <nav>
+      <ul class="pagination">
+        {% if pests.has_previous %}
+          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}">Previous</a></li>
+        {% endif %}
+        {% for num in pests.paginator.page_range %}
+          <li class="page-item {% if pests.number == num %}active{% endif %}"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ num }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ num }}">{{ num }}</a></li>
+        {% endfor %}
+        {% if pests.has_next %}
+          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+    <a href="{% url 'create_pest' %}" class="btn btn-primary mb-4 me-2">+ Add Pest</a>
+  </div>
 </div>
 
 <!-- HTMX for AJAX -->

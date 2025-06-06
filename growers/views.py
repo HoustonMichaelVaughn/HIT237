@@ -4,7 +4,9 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.core.paginator import Paginator
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
@@ -195,3 +197,81 @@ def profile_view(request):
             "pest_paginator": pest_paginator,
         },
     )
+
+
+@login_required
+def ajax_farm_block_list(request):
+    farm_blocks = FarmBlock.objects.filter(grower=request.user)
+    fb_search = request.GET.get("fb_search", "").strip().lower()
+    if fb_search:
+        farm_blocks = farm_blocks.filter(name__icontains=fb_search)
+    fb_page = request.GET.get("fb_page", 1)
+    fb_paginator = Paginator(farm_blocks, 5)
+    farm_blocks_page = fb_paginator.get_page(fb_page)
+    html = render_to_string(
+        "growers/partials/farm_blocks_table.html",
+        {"farm_blocks": farm_blocks_page, "fb_search": fb_search},
+        request=request,
+    )
+    return HttpResponse(html)
+
+
+@login_required
+def ajax_pest_check_list(request):
+    # Rebuild the same logic as in profile_view for pest checks
+    from mango_pests.models import PestCheck
+    raw_checks_qs = PestCheck.objects.filter(farm_block__grower=request.user).order_by("-date_checked")
+    all_checks = []
+    for c in raw_checks_qs:
+        n = getattr(c, "num_trees", 0)
+        if getattr(c, "positives", 0) == 0 and n > 0:
+            computed_conf = 100 * (1 - (1 - 0.01) ** n)
+        else:
+            computed_conf = 0.0
+        c.confidence = computed_conf
+        all_checks.append(c)
+    # Filtering
+    pc_search = request.GET.get("pc_search", "").strip().lower()
+    filtered_checks = all_checks
+    if pc_search:
+        filtered_checks = [c for c in all_checks if pc_search in c.pest.name.lower() or pc_search in c.farm_block.name.lower()]
+    pc_page = request.GET.get("pc_page", 1)
+    pc_paginator = Paginator(filtered_checks, 5)
+    recent_pest_checks_page = pc_paginator.get_page(pc_page)
+    html = render_to_string(
+        "growers/partials/pest_checks_table.html",
+        {"recent_pest_checks": recent_pest_checks_page, "pc_search": pc_search},
+        request=request,
+    )
+    return HttpResponse(html)
+
+
+@login_required
+def ajax_pest_list(request):
+    from mango_pests.models import Pest
+    from mango_pests.data import Pestsdiseases
+    # Build DB and static pest list as in profile_view
+    db_pests = list(Pest.objects.all())
+    static_pests = [
+        type('StaticPest', (), {
+            'name': p.cardtitle,
+            'scientific_name': getattr(p, 'scientific_name', ''),
+            'description': p.detailedinfo,
+            'plant_type': type('PlantType', (), {'name': 'Mango'})(),
+            'is_static': True
+        })() for p in Pestsdiseases
+    ]
+    pests = db_pests + static_pests
+    pest_search = request.GET.get("pest_search", "").strip().lower()
+    if pest_search:
+        pests = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, 'scientific_name') and pest_search in (p.scientific_name or '').lower())]
+    pest_page = request.GET.get("pest_page", 1)
+    from django.core.paginator import Paginator
+    pest_paginator = Paginator(pests, 5)
+    pests_page = pest_paginator.get_page(pest_page)
+    html = render_to_string(
+        "growers/partials/pests_table.html",
+        {"pests": pests_page, "pest_search": pest_search},
+        request=request,
+    )
+    return HttpResponse(html)
