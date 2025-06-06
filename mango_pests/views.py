@@ -145,10 +145,37 @@ def add_farm_block(request):
 
 @login_required
 def create_pest_check(request):
+    from .data import Pestsdiseases
+    from .models import Pest, PlantType
+    from django.contrib import messages
     form = PestCheckForm(request.POST or None, user=request.user)
     if request.method == "POST" and form.is_valid():
-        form.save()
-        return redirect("profile")
+        pest_val = form.cleaned_data["pest"]
+        if isinstance(pest_val, str) and pest_val.startswith("static::"):
+            idx = int(pest_val.split("::")[1])
+            static_pest = Pestsdiseases[idx]
+            # Check if a DB pest with this name exists, else create a hidden DB pest for logging
+            pest_obj, created = Pest.objects.get_or_create(
+                name=static_pest.cardtitle,
+                defaults={
+                    "description": static_pest.detailedinfo,
+                    "scientific_name": getattr(static_pest, "scientific_name", ""),
+                    "plant_type": PlantType.objects.first(),  # fallback to first plant type
+                },
+            )
+            # Replace the POST data to use the DB pest pk
+            post = request.POST.copy()
+            post["pest"] = str(pest_obj.pk)
+            form = PestCheckForm(post, user=request.user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"Pest check for static pest '{static_pest.cardtitle}' logged.")
+                return redirect("profile")
+            else:
+                messages.error(request, "Failed to log pest check for static pest.")
+        else:
+            form.save()
+            return redirect("profile")
     return render(
         request,
         "mango_pests/farm_check_add.html",

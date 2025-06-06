@@ -193,11 +193,15 @@
       {% for pest in pests %}
       <tr>
         <td>{{ pest.name }}</td>
-        <td>{{ pest.scientific_name }}</td>
+        <td>{% if pest.scientific_name %}{{ pest.scientific_name }}{% else %}-{% endif %}</td>
         <td>{{ pest.plant_type.name }}</td>
         <td>
-          <a href="{% url 'edit_pest' pest.pk %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'delete_pest' pest.pk %}" class="btn btn-sm btn-danger">Delete</a>
+          {% if not pest.is_static %}
+            <a href="{% url 'edit_pest' pest.pk %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'delete_pest' pest.pk %}" class="btn btn-sm btn-danger">Delete</a>
+          {% else %}
+            <span class="badge bg-info">Static</span>
+          {% endif %}
         </td>
       </tr>
       {% empty %}
