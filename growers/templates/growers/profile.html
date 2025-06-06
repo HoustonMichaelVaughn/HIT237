@@ -149,60 +149,9 @@
     </div>
   </div>
 
-  <h3>Your Pests</h3>
-  <form method="get"
-        class="mb-2"
-        hx-get="{% url 'pest_list' %}"
-        hx-target="#pests-table"
-        hx-swap="innerHTML">
-    <div class="input-group w-50 mb-2">
-      <input type="text" name="pest_search" id="pestSearchInput" class="form-control" placeholder="Search pests..." value="{{ pest_search }}">
-      <button type="submit" class="btn btn-primary">Search</button>
-      <button type="button" id="clearPestSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'pest_list' %}', {target: '#pests-table', swap: 'innerHTML'});">Clear</button>
-    </div>
-  </form>
-  <div id="pests-table">
-    <table class="table table-bordered table-hover">
-      <thead>
-        <tr><th>Name</th><th>Scientific Name</th><th>Plant Type</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-        {% for pest in pests %}
-        <tr>
-          <td>{{ pest.name }}</td>
-          <td>{% if pest.scientific_name %}{{ pest.scientific_name }}{% else %}-{% endif %}</td>
-          <td>{{ pest.plant_type.name }}</td>
-          <td>
-            {% if not pest.is_static %}
-              <a href="{% url 'edit_pest' pest.pk %}" class="btn btn-sm btn-warning">Edit</a>
-              <a href="{% url 'delete_pest' pest.pk %}" class="btn btn-sm btn-danger">Delete</a>
-            {% else %}
-              <span class="badge bg-info">Base Pest</span>
-            {% endif %}
-          </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="4">No pests added yet.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% if pests.paginator.num_pages > 1 %}
-    <nav>
-      <ul class="pagination">
-        {% if pests.has_previous %}
-          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="#">Previous</a></li>
-        {% endif %}
-        {% for num in pests.paginator.page_range %}
-          <li class="page-item {% if pests.number == num %}active{% endif %}"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ num }}" hx-target="#pests-table" hx-swap="innerHTML" href="#">{{ num }}</a></li>
-        {% endfor %}
-        {% if pests.has_next %}
-          <li class="page-item"><a class="page-link" hx-get="{% url 'pest_list' %}?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}" hx-target="#pests-table" hx-swap="innerHTML" href="#">Next</a></li>
-        {% endif %}
-      </ul>
-    </nav>
-    {% endif %}
-    <a href="{% url 'create_pest' %}" class="btn btn-primary mb-4 me-2">+ Add Pest</a>
-  </div>
+<h3>Your Pests</h3>
+<div id="pests-table">
+  {% include "growers/partials/pests_table.html" %}
 </div>
 
 <!-- HTMX for AJAX -->

@@ -167,9 +167,15 @@ def profile_view(request):
 
     # Search and pagination for Pests
     pest_search = request.GET.get("pest_search", "").strip().lower()
+    pest_type = request.GET.get("pest_type", "all").lower()  # new filter
     pests_qs = pests
     if pest_search:
         pests_qs = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, 'scientific_name') and pest_search in (p.scientific_name or '').lower())]
+    # Filter by pest_type
+    if pest_type == "base":
+        pests_qs = [p for p in pests_qs if getattr(p, 'is_static', False)]
+    elif pest_type == "user":
+        pests_qs = [p for p in pests_qs if not getattr(p, 'is_static', False)]
     pest_page = request.GET.get("pest_page", 1)
     pest_paginator = Paginator(pests_qs, 5)
     pests_page = pest_paginator.get_page(pest_page)
@@ -263,8 +269,14 @@ def ajax_pest_list(request):
     ]
     pests = db_pests + static_pests
     pest_search = request.GET.get("pest_search", "").strip().lower()
+    pest_type = request.GET.get("pest_type", "all").lower()  # new filter
     if pest_search:
         pests = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, 'scientific_name') and pest_search in (p.scientific_name or '').lower())]
+    # Filter by pest_type
+    if pest_type == "base":
+        pests = [p for p in pests if getattr(p, 'is_static', False)]
+    elif pest_type == "user":
+        pests = [p for p in pests if not getattr(p, 'is_static', False)]
     pest_page = request.GET.get("pest_page", 1)
     from django.core.paginator import Paginator
     pest_paginator = Paginator(pests, 5)
