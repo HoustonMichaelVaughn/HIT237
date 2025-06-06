@@ -14,6 +14,8 @@ urlpatterns = [
     ),
     path("references/", views.ReferencesView.as_view(), name="references"),
     path("pest/new/", views.create_pest, name="create_pest"),
+    path("pest/<int:pk>/edit/", views.PestUpdateView.as_view(), name="edit_pest"),
+    path("pest/<int:pk>/delete/", views.PestDeleteView.as_view(), name="delete_pest"),
     path("farmblock/new/", views.add_farm_block, name="add_farm_block"),
     path("pestcheck/new/", views.create_pest_check, name="create_pest_check"),
     path("pestcheck/<int:pk>/edit/", views.PestCheckUpdateView.as_view(), name="edit_pest_check"),

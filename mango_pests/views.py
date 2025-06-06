@@ -6,12 +6,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import UpdateView, DeleteView
 from mango_pests.forms import PestSelectionForm, SampleSizeForm
 import math
+from .models import Pest
+from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from .data import Pestsdiseases, References
 from .forms import PestForm, FarmBlockForm, PestCheckForm
-from .models import FarmBlock, PestCheck
+from .models import FarmBlock, PestCheck, Pest
 
 
 # Static Views
@@ -21,8 +23,36 @@ def home(request):
 class PestListView(View):
     def get(self, request: HttpRequest):
         search = request.GET.get("search", "").lower()
-        pestcards = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()] if search else [pest.__dict__ for pest in Pestsdiseases]
-        return render(request, "mango_pests/project_list.html", {"pestcards": pestcards, "search": search})
+        page_number = request.GET.get("page", 1)
+
+        # Static pests
+        static_pests = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()] if search else [pest.__dict__ for pest in Pestsdiseases]
+
+        # Database pests
+        db_pests_qs = Pest.objects.all()
+        if search:
+            db_pests_qs = db_pests_qs.filter(name__icontains=search)
+        db_pests = []
+        for pest in db_pests_qs:
+            db_pests.append({
+                "cardtitle": pest.name,
+                "cardtext": pest.description[:120] + ("..." if len(pest.description) > 120 else ""),
+                "urlslug": pest.name.lower().replace(" ", "-"),
+                "image": pest.image.url if pest.image else None,
+                "is_db": True,
+                "id": pest.id,
+            })
+
+        # Combine and paginate
+        all_pests = static_pests + db_pests
+        paginator = Paginator(all_pests, 7)
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, "mango_pests/project_list.html", {
+            "pestcards": page_obj.object_list,
+            "search": search,
+            "page_obj": page_obj,
+        })
 
 class PestDetailView(View):
     def get(self, request, slugurl):
@@ -50,7 +80,7 @@ def create_pest(request):
     form = PestForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
         form.save()
-        return redirect("pestlist")
+        return redirect("profile")
     return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Add Pest", "button_label": "Create"})
 
 @login_required
@@ -112,6 +142,18 @@ class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
         context["button_label"] = "Save Changes"
         return context
 
+class PestUpdateView(LoginRequiredMixin, UpdateView):
+    model = Pest
+    form_class = PestForm
+    template_name = "mango_pests/farm_check_add.html"
+    success_url = reverse_lazy("profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Edit Pest '{self.object.name}'"
+        context["button_label"] = "Save Changes"
+        return context
+
 # Delete Views
 class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
     model = FarmBlock
@@ -140,6 +182,16 @@ class PestCheckDeleteView(LoginRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["confirm_message"] = "Are you sure you want to delete this pest check?"
+        return context
+
+class PestDeleteView(LoginRequiredMixin, DeleteView):
+    model = Pest
+    template_name = "mango_pests/farm_check_remove.html"
+    success_url = reverse_lazy("profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["confirm_message"] = f"Are you sure you want to delete the pest '{self.object.name}'?"
         return context
 
 def ajax_confidence_result(request):

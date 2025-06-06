@@ -27,7 +27,7 @@ class Pest(models.Model):
     description = models.TextField()
     plant_type = models.ForeignKey(PlantType, on_delete=models.CASCADE, related_name='pests')
     image = models.ImageField(upload_to='pests/', blank=True, null=True)
-
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     def __str__(self):
         return self.name
     
