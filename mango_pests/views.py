@@ -1,3 +1,5 @@
+# mango_pests/views.py
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpRequest
 from django.views import View
@@ -15,16 +17,27 @@ from .models import FarmBlock, PestCheck
 def home(request):
     return render(request, "mango_pests/home.html")
 
+
 class PestListView(View):
     def get(self, request: HttpRequest):
         search = request.GET.get("search", "").lower()
-        pestcards = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()] if search else [pest.__dict__ for pest in Pestsdiseases]
-        return render(request, "mango_pests/project_list.html", {"pestcards": pestcards, "search": search})
+        pestcards = (
+            [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()]
+            if search
+            else [pest.__dict__ for pest in Pestsdiseases]
+        )
+        return render(
+            request, "mango_pests/project_list.html", {"pestcards": pestcards, "search": search}
+        )
+
 
 class PestDetailView(View):
     def get(self, request, slugurl):
-        pestdetails = next((pest.__dict__ for pest in Pestsdiseases if pest.urlslug == slugurl), None)
+        pestdetails = next(
+            (pest.__dict__ for pest in Pestsdiseases if pest.urlslug == slugurl), None
+        )
         return render(request, "mango_pests/project_detail.html", {"pestdetails": pestdetails})
+
 
 class AboutView(View):
     def get(self, request):
@@ -36,9 +49,11 @@ class AboutView(View):
         ]
         return render(request, "mango_pests/about.html", {"aboutcards": aboutcards})
 
+
 class ReferencesView(View):
     def get(self, request):
         return render(request, "mango_pests/references.html", {"references": References})
+
 
 # CRUD Views (shared template logic)
 
@@ -48,7 +63,12 @@ def create_pest(request):
     if request.method == "POST" and form.is_valid():
         form.save()
         return redirect("pestlist")
-    return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Add Pest", "button_label": "Create"})
+    return render(
+        request,
+        "mango_pests/farm_check_add.html",
+        {"form": form, "title": "Add Pest", "button_label": "Create"},
+    )
+
 
 @login_required
 def add_farm_block(request):
@@ -58,7 +78,12 @@ def add_farm_block(request):
         farm_block.grower = request.user
         farm_block.save()
         return redirect("profile")
-    return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Add Farm Block", "button_label": "Create"})
+    return render(
+        request,
+        "mango_pests/farm_check_add.html",
+        {"form": form, "title": "Add Farm Block", "button_label": "Create"},
+    )
+
 
 @login_required
 def create_pest_check(request):
@@ -66,7 +91,12 @@ def create_pest_check(request):
     if request.method == "POST" and form.is_valid():
         pest_check = form.save()
         return redirect("profile")
-    return render(request, "mango_pests/farm_check_add.html", {"form": form, "title": "Log New Pest Check", "button_label": "Create"})
+    return render(
+        request,
+        "mango_pests/farm_check_add.html",
+        {"form": form, "title": "Log New Pest Check", "button_label": "Create"},
+    )
+
 
 # Update Views
 class FarmBlockUpdateView(LoginRequiredMixin, UpdateView):
@@ -79,12 +109,13 @@ class FarmBlockUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = f"Edit Farm Block \"{self.object.name}\""
+        context["title"] = f'Edit Farm Block "{self.object.name}"'
         context["button_label"] = "Save Changes"
         return context
 
     def get_success_url(self):
         return reverse_lazy("profile")
+
 
 class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
     model = PestCheck
@@ -109,6 +140,7 @@ class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
         context["button_label"] = "Save Changes"
         return context
 
+
 # Delete Views
 class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
     model = FarmBlock
@@ -120,8 +152,11 @@ class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["confirm_message"] = f"Are you sure you want to delete the farm block \"{self.object.name}\"?"
+        context[
+            "confirm_message"
+        ] = f'Are you sure you want to delete the farm block "{self.object.name}"?'
         return context
+
 
 class PestCheckDeleteView(LoginRequiredMixin, DeleteView):
     model = PestCheck

@@ -1,32 +1,152 @@
-/*
-    Used for the project_list transistions
-    Sources:
-    https://www.w3schools.com/css/css_pseudo_classes.asp
-    https://cssgradient.io/
-    https://www.canva.com/colors/color-wheel/
 
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;600;700&display=swap");
+
+/* 1) GLOBAL / BODY
+   - Gradient background pulled from before.
+   - Fonts: Lato for body; Montserrat for headings/nav/buttons.
 */
 
 
 body {
-    /*background: linear-gradient(180deg, rgba(255,152,0,1) 0%, rgba(255,184,0,1) 42%, rgba(201,255,0,1) 100%);*/
-    /*background: linear-gradient(to bottom, #ffcc80, #ffb74d, #ff9800);*/
-    background: linear-gradient(to bottom, rgba(255, 204, 128, 1) 0%, rgba(255, 183, 77, 1) 70%, rgba(255, 167, 38, 1) 80%, rgba(255, 152, 0, 1) 100%);
-    background-attachment: fixed;
-    color: #333;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 204, 128, 1) 0%,
+    rgba(255, 183, 77, 1) 70%,
+    rgba(255, 167, 38, 1) 80%,
+    rgba(255, 152, 0, 1) 100%
+  );
+  background-attachment: fixed;
+  color: #333333;
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
-/*There is a surprising lack of tutorials on how to make a fab using css and boostrap so below is A.I generated*/
+/* 2) HEADINGS (h1–h6) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  color: #222222;
+  margin-bottom: 1.2rem;
+}
+
+h1, h2 {
+  letter-spacing: 0.5px;
+}
+
+h1:hover, h2:hover, h3:hover {
+  color: #111111;
+}
+
+/* 3) PARAGRAPHS / FORM TEXT */
+p, label, input, textarea, select, option {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #333333;
+}
+
+/* 4) NAVBAR LINKS */
+.navbar-nav .nav-link {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #222222 !important;
+  padding: 0.5rem 0.75rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #0056b3 !important;
+}
+
+/* 5) BUTTONS */
+.btn-outline-primary {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  color: #0056b3;
+  padding: 0.6rem 1.4rem;
+  border-radius: 0.35rem;
+  border-width: 1.5px;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+  color: #ffffff !important;
+  background-color: #0056b3;
+  border-color: #004085;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary,
+.btn-secondary {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+}
+
+/* 5) Pull the entire progression section up slightly so it sits closer to the hero section*/
+#disease-progression {
+  margin-top: -1rem;      
+}
+
+/* 6) CARD DISEASE‐PROGRESSION ----- */
+#disease-progression {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+#disease-progression img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#disease-progression .card {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+#disease-progression .card-body {
+  background-color: #ffffff;
+  padding: 1rem 1.25rem;
+}
+
+#disease-progression p.text-muted {
+  margin-bottom: 0;
+  color: #555555 !important;
+}
+
+/* 7) FLOATING ACTION BUTTON  */
 .fab {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999;
-    border-radius: 50%;
-    padding: 0.75rem 1rem;
-    font-size: 1.25rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  border-radius: 50%;
+  padding: 0.75rem 1rem;
+  font-size: 1.00rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  background-color: #0056b3;
+  color: #ffffff;
+  border: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fab:hover {
+  background-color: #003f7d;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* 8) UTILITY: text-muted override if needed later */
+.text-muted {
+  color: #555555 !important;
 }
