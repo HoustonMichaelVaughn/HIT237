@@ -3,6 +3,7 @@ import math
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView as DjangoLoginView
+from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
@@ -144,13 +145,40 @@ def profile_view(request):
             "required_n": required_n,
         }
 
+    # Search and pagination for Farm Blocks
+    fb_search = request.GET.get("fb_search", "").strip().lower()
+    farm_blocks_qs = farm_blocks
+    if fb_search:
+        farm_blocks_qs = farm_blocks_qs.filter(name__icontains=fb_search)
+    fb_page = request.GET.get("fb_page", 1)
+    fb_paginator = Paginator(farm_blocks_qs, 5)
+    farm_blocks_page = fb_paginator.get_page(fb_page)
+
+    # Search and pagination for Pest Checks
+    pc_search = request.GET.get("pc_search", "").strip().lower()
+    filtered_checks_qs = filtered_checks
+    if pc_search:
+        filtered_checks_qs = [c for c in filtered_checks if pc_search in c.pest.name.lower() or pc_search in c.farm_block.name.lower()]
+    pc_page = request.GET.get("pc_page", 1)
+    pc_paginator = Paginator(filtered_checks_qs, 5)
+    recent_pest_checks_page = pc_paginator.get_page(pc_page)
+
+    # Search and pagination for Pests
+    pest_search = request.GET.get("pest_search", "").strip().lower()
+    pests_qs = pests
+    if pest_search:
+        pests_qs = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, 'scientific_name') and pest_search in (p.scientific_name or '').lower())]
+    pest_page = request.GET.get("pest_page", 1)
+    pest_paginator = Paginator(pests_qs, 5)
+    pests_page = pest_paginator.get_page(pest_page)
+
     # I) Render the template with all context
     return render(
         request,
         "growers/profile.html",
         {
-            "farm_blocks": farm_blocks,
-            "recent_pest_checks": recent_pest_checks,
+            "farm_blocks": farm_blocks_page,
+            "recent_pest_checks": recent_pest_checks_page,
             "status_filter": status,
             "total_blocks": total_blocks,
             "total_checks": total_checks,
@@ -158,6 +186,12 @@ def profile_view(request):
             "surveillance_result": surveillance_result,
             "sample_form": sample_form,
             "sample_size_result": sample_size_result,
-            "pests": pests,
+            "pests": pests_page,
+            "fb_search": fb_search,
+            "pc_search": pc_search,
+            "pest_search": pest_search,
+            "fb_paginator": fb_paginator,
+            "pc_paginator": pc_paginator,
+            "pest_paginator": pest_paginator,
         },
     )

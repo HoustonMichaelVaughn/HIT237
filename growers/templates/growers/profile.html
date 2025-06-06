@@ -26,6 +26,15 @@
 
   <!-- Farm Blocks Table -->
   <h3>Your Farm Blocks</h3>
+  <form method="get" class="mb-2">
+    <div class="input-group w-50 mb-2">
+      <input type="text" name="fb_search" class="form-control" placeholder="Search farm blocks..." value="{{ fb_search }}">
+      <button type="submit" class="btn btn-primary">Search</button>
+      {% if fb_search %}
+      <a href="?" class="btn btn-outline-secondary">Clear</a>
+      {% endif %}
+    </div>
+  </form>
   <table class="table table-bordered table-hover">
     <thead>
       <tr><th>Name</th><th>Location</th><th>Actions</th></tr>
@@ -45,11 +54,35 @@
       {% endfor %}
     </tbody>
   </table>
+  {% if farm_blocks.paginator.num_pages > 1 %}
+  <nav>
+    <ul class="pagination">
+      {% if farm_blocks.has_previous %}
+        <li class="page-item"><a class="page-link" href="?fb_search={{ fb_search }}&fb_page={{ farm_blocks.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      {% for num in farm_blocks.paginator.page_range %}
+        <li class="page-item {% if farm_blocks.number == num %}active{% endif %}"><a class="page-link" href="?fb_search={{ fb_search }}&fb_page={{ num }}">{{ num }}</a></li>
+      {% endfor %}
+      {% if farm_blocks.has_next %}
+        <li class="page-item"><a class="page-link" href="?fb_search={{ fb_search }}&fb_page={{ farm_blocks.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
   <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4 me-2">+ Add Farm Block</a>
   <a href="{% url 'create_pest_check' %}" class="btn btn-secondary mb-4">+ Add Pest Check</a>
 
   <!-- Recent Pest Checks -->
   <h3>Recent Pest Checks</h3>
+  <form method="get" class="mb-2">
+    <div class="input-group w-50 mb-2">
+      <input type="text" name="pc_search" class="form-control" placeholder="Search pest checks..." value="{{ pc_search }}">
+      <button type="submit" class="btn btn-primary">Search</button>
+      {% if pc_search %}
+      <a href="?" class="btn btn-outline-secondary">Clear</a>
+      {% endif %}
+    </div>
+  </form>
   <form method="get" class="mb-3">
     <label for="status">Show checks with confidence:</label>
     <select name="status" id="status"
@@ -61,7 +94,6 @@
       <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (< 50%)</option>
     </select>
   </form>
-
   <table class="table table-striped">
     <thead>
       <tr>
@@ -105,6 +137,21 @@
       {% endfor %}
     </tbody>
   </table>
+  {% if recent_pest_checks.paginator.num_pages > 1 %}
+  <nav>
+    <ul class="pagination">
+      {% if recent_pest_checks.has_previous %}
+        <li class="page-item"><a class="page-link" href="?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      {% for num in recent_pest_checks.paginator.page_range %}
+        <li class="page-item {% if recent_pest_checks.number == num %}active{% endif %}"><a class="page-link" href="?pc_search={{ pc_search }}&pc_page={{ num }}">{{ num }}</a></li>
+      {% endfor %}
+      {% if recent_pest_checks.has_next %}
+        <li class="page-item"><a class="page-link" href="?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
 
   <!-- Sampling Badge Legend -->
   <div class="mt-5 mb-4 p-3 border rounded bg-light">
@@ -185,6 +232,15 @@
 
   <!-- Pests Table -->
   <h3>Your Pests</h3>
+  <form method="get" class="mb-2">
+    <div class="input-group w-50 mb-2">
+      <input type="text" name="pest_search" class="form-control" placeholder="Search pests..." value="{{ pest_search }}">
+      <button type="submit" class="btn btn-primary">Search</button>
+      {% if pest_search %}
+      <a href="?" class="btn btn-outline-secondary">Clear</a>
+      {% endif %}
+    </div>
+  </form>
   <table class="table table-bordered table-hover">
     <thead>
       <tr><th>Name</th><th>Scientific Name</th><th>Plant Type</th><th>Actions</th></tr>
@@ -209,6 +265,21 @@
       {% endfor %}
     </tbody>
   </table>
+  {% if pests.paginator.num_pages > 1 %}
+  <nav>
+    <ul class="pagination">
+      {% if pests.has_previous %}
+        <li class="page-item"><a class="page-link" href="?pest_search={{ pest_search }}&pest_page={{ pests.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      {% for num in pests.paginator.page_range %}
+        <li class="page-item {% if pests.number == num %}active{% endif %}"><a class="page-link" href="?pest_search={{ pest_search }}&pest_page={{ num }}">{{ num }}</a></li>
+      {% endfor %}
+      {% if pests.has_next %}
+        <li class="page-item"><a class="page-link" href="?pest_search={{ pest_search }}&pest_page={{ pests.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
   <a href="{% url 'create_pest' %}" class="btn btn-primary mb-4 me-2">+ Add Pest</a>
 </div>
 
