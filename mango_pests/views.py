@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import UpdateView, DeleteView
 from mango_pests.forms import PestSelectionForm, SampleSizeForm
 import math
+from .models import Pest
+from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.http import HttpResponse
@@ -21,8 +23,36 @@ def home(request):
 class PestListView(View):
     def get(self, request: HttpRequest):
         search = request.GET.get("search", "").lower()
-        pestcards = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()] if search else [pest.__dict__ for pest in Pestsdiseases]
-        return render(request, "mango_pests/project_list.html", {"pestcards": pestcards, "search": search})
+        page_number = request.GET.get("page", 1)
+
+        # Static pests
+        static_pests = [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()] if search else [pest.__dict__ for pest in Pestsdiseases]
+
+        # Database pests
+        db_pests_qs = Pest.objects.all()
+        if search:
+            db_pests_qs = db_pests_qs.filter(name__icontains=search)
+        db_pests = []
+        for pest in db_pests_qs:
+            db_pests.append({
+                "cardtitle": pest.name,
+                "cardtext": pest.description[:120] + ("..." if len(pest.description) > 120 else ""),
+                "urlslug": pest.name.lower().replace(" ", "-"),
+                "image": pest.image.url if pest.image else None,
+                "is_db": True,
+                "id": pest.id,
+            })
+
+        # Combine and paginate
+        all_pests = static_pests + db_pests
+        paginator = Paginator(all_pests, 7)
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, "mango_pests/project_list.html", {
+            "pestcards": page_obj.object_list,
+            "search": search,
+            "page_obj": page_obj,
+        })
 
 class PestDetailView(View):
     def get(self, request, slugurl):
