@@ -1,15 +1,15 @@
 import math
 
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
-from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import redirect, render, get_object_or_404
-from django.template.loader import render_to_string
-from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic.edit import DeleteView, UpdateView
+from django.contrib import messages  # Used for displaying one-time messages to users.
+from django.contrib.auth.decorators import login_required  # Decorator to restrict access to logged-in users.
+from django.contrib.auth.mixins import LoginRequiredMixin  # Mixin to restrict class-based views to logged-in users.
+from django.core.paginator import Paginator  # Utility for paginating querysets.
+from django.http import Http404, HttpRequest, HttpResponse  # HTTP utilities for handling requests and responses.
+from django.shortcuts import redirect, render, get_object_or_404  # Shortcuts for common view operations.
+from django.template.loader import render_to_string  # Utility for rendering templates to strings.
+from django.urls import reverse_lazy  # Utility for lazy URL resolution.
+from django.views import View  # Base class for all views.
+from django.views.generic.edit import DeleteView, UpdateView  # Generic views for editing models.
 
 from mango_pests.forms import PestSelectionForm, SampleSizeForm
 
@@ -21,6 +21,11 @@ from .models import FarmBlock, Pest, PestCheck, PlantType
 # Static Views
 def home(request):
     return render(request, "mango_pests/home.html")
+
+
+# Added a fallback image for pests without an image.
+# Define a fallback image URL
+FALLBACK_IMAGE_URL = "/static/images/default_fallback_image.png"
 
 
 class PestListView(View):
@@ -51,7 +56,7 @@ class PestListView(View):
                     "cardtext": pest.description[:120]
                     + ("..." if len(pest.description) > 120 else ""),
                     "urlslug": pest.name.lower().replace(" ", "-"),
-                    "image": pest.image.url if pest.image else None,
+                    "image": pest.image.url if pest.image else FALLBACK_IMAGE_URL,
                     "is_db": True,
                     "id": pest.id,
                 }
