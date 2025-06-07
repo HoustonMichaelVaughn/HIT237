@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from .views import Login, RegisterUser, profile_view, export_csv
+from .views import Login, RegisterUser, profile_view
 from . import views
 
 urlpatterns = [
@@ -9,7 +9,7 @@ urlpatterns = [
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", RegisterUser.as_view(), name="register"),
     path("profile/", profile_view, name="profile"),
-    path("profile/export-csv/", export_csv, name="export_csv"),
+    #path("profile/export-csv/", export_csv, name="export_csv"),
     
     # AJAX endpoints for HTMX
     path("ajax/farmblocks/", views.ajax_farm_block_list, name="farm_block_list"),
