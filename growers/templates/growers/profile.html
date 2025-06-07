@@ -25,24 +25,21 @@
   </div>
 
   <!-- HTMX: Farm Blocks -->
-  <form method="get"
-        class="mb-2"
-        hx-get="{% url 'farm_block_list' %}"
-        hx-target="#farm-blocks-table"
-        hx-swap="innerHTML">
-    <div class="input-group w-50 mb-2">
-      <input type="text" name="fb_search" id="fbSearchInput" class="form-control" placeholder="Search farm blocks..." value="{{ fb_search }}">
-      <button type="submit" class="btn btn-primary">Search</button>
-      <button type="button" id="clearFbSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'farm_block_list' %}', {target: '#farm-blocks-table', swap: 'innerHTML'});">Clear</button>
-    </div>
-  </form>
-
-  <div id="farm-blocks-table">
+    <div id="farm-blocks-table">
     {% include "growers/partials/farm_blocks_table.html" %}
   </div>
 
-  <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4 me-2">+ Add Farm Block</a>
-  <a href="{% url 'create_pest_check' %}" class="btn btn-secondary mb-4">+ Add Pest Check</a>
+  <div class="mb-4">
+    <a href="{% url 'export_checks_csv' %}" class="btn btn-secondary mb-4 me-2">
+      Download CSV
+    </a>
+    <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4 me-2">
+      + Add Farm Block
+    </a>
+    <a href="{% url 'create_pest_check' %}" class="btn btn-secondary mb-4">
+      + Add Pest Check
+    </a>
+  </div>
 
   <!-- Recent Pest Checks -->
   <h3>Recent Pest Checks</h3>
