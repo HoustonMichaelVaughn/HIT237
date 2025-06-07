@@ -1,7 +1,6 @@
 from math import exp
-
-from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User
 
 PATH_CHOICES = [
     ("ZigZag", "Zig-Zag between rows"),
@@ -30,9 +29,7 @@ class Pest(models.Model):
     name = models.CharField(max_length=100)
     scientific_name = models.CharField(max_length=150, blank=True)
     description = models.TextField()
-    plant_type = models.ForeignKey(
-        PlantType, on_delete=models.CASCADE, related_name="pests"
-    )
+    plant_type = models.ForeignKey(PlantType, on_delete=models.CASCADE, related_name="pests")
     image = models.ImageField(upload_to="pests/", blank=True, null=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -47,12 +44,8 @@ class PestCheck(models.Model):
     part_of_plant = models.CharField(max_length=100)
     infestation_level = models.TextField(blank=True)
     num_trees = models.PositiveIntegerField(help_text="Total number of trees checked.")
-    positives = models.PositiveIntegerField(
-        help_text="Number of trees with visible pest signs."
-    )
+    positives = models.PositiveIntegerField(help_text="Number of trees with visible pest signs.")
     notes = models.TextField(blank=True)
-
-    # New Field: Path Pattern
     path_pattern = models.CharField(
         max_length=20,
         choices=PATH_CHOICES,

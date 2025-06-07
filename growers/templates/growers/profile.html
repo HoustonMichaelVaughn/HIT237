@@ -1,7 +1,7 @@
 {% extends "mango_pests/base.html" %}
-
 {% block content %}
 <div class="container my-4">
+
   <h2 class="mb-4">Welcome, {{ user.username }}!</h2>
 
   <!-- Grower Stats Overview -->
@@ -24,8 +24,7 @@
     </div>
   </div>
 
-  <!-- Farm Blocks Table -->
-  <h3>Your Farm Blocks</h3>
+  <!-- HTMX: Farm Blocks -->
   <form method="get"
         class="mb-2"
         hx-get="{% url 'farm_block_list' %}"
@@ -37,9 +36,11 @@
       <button type="button" id="clearFbSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'farm_block_list' %}', {target: '#farm-blocks-table', swap: 'innerHTML'});">Clear</button>
     </div>
   </form>
+
   <div id="farm-blocks-table">
     {% include "growers/partials/farm_blocks_table.html" %}
   </div>
+
   <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4 me-2">+ Add Farm Block</a>
   <a href="{% url 'create_pest_check' %}" class="btn btn-secondary mb-4">+ Add Pest Check</a>
 
@@ -56,6 +57,7 @@
       <button type="button" id="clearPcSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'pest_check_list' %}', {target: '#recent-pest-checks-table', swap: 'innerHTML'});">Clear</button>
     </div>
   </form>
+
   <form method="get" class="mb-3"
         hx-get="{% url 'pest_check_list' %}"
         hx-target="#recent-pest-checks-table"
@@ -68,11 +70,12 @@
       <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (&lt; 50%)</option>
     </select>
   </form>
+
   <div id="recent-pest-checks-table">
     {% include "growers/partials/pest_checks_table.html" %}
   </div>
 
-  <!-- Sampling Badge Legend -->
+  <!-- Sampling Status Badges -->
   <div class="mt-5 mb-4 p-3 border rounded bg-light">
     <h5>Sampling Status Badges</h5>
     <div>
@@ -82,9 +85,9 @@
     </div>
   </div>
 
-  <!-- Accordion -->
+  <!-- Accordions -->
   <div class="accordion mb-3" id="dashboardAccordion">
-    <!-- Surveillance Confidence -->
+    <!-- Confidence Calculator -->
     <div class="accordion-item">
       <h3 class="accordion-header" id="headingConfidence">
         <button class="accordion-button collapsed" type="button"
@@ -149,15 +152,15 @@
     </div>
   </div>
 
-<h3>Your Pests</h3>
-<div id="pests-table">
-  {% include "growers/partials/pests_table.html" %}
+  <!-- Your Pests Table -->
+  <h3>Your Pests</h3>
+  <div id="pests-table">
+    {% include "growers/partials/pests_table.html" %}
+  </div>
 </div>
 
-<!-- HTMX for AJAX -->
+<!-- Scripts -->
 <script src="https://unpkg.com/htmx.org@1.9.5"></script>
-
-<!-- Bootstrap Tooltip Init -->
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var tooltipTriggerList = [].slice.call(
@@ -166,11 +169,7 @@
     tooltipTriggerList.forEach(function (tooltipTriggerEl) {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
-  });
-</script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById("pestSearchInput");
     const clearBtn = document.getElementById("clearPestSearchBtn");
 
@@ -178,11 +177,8 @@
       clearBtn.disabled = !input.value.trim();
     }
 
-    // Initial check
     toggleClearButton();
-
-    // Update on input
-    input.addEventListener("input", toggleClearButton);
+    input?.addEventListener("input", toggleClearButton);
   });
 </script>
 {% endblock %}

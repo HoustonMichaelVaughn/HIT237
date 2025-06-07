@@ -1,23 +1,35 @@
 {% comment %}
 Base html provides the basic layout persistent across all pages.
-block head provides the JS include only for pages that need it (e.g. project_detail.html).
-Sources:
-  ~Navbar~
-  https://pypi.org/project/django-bootstrap5/
-  https://getbootstrap.com/docs/5.0/components/navbar/
+We load Bootstrap’s CSS first, then our own "style.css",
+then Bootstrap’s JavaScript. This ensures our custom styles
+will not be immediately overridden by Bootstrap.
 {% endcomment %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mango Pests</title>
+
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% load django_bootstrap5 %}
+
+  <!-- 1) Google Fonts for headings/body -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- 2) Bootstrap CSS -->
   {% bootstrap_css %}
+
+  <!-- 3) Custom stylesheet (overrides Bootstrap) -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+  <!-- 4) Bootstrap JavaScript -->
   {% bootstrap_javascript %}
+
   {% block head %}{% endblock %}
 </head>
 
@@ -39,105 +51,88 @@ Sources:
 
           <!-- Home -->
           <li class="nav-item">
-            <a
-              class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-              {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}
-              href="{% url 'home' %}"
-            >
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}
+               href="{% url 'home' %}">
               Home
             </a>
           </li>
 
           <!-- Pestlist -->
           <li class="nav-item">
-            <a
-              class="nav-link {% if request.resolver_match.url_name == 'pestlist' %}active{% endif %}"
-              {% if request.resolver_match.url_name == 'pestlist' %}aria-current="page"{% endif %}
-              href="{% url 'pestlist' %}"
-            >
+            <a class="nav-link {% if request.resolver_match.url_name == 'pestlist' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'pestlist' %}aria-current="page"{% endif %}
+               href="{% url 'pestlist' %}">
               Pestlist
             </a>
           </li>
 
           <!-- About -->
           <li class="nav-item">
-            <a
-              class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
-              {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}
-              href="{% url 'about' %}"
-            >
+            <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}
+               href="{% url 'about' %}">
               About
             </a>
           </li>
 
           <!-- References -->
           <li class="nav-item">
-            <a
-              class="nav-link {% if request.resolver_match.url_name == 'references' %}active{% endif %}"
-              {% if request.resolver_match.url_name == 'references' %}aria-current="page"{% endif %}
-              href="{% url 'references' %}"
-            >
+            <a class="nav-link {% if request.resolver_match.url_name == 'references' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'references' %}aria-current="page"{% endif %}
+               href="{% url 'references' %}">
               References
             </a>
           </li>
 
           {% if user.is_authenticated %}
-            <!-- Logout (as a form button) -->
+            <!-- Logout -->
             <li class="nav-item">
               <form action="{% url 'logout' %}" method="post" style="display:inline;">
                 {% csrf_token %}
-                <button
-                  class="nav-link btn btn-link {% if request.resolver_match.url_name == 'logout' %}active{% endif %}"
-                  type="submit"
-                  {% if request.resolver_match.url_name == 'logout' %}aria-current="page"{% endif %}
-                >
+                <button class="nav-link btn btn-link {% if request.resolver_match.url_name == 'logout' %}active{% endif %}"
+                        type="submit"
+                        {% if request.resolver_match.url_name == 'logout' %}aria-current="page"{% endif %}>
                   Logout ({{ user.username }})
                 </button>
               </form>
             </li>
+
             <!-- Profile -->
             <li class="nav-item">
-              <a
-                class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
-                {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}
-                href="{% url 'profile' %}"
-              >
+              <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                 {% if request.resolver_match.url_name == 'profile' %}aria-current="page"{% endif %}
+                 href="{% url 'profile' %}">
                 Profile
               </a>
             </li>
           {% else %}
             <!-- Login -->
             <li class="nav-item">
-              <a
-                class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
-                {% if request.resolver_match.url_name == 'login' %}aria-current="page"{% endif %}
-                href="{% url 'login' %}"
-              >
+              <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+                 {% if request.resolver_match.url_name == 'login' %}aria-current="page"{% endif %}
+                 href="{% url 'login' %}">
                 Login
               </a>
             </li>
+
             <!-- Register -->
             <li class="nav-item">
-              <a
-                class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}"
-                {% if request.resolver_match.url_name == 'register' %}aria-current="page"{% endif %}
-                href="{% url 'register' %}"
-              >
+              <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}"
+                 {% if request.resolver_match.url_name == 'register' %}aria-current="page"{% endif %}
+                 href="{% url 'register' %}">
                 Register
               </a>
             </li>
           {% endif %}
-
         </ul>
       </div>
     </div>
   </nav>
 
-  
   <main>
     {% block content %}{% endblock %}
   </main>
-
 </body>
 
 </html>

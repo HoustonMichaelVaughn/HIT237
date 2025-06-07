@@ -1,26 +1,44 @@
-{% extends "mango_pests/base.html"%}
+{% extends "mango_pests/base.html" %}
+{% load static %}
 
-{%comment%}
-Sources:
-https://getbootstrap.com/docs/4.0/components/buttons/
-{%endcomment%}
+{% block content %}
 
-{%block content%}
-<div class="container text-center">
+<section id="hero" class="py-4 text-center" style="min-height: 40vh;">
+  <div class="container">
+    <h1 class="display-4 mb-3">Welcome to BioMangoes pest information!</h1>
+    <p class="lead mb-4">
+      Discover important information about pests affecting mango crops and how to manage them.
+    </p>
+    <a href="{% url 'pestlist' %}" class="btn btn-outline-primary btn-lg">View Pests</a>
+  </div>
+</section>
+
+<section id="disease-progression" class="py-3">
+  <div class="container">
+    <h2 class="mb-3 text-center">Mealybug Infestation Stages</h2>
+    <p class="text-muted text-center mb-4">
+      AI-generated simulation of mealybug progression: early → intermediate → severe
+    </p>
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h1 class="display-4">Welcome to Biomangoes pest information!</h1>
+      <div class="col-auto">
+        <div class="card shadow-sm border-3" style="width: 700px;">
+          <img
+            src="{% static 'images/pests/mealybug_progression/mangobasictransition.gif' %}"
+            alt="Mealybug progression from early to severe"
+            class="img-fluid rounded-top"
+          />
+          <div class="card-body bg-white">
+            <p class="text-muted mb-0 text-center">
+              Tip: Regularly scout your orchard to catch pests early and avoid severe infestations.
+            </p>
+          </div>
         </div>
+      </div>
+      <div class="w-100 text-center small text-muted mt-2">
+        (Images by Gislene FDLC; animation by Dean Metcalfe)
+      </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-md-3">
-            <p>Discover important information about pests affecting mango crops and how to manage them</p>
-        </div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <a type="button" href="{% url 'pestlist' %}" class="btn btn-outline-primary">View Pests</a>
-        </div>
-    </div>
-</div>
-{%endblock%}
+  </div>
+</section>
+
+{% endblock %}

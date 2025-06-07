@@ -1,9 +1,7 @@
 from django import forms
-
 from mango_pests.models import Pest
-
 from .data import Pestsdiseases
-from .models import PATH_CHOICES, FarmBlock, Pest, PestCheck
+from .models import PATH_CHOICES, FarmBlock, PestCheck, PlantType
 
 
 class SampleSizeForm(forms.Form):
@@ -44,7 +42,7 @@ class PestCheckForm(forms.ModelForm):
             "num_trees",
             "positives",
             "notes",
-        ]  # Removed 'pest' from fields
+        ]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
@@ -73,12 +71,10 @@ class PestCheckForm(forms.ModelForm):
         instance = super().save(commit=False)
         pest_val = self.cleaned_data.get("pest")
         if isinstance(pest_val, str) and pest_val.startswith("static::"):
-            # Attach static pest identifier for view to handle
             instance._static_pest = pest_val
             if commit:
                 raise ValueError("Cannot save PestCheck with static pest directly. Handle in view.")
             return instance
-        # Assign regular DB pest
         instance.pest = pest_val
         if commit:
             instance.save()

@@ -1,10 +1,11 @@
 import math
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import Http404, HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views import View
@@ -14,7 +15,7 @@ from mango_pests.forms import PestSelectionForm, SampleSizeForm
 
 from .data import Pestsdiseases, References
 from .forms import FarmBlockForm, PestCheckForm, PestForm
-from .models import FarmBlock, Pest, PestCheck
+from .models import FarmBlock, Pest, PestCheck, PlantType
 
 
 # Static Views
@@ -77,44 +78,26 @@ class PestDetailView(View):
         pestdetails = next(
             (pest.__dict__ for pest in Pestsdiseases if pest.urlslug == slugurl), None
         )
-        return render(
-            request, "mango_pests/project_detail.html", {"pestdetails": pestdetails}
-        )
+        return render(request, "mango_pests/project_detail.html", {"pestdetails": pestdetails})
 
 
 class AboutView(View):
     def get(self, request):
         aboutcards = [
-            {
-                "membername": "Houston Vaughn",
-                "aboutmember": "A computer science student at CDU. Teamleader for Group 7",
-            },
-            {
-                "membername": "Neolisa De Castro",
-                "aboutmember": "Computer Science Student.",
-            },
-            {
-                "membername": "Gislene Freitas De Lima Clancy",
-                "aboutmember": "A computer science student at CDU.",
-            },
-            {
-                "membername": "Dean Metcalfe",
-                "aboutmember": "A computer science student at CDU.",
-            },
+            {"membername": "Houston Vaughn", "aboutmember": "A computer science student at CDU. Teamleader for Group 7"},
+            {"membername": "Neolisa De Castro", "aboutmember": "Computer Science Student."},
+            {"membername": "Gislene Freitas De Lima Clancy", "aboutmember": "A computer science student at CDU."},
+            {"membername": "Dean Metcalfe", "aboutmember": "A computer science student at CDU."},
         ]
         return render(request, "mango_pests/about.html", {"aboutcards": aboutcards})
 
 
 class ReferencesView(View):
     def get(self, request):
-        return render(
-            request, "mango_pests/references.html", {"references": References}
-        )
+        return render(request, "mango_pests/references.html", {"references": References})
 
 
-# CRUD Views (shared template logic)
-
-
+# CRUD Views
 @login_required
 def create_pest(request):
     form = PestForm(request.POST or None, request.FILES or None)
@@ -145,25 +128,20 @@ def add_farm_block(request):
 
 @login_required
 def create_pest_check(request):
-    from .data import Pestsdiseases
-    from .models import Pest, PlantType
-    from django.contrib import messages
     form = PestCheckForm(request.POST or None, user=request.user)
     if request.method == "POST" and form.is_valid():
         pest_val = form.cleaned_data["pest"]
         if isinstance(pest_val, str) and pest_val.startswith("static::"):
             idx = int(pest_val.split("::")[1])
             static_pest = Pestsdiseases[idx]
-            # Check if a DB pest with this name exists, else create a hidden DB pest for logging
             pest_obj, created = Pest.objects.get_or_create(
                 name=static_pest.cardtitle,
                 defaults={
                     "description": static_pest.detailedinfo,
                     "scientific_name": getattr(static_pest, "scientific_name", ""),
-                    "plant_type": PlantType.objects.first(),  # fallback to first plant type
+                    "plant_type": PlantType.objects.first(),
                 },
             )
-            # Replace the POST data to use the DB pest pk
             post = request.POST.copy()
             post["pest"] = str(pest_obj.pk)
             form = PestCheckForm(post, request.FILES or None, user=request.user)
@@ -250,9 +228,7 @@ class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["confirm_message"] = (
-            f'Are you sure you want to delete the farm block "{self.object.name}"?'
-        )
+        context["confirm_message"] = f'Are you sure you want to delete the farm block "{self.object.name}"?'
         return context
 
 
@@ -280,12 +256,11 @@ class PestDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["confirm_message"] = (
-            f"Are you sure you want to delete the pest '{self.object.name}'?"
-        )
+        context["confirm_message"] = f"Are you sure you want to delete the pest '{self.object.name}'?"
         return context
 
 
+# AJAX Views
 def ajax_confidence_result(request):
     form = PestSelectionForm(request.POST or None, prefix="surv")
     result_html = ""
