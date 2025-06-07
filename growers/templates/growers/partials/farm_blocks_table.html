@@ -1,0 +1,37 @@
+{# Partial for AJAX farm blocks table and pagination #}
+<div id="farm-blocks-table">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr><th>Name</th><th>Location</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for block in farm_blocks %}
+      <tr>
+        <td>{{ block.name }}</td>
+        <td>{{ block.location_description }}</td>
+        <td>
+          <a href="{% url 'edit_farm_block' block.pk %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'delete_farm_block' block.pk %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">You haven't added any farm blocks yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if farm_blocks.paginator.num_pages > 1 %}
+  <nav>
+    <ul class="pagination">
+      {% if farm_blocks.has_previous %}
+        <li class="page-item"><a class="page-link" hx-get="{% url 'farm_block_list' %}?fb_search={{ fb_search }}&fb_page={{ farm_blocks.previous_page_number }}" hx-target="#farm-blocks-table" hx-swap="innerHTML" href="?fb_search={{ fb_search }}&fb_page={{ farm_blocks.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      {% for num in farm_blocks.paginator.page_range %}
+        <li class="page-item {% if farm_blocks.number == num %}active{% endif %}"><a class="page-link" hx-get="{% url 'farm_block_list' %}?fb_search={{ fb_search }}&fb_page={{ num }}" hx-target="#farm-blocks-table" hx-swap="innerHTML" href="?fb_search={{ fb_search }}&fb_page={{ num }}">{{ num }}</a></li>
+      {% endfor %}
+      {% if farm_blocks.has_next %}
+        <li class="page-item"><a class="page-link" hx-get="{% url 'farm_block_list' %}?fb_search={{ fb_search }}&fb_page={{ farm_blocks.next_page_number }}" hx-target="#farm-blocks-table" hx-swap="innerHTML" href="?fb_search={{ fb_search }}&fb_page={{ farm_blocks.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>

@@ -45,10 +45,14 @@
                 <div class="card mb-3 shadow-sm border-danger border-2 rounded-4">
                     <div class="row g-0 align-items-center">
                         <div class="col-md-3 text-center p-2">
-                            <img src="{% static 'images/pests/'|add:card.urlslug|add:'/'|add:card.urlslug|add:'-400w.webp' %}"
-                                srcset="{{ card.urlslug|repsrcset|safe }}"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                alt="{{ card.cardtitle }}" class="img-fluid rounded-4 px-2">
+                            {% if card.is_db and card.image %}
+                                <img src="{{ card.image }}" alt="{{ card.cardtitle }}" class="img-fluid rounded-4 px-2">
+                            {% else %}
+                                <img src="{% static 'images/pests/'|add:card.urlslug|add:'/'|add:card.urlslug|add:'-400w.webp' %}"
+                                    srcset="{{ card.urlslug|repsrcset|safe }}"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    alt="{{ card.cardtitle }}" class="img-fluid rounded-4 px-2">
+                            {% endif %}
                         </div>
                         <div class="col-md-9">
                             <div class="card-body">
@@ -63,6 +67,32 @@
                     </div>
                 </div>
                 {% endfor %}
+                                <!-- Pagination controls -->
+                <nav aria-label="Pest list pagination">
+                  <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                      <li class="page-item">
+                        <a class="page-link" href="?search={{ search }}&page={{ page_obj.previous_page_number }}">Previous</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                      {% if page_obj.number == num %}
+                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                      {% else %}
+                        <li class="page-item"><a class="page-link" href="?search={{ search }}&page={{ num }}">{{ num }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                      <li class="page-item">
+                        <a class="page-link" href="?search={{ search }}&page={{ page_obj.next_page_number }}">Next</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    {% endif %}
+                  </ul>
+                </nav>
             </div>
         </div>
     </div>

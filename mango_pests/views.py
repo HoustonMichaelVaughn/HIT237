@@ -1,16 +1,21 @@
-# mango_pests/views.py
+import math
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, HttpRequest
-from django.views import View
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import UpdateView, DeleteView
+from django.core.paginator import Paginator
+from django.http import Http404, HttpRequest, HttpResponse
+from django.shortcuts import redirect, render, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic.edit import DeleteView, UpdateView
+
+from mango_pests.forms import PestSelectionForm, SampleSizeForm
 
 from .data import Pestsdiseases, References
-from .forms import PestForm, FarmBlockForm, PestCheckForm
-from .models import FarmBlock, PestCheck
+from .forms import FarmBlockForm, PestCheckForm, PestForm
+from .models import FarmBlock, Pest, PestCheck, PlantType
 
 
 # Static Views
@@ -21,13 +26,50 @@ def home(request):
 class PestListView(View):
     def get(self, request: HttpRequest):
         search = request.GET.get("search", "").lower()
-        pestcards = (
-            [pest.__dict__ for pest in Pestsdiseases if search in pest.cardtitle.lower()]
+        page_number = request.GET.get("page", 1)
+
+        # Static pests
+        static_pests = (
+            [
+                pest.__dict__
+                for pest in Pestsdiseases
+                if search in pest.cardtitle.lower()
+            ]
             if search
             else [pest.__dict__ for pest in Pestsdiseases]
         )
+
+        # Database pests
+        db_pests_qs = Pest.objects.all()
+        if search:
+            db_pests_qs = db_pests_qs.filter(name__icontains=search)
+        db_pests = []
+        for pest in db_pests_qs:
+            db_pests.append(
+                {
+                    "cardtitle": pest.name,
+                    "cardtext": pest.description[:120]
+                    + ("..." if len(pest.description) > 120 else ""),
+                    "urlslug": pest.name.lower().replace(" ", "-"),
+                    "image": pest.image.url if pest.image else None,
+                    "is_db": True,
+                    "id": pest.id,
+                }
+            )
+
+        # Combine and paginate
+        all_pests = static_pests + db_pests
+        paginator = Paginator(all_pests, 7)
+        page_obj = paginator.get_page(page_number)
+
         return render(
-            request, "mango_pests/project_list.html", {"pestcards": pestcards, "search": search}
+            request,
+            "mango_pests/project_list.html",
+            {
+                "pestcards": page_obj.object_list,
+                "search": search,
+                "page_obj": page_obj,
+            },
         )
 
 
@@ -55,14 +97,13 @@ class ReferencesView(View):
         return render(request, "mango_pests/references.html", {"references": References})
 
 
-# CRUD Views (shared template logic)
-
+# CRUD Views
 @login_required
 def create_pest(request):
     form = PestForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
         form.save()
-        return redirect("pestlist")
+        return redirect("profile")
     return render(
         request,
         "mango_pests/farm_check_add.html",
@@ -89,8 +130,30 @@ def add_farm_block(request):
 def create_pest_check(request):
     form = PestCheckForm(request.POST or None, user=request.user)
     if request.method == "POST" and form.is_valid():
-        pest_check = form.save()
-        return redirect("profile")
+        pest_val = form.cleaned_data["pest"]
+        if isinstance(pest_val, str) and pest_val.startswith("static::"):
+            idx = int(pest_val.split("::")[1])
+            static_pest = Pestsdiseases[idx]
+            pest_obj, created = Pest.objects.get_or_create(
+                name=static_pest.cardtitle,
+                defaults={
+                    "description": static_pest.detailedinfo,
+                    "scientific_name": getattr(static_pest, "scientific_name", ""),
+                    "plant_type": PlantType.objects.first(),
+                },
+            )
+            post = request.POST.copy()
+            post["pest"] = str(pest_obj.pk)
+            form = PestCheckForm(post, request.FILES or None, user=request.user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f"Pest check for static pest '{static_pest.cardtitle}' logged.")
+                return redirect("profile")
+            else:
+                messages.error(request, "Failed to log pest check for static pest.")
+        else:
+            form.save()
+            return redirect("profile")
     return render(
         request,
         "mango_pests/farm_check_add.html",
@@ -141,6 +204,19 @@ class PestCheckUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
+class PestUpdateView(LoginRequiredMixin, UpdateView):
+    model = Pest
+    form_class = PestForm
+    template_name = "mango_pests/farm_check_add.html"
+    success_url = reverse_lazy("profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = f"Edit Pest '{self.object.name}'"
+        context["button_label"] = "Save Changes"
+        return context
+
+
 # Delete Views
 class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
     model = FarmBlock
@@ -152,9 +228,7 @@ class FarmBlockDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context[
-            "confirm_message"
-        ] = f'Are you sure you want to delete the farm block "{self.object.name}"?'
+        context["confirm_message"] = f'Are you sure you want to delete the farm block "{self.object.name}"?'
         return context
 
 
@@ -173,3 +247,71 @@ class PestCheckDeleteView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["confirm_message"] = "Are you sure you want to delete this pest check?"
         return context
+
+
+class PestDeleteView(LoginRequiredMixin, DeleteView):
+    model = Pest
+    template_name = "mango_pests/farm_check_remove.html"
+    success_url = reverse_lazy("profile")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["confirm_message"] = f"Are you sure you want to delete the pest '{self.object.name}'?"
+        return context
+
+
+# AJAX Views
+def ajax_confidence_result(request):
+    form = PestSelectionForm(request.POST or None, prefix="surv")
+    result_html = ""
+
+    if form.is_valid():
+        pest = form.cleaned_data["pest"]
+        checks = PestCheck.objects.filter(
+            pest=pest, positives=0, farm_block__grower=request.user
+        )
+        total_checked = sum(c.num_trees for c in checks)
+        if total_checked > 0:
+            confidence = 100 * (1 - (1 - 0.01) ** total_checked)
+        else:
+            confidence = None
+
+        result_html = render_to_string(
+            "mango_pests/partials/confidence_result.html",
+            {
+                "surveillance_result": {
+                    "pest": pest,
+                    "total_checked": total_checked,
+                    "confidence": confidence,
+                }
+            },
+        )
+
+    return HttpResponse(result_html)
+
+
+def ajax_sample_result(request):
+    form = SampleSizeForm(request.POST or None, prefix="sample")
+    result_html = ""
+
+    if form.is_valid():
+        p = form.cleaned_data["prevalence"]
+        c_val = form.cleaned_data["confidence"]
+
+        if p > 0 and c_val > 0:
+            required_n = math.ceil(math.log(1 - c_val) / math.log(1 - p))
+        else:
+            required_n = None
+
+        result_html = render_to_string(
+            "mango_pests/partials/sample_size_result.html",
+            {
+                "sample_size_result": {
+                    "prevalence": p,
+                    "confidence": c_val,
+                    "required_n": required_n,
+                }
+            },
+        )
+
+    return HttpResponse(result_html)

@@ -32,7 +32,8 @@ class Intrusion:
     # URL slugger method to convert cardtitle to URL-friendly slug
     def slugger(self, cardtitle):
         return sub(r"[^A-Za-z]+", "-", cardtitle).lower()
-    
+
+
 class Reference:
     def __init__(self, title, source):
         self.title = title

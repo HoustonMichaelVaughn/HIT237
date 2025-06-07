@@ -1,0 +1,61 @@
+{# Partial for AJAX pest checks table and pagination #}
+<div id="recent-pest-checks-table">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Pest</th>
+        <th>Date</th>
+        <th>Block</th>
+        <th>Trees</th>
+        <th>Positives</th>
+        <th>Confidence</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for check in recent_pest_checks %}
+      <tr>
+        <td>{{ check.pest.name }}</td>
+        <td>{{ check.date_checked }}</td>
+        <td>{{ check.farm_block.name }}</td>
+        <td>{{ check.num_trees }}</td>
+        <td>{{ check.positives }}</td>
+        <td>
+          {% if check.positives > 0 %}
+            <span class="badge bg-danger">0%</span>
+          {% else %}
+            {% with pct=check.confidence|floatformat:0 %}
+              {% if pct|floatformat:0 >= 90 %}
+                <span class="badge bg-success">{{ pct }}&#37;</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">{{ pct }}&#37;</span>
+              {% endif %}
+            {% endwith %}
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'edit_pest_check' check.id %}" class="btn btn-sm btn-warning">Edit</a>
+          <a href="{% url 'delete_pest_check' check.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center">No pest checks found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if recent_pest_checks.paginator.num_pages > 1 %}
+  <nav>
+    <ul class="pagination">
+      {% if recent_pest_checks.has_previous %}
+        <li class="page-item"><a class="page-link" hx-get="{% url 'pest_check_list' %}?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.previous_page_number }}" hx-target="#recent-pest-checks-table" hx-swap="innerHTML" href="?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.previous_page_number }}">Previous</a></li>
+      {% endif %}
+      {% for num in recent_pest_checks.paginator.page_range %}
+        <li class="page-item {% if recent_pest_checks.number == num %}active{% endif %}"><a class="page-link" hx-get="{% url 'pest_check_list' %}?pc_search={{ pc_search }}&pc_page={{ num }}" hx-target="#recent-pest-checks-table" hx-swap="innerHTML" href="?pc_search={{ pc_search }}&pc_page={{ num }}">{{ num }}</a></li>
+      {% endfor %}
+      {% if recent_pest_checks.has_next %}
+        <li class="page-item"><a class="page-link" hx-get="{% url 'pest_check_list' %}?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.next_page_number }}" hx-target="#recent-pest-checks-table" hx-swap="innerHTML" href="?pc_search={{ pc_search }}&pc_page={{ recent_pest_checks.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>

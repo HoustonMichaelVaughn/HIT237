@@ -24,125 +24,70 @@
     </div>
   </div>
 
-  <!-- Farm Blocks Table -->
-  <h3>Your Farm Blocks</h3>
-  <table class="table table-bordered table-hover">
-    <thead>
-      <tr><th>Name</th><th>Location</th><th>Actions</th></tr>
-    </thead>
-    <tbody>
-      {% for block in farm_blocks %}
-      <tr>
-        <td>{{ block.name }}</td>
-        <td>{{ block.location_description }}</td>
-        <td>
-          <a href="{% url 'edit_farm_block' block.pk %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'delete_farm_block' block.pk %}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="3">You haven't added any farm blocks yet.</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4">+ Add Farm Block</a>
+  <!-- HTMX: Farm Blocks -->
+  <form method="get"
+        class="mb-2"
+        hx-get="{% url 'farm_block_list' %}"
+        hx-target="#farm-blocks-table"
+        hx-swap="innerHTML">
+    <div class="input-group w-50 mb-2">
+      <input type="text" name="fb_search" id="fbSearchInput" class="form-control" placeholder="Search farm blocks..." value="{{ fb_search }}">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <button type="button" id="clearFbSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'farm_block_list' %}', {target: '#farm-blocks-table', swap: 'innerHTML'});">Clear</button>
+    </div>
+  </form>
 
-  <!-- Recent Pest Checks got a bit of trouble here see notes-->
-   <div class="d-flex align-items-center mb-3">
-  <a href="{% url 'export_csv' %}" class="btn btn-secondary me-2">
-    Download CSV
-  </a>
-  <a href="{% url 'create_pest_check' %}" class="btn btn-primary me-2">
-    + Add Pest Check
-  </a>
-  <a href="{% url 'add_farm_block' %}" class="btn btn-secondary">
-    + Add Farm Block
-  </a>
+  <div id="farm-blocks-table">
+    {% include "growers/partials/farm_blocks_table.html" %}
   </div>
 
-  <h3>Recent Pest Checks</h3>
+  <a href="{% url 'add_farm_block' %}" class="btn btn-primary mb-4 me-2">+ Add Farm Block</a>
+  <a href="{% url 'create_pest_check' %}" class="btn btn-secondary mb-4">+ Add Pest Check</a>
 
-  <!-- Confidence-filter dropdown -->
-  <form method="get" class="mb-3">
+  <!-- Recent Pest Checks -->
+  <h3>Recent Pest Checks</h3>
+  <form method="get"
+        class="mb-2"
+        hx-get="{% url 'pest_check_list' %}"
+        hx-target="#recent-pest-checks-table"
+        hx-swap="innerHTML">
+    <div class="input-group w-50 mb-2">
+      <input type="text" name="pc_search" id="pcSearchInput" class="form-control" placeholder="Search pest checks..." value="{{ pc_search }}">
+      <button type="submit" class="btn btn-primary">Search</button>
+      <button type="button" id="clearPcSearchBtn" class="btn btn-outline-secondary" onclick="this.closest('form').reset();htmx.ajax('GET', '{% url 'pest_check_list' %}', {target: '#recent-pest-checks-table', swap: 'innerHTML'});">Clear</button>
+    </div>
+  </form>
+
+  <form method="get" class="mb-3"
+        hx-get="{% url 'pest_check_list' %}"
+        hx-target="#recent-pest-checks-table"
+        hx-swap="innerHTML">
     <label for="status">Show checks with confidence:</label>
-    <select name="status" id="status"
-            onchange="this.form.submit()"
-            class="form-control w-auto d-inline-block">
+    <select name="status" id="status" class="form-control w-auto d-inline-block">
       <option value="all"    {% if status_filter == "all"    %}selected{% endif %}>All</option>
       <option value="high"   {% if status_filter == "high"   %}selected{% endif %}>High (≥ 90%)</option>
       <option value="medium" {% if status_filter == "medium" %}selected{% endif %}>Medium (50–89%)</option>
-      <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (< 50%)</option>
+      <option value="low"    {% if status_filter == "low"    %}selected{% endif %}>Low (&lt; 50%)</option>
     </select>
   </form>
 
-  <table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Pest</th>
-      <th>Date</th>
-      <th>Block</th>
-      <th>Trees</th>
-      <th>Positives</th>
-      <th>Confidence</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for check in recent_pest_checks %}
-      <tr>
-        <td>{{ check.pest.name }}</td>
-        <td>{{ check.date_checked }}</td>
-        <td>{{ check.farm_block.name }}</td>
-        <td>{{ check.num_trees }}</td>
-        <td>{{ check.positives }}</td>
-
-        <!-- UPDATED “Confidence” COLUMN -->
-        <td>
-          {% if check.positives > 0 %}
-            <!-- If any positives were found, show a red “0%” -->
-            <span class="badge bg-danger">0%</span>
-          {% else %}
-            {% with pct=check.confidence|floatformat:0 %}
-              {% if pct|floatformat:0 >= 90 %}
-                <!-- Zero positives & ≥90% confidence → green badge -->
-                <span class="badge bg-success">{{ pct }}&#37;</span>
-              {% else %}
-                <!-- Zero positives & <90% confidence → yellow badge -->
-                <span class="badge bg-warning text-dark">{{ pct }}&#37;</span>
-              {% endif %}
-            {% endwith %}
-          {% endif %}
-        </td>
-        <!-- END UPDATED “Confidence” COLUMN -->
-
-        <td>
-          <a href="{% url 'edit_pest_check' check.id %}" class="btn btn-sm btn-link">Edit</a>
-          <a href="{% url 'delete_pest_check' check.id %}" class="btn btn-sm btn-link text-danger">Delete</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="7" class="text-center">No pest checks found.</td></tr>
-    {% endfor %}
-  </tbody>
-  </table>
-    <!-- Neolisa Idea-Badge Preview Section -->
-<div class="mt-5 mb-4 p-3 border rounded bg-light">
-  <h5>Sampling Status Badges</h5>
-  <div class="mb-3">
-    <span class="badge bg-success me-2">
-      Green Badge (conf ≥ 90%)
-    </span>
-    <span class="badge bg-warning text-dark me-2">
-      Yellow Badge (low sample)
-    </span>
-    <span class="badge bg-danger">
-      Red Badge (pest found)
-    </span>
+  <div id="recent-pest-checks-table">
+    {% include "growers/partials/pest_checks_table.html" %}
   </div>
-</div>
 
-  <!-- Confidence Calculator -->
+  <!-- Sampling Status Badges -->
+  <div class="mt-5 mb-4 p-3 border rounded bg-light">
+    <h5>Sampling Status Badges</h5>
+    <div>
+      <span class="badge bg-success me-2">Green Badge (conf ≥ 90%)</span>
+      <span class="badge bg-warning text-dark me-2">Yellow Badge (low sample)</span>
+      <span class="badge bg-danger">Red Badge (pest found)</span>
+    </div>
+  </div>
+
+  <!-- Accordions -->
   <div class="accordion mb-3" id="dashboardAccordion">
+    <!-- Confidence Calculator -->
     <div class="accordion-item">
       <h3 class="accordion-header" id="headingConfidence">
         <button class="accordion-button collapsed" type="button"
@@ -151,30 +96,24 @@
           Check My Surveillance Confidence
         </button>
       </h3>
-      <div id="collapseConfidence" class="accordion-collapse collapse"
-           aria-labelledby="headingConfidence" data-bs-parent="#dashboardAccordion">
+      <div id="collapseConfidence"
+           class="accordion-collapse collapse"
+           aria-labelledby="headingConfidence"
+           data-bs-parent="#dashboardAccordion">
         <div class="accordion-body">
-          <form method="post">
+          <form method="post"
+                id="confidence-form"
+                hx-post="{% url 'confidence_check' %}"
+                hx-target="#confidence-result"
+                hx-swap="innerHTML"
+                hx-on="htmx:afterSwap: document.getElementById('confidence-result-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' })">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-secondary">
-              Evaluate Surveillance Effort
-            </button>
+            <button type="submit" class="btn btn-secondary">Evaluate Surveillance Effort</button>
           </form>
-
-          {% if surveillance_result %}
-            <div class="alert alert-info mt-3">
-              <h5>Confidence Summary for {{ surveillance_result.pest.name }}</h5>
-              <p><strong>Total trees checked (0 positives):</strong>
-                 {{ surveillance_result.total_checked }}</p>
-              {% if surveillance_result.confidence %}
-                <p><strong>Confidence (1% prevalence):</strong>
-                   {{ surveillance_result.confidence|floatformat:2 }}%</p>
-              {% else %}
-                <p class="text-muted">Insufficient data to calculate confidence.</p>
-              {% endif %}
-            </div>
-          {% endif %}
+          <div id="confidence-result-anchor">
+            <div id="confidence-result"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -188,38 +127,40 @@
           How Many Trees Should I Check?
         </button>
       </h3>
-      <div id="collapseSampleSize" class="accordion-collapse collapse"
-           aria-labelledby="headingSampleSize" data-bs-parent="#dashboardAccordion">
+      <div id="collapseSampleSize"
+           class="accordion-collapse collapse"
+           aria-labelledby="headingSampleSize"
+           data-bs-parent="#dashboardAccordion">
         <div class="accordion-body">
-          <form method="post">
+          <form method="post"
+                id="sample-form"
+                hx-post="{% url 'sample_check' %}"
+                hx-target="#sample-result"
+                hx-swap="innerHTML"
+                hx-on="htmx:afterSwap: document.getElementById('sample-result-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' })">
             {% csrf_token %}
             {{ sample_form.as_p }}
             <button type="submit" class="btn btn-secondary">
               Calculate Required Sample Size
             </button>
           </form>
-
-          {% if sample_size_result %}
-            <div class="alert alert-success mt-3">
-              <p>To be <strong>
-                  {{ sample_size_result.confidence|floatformat:2 }}
-                </strong>% confident that a pest is not present at a prevalence
-                of <strong>
-                  {{ sample_size_result.prevalence|floatformat:4 }}
-                </strong>, you must check at least
-                <strong>{{ sample_size_result.required_n }}</strong> trees
-                with 0 positives.
-              </p>
-            </div>
-          {% endif %}
+          <div id="sample-result-anchor">
+            <div id="sample-result"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Your Pests Table -->
+  <h3>Your Pests</h3>
+  <div id="pests-table">
+    {% include "growers/partials/pests_table.html" %}
+  </div>
 </div>
 
-<!-- Initialize Bootstrap tooltips -->
+<!-- Scripts -->
+<script src="https://unpkg.com/htmx.org@1.9.5"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     var tooltipTriggerList = [].slice.call(
@@ -228,6 +169,16 @@
     tooltipTriggerList.forEach(function (tooltipTriggerEl) {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    const input = document.getElementById("pestSearchInput");
+    const clearBtn = document.getElementById("clearPestSearchBtn");
+
+    function toggleClearButton() {
+      clearBtn.disabled = !input.value.trim();
+    }
+
+    toggleClearButton();
+    input?.addEventListener("input", toggleClearButton);
   });
 </script>
 {% endblock %}
