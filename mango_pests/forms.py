@@ -31,12 +31,12 @@ class PestCheckForm(forms.ModelForm):
             attrs={"class": "form-control", "aria-describedby": "pathHelp"}
         ),
     )
+    pest = forms.ChoiceField(label="Pest")
 
     class Meta:
         model = PestCheck
         fields = [
             "farm_block",
-            "pest",
             "date_checked",
             "part_of_plant",
             "infestation_level",
@@ -44,7 +44,7 @@ class PestCheckForm(forms.ModelForm):
             "num_trees",
             "positives",
             "notes",
-        ]
+        ]  # Removed 'pest' from fields
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
@@ -53,13 +53,37 @@ class PestCheckForm(forms.ModelForm):
             self.fields["farm_block"].queryset = FarmBlock.objects.filter(grower=user)
         else:
             self.fields["farm_block"].queryset = FarmBlock.objects.none()
-        # Patch pest queryset to include static pests as choices
         db_pests = list(Pest.objects.all())
         static_pests = [
             (f"static::{i}", p.cardtitle) for i, p in enumerate(Pestsdiseases)
         ]
-        db_choices = [(p.pk, p.name) for p in db_pests]
+        db_choices = [(str(p.pk), p.name) for p in db_pests]
         self.fields["pest"].choices = db_choices + static_pests
+
+    def clean_pest(self):
+        value = self.cleaned_data["pest"]
+        if value.startswith("static::"):
+            return value
+        try:
+            return Pest.objects.get(pk=value)
+        except (Pest.DoesNotExist, ValueError, TypeError):
+            raise forms.ValidationError("Invalid pest selection.")
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        pest_val = self.cleaned_data.get("pest")
+        if isinstance(pest_val, str) and pest_val.startswith("static::"):
+            # Attach static pest identifier for view to handle
+            instance._static_pest = pest_val
+            if commit:
+                raise ValueError("Cannot save PestCheck with static pest directly. Handle in view.")
+            return instance
+        # Assign regular DB pest
+        instance.pest = pest_val
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance
 
 
 class PestSelectionForm(forms.Form):

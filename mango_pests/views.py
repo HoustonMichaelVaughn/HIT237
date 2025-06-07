@@ -166,7 +166,7 @@ def create_pest_check(request):
             # Replace the POST data to use the DB pest pk
             post = request.POST.copy()
             post["pest"] = str(pest_obj.pk)
-            form = PestCheckForm(post, user=request.user)
+            form = PestCheckForm(post, request.FILES or None, user=request.user)
             if form.is_valid():
                 form.save()
                 messages.success(request, f"Pest check for static pest '{static_pest.cardtitle}' logged.")
