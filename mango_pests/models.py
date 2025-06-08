@@ -4,6 +4,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from math import exp
 
 # PATH_CHOICES is used to define sampling methods for pest checks.
 # Each tuple contains a machine-readable value and a human-readable label.
@@ -15,17 +16,8 @@ PATH_CHOICES = [
 
 
 class FarmBlock(models.Model):
-    """
-    Represents a block of farmland associated with a grower.
+    #Represents a block of farmland associated with a grower.
 
-    Fields:
-        - grower: ForeignKey to the User model, representing the owner of the farm block.
-        - name: Name of the farm block.
-        - location_description: Text description of the farm block's location.
-
-    For more information on ForeignKey, visit:
-    https://docs.djangoproject.com/en/stable/ref/models/fields/#foreignkey
-    """
     grower = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     location_description = models.TextField()
@@ -35,15 +27,8 @@ class FarmBlock(models.Model):
 
 
 class PlantType(models.Model):
-    """
-    Represents the type of plant that can be grown in a farm block.
+    #Represents the type of plant that can be grown in a farm block.
 
-    Fields:
-        - name: The common name of the plant type.
-
-    For more information on model fields, visit:
-    https://docs.djangoproject.com/en/stable/ref/models/fields/
-    """
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -51,20 +36,15 @@ class PlantType(models.Model):
 
 
 class Pest(models.Model):
-    """
-    Represents a pest that can affect plants in a farm block.
 
-    Fields:
-        - name: The common name of the pest.
-        - scientific_name: The scientific name of the pest (optional).
-        - description: A text description of the pest.
-        - plant_type: ForeignKey to the PlantType model, representing the type of plant the pest affects.
-        - image: An image of the pest (optional).
-        - owner: ForeignKey to the User model, representing the owner of the pest record (optional).
+    # Represents a pest that can affect plants in a farm block.
+    #- name: The common name of the pest.
+    #- scientific_name: The scientific name of the pest (optional).
+    #- description: A text description of the pest.
+    #- plant_type: ForeignKey to the PlantType model, representing the type of plant the pest affects.
+    #- image: An image of the pest (optional).
+    #- owner: ForeignKey to the User model, representing the owner of the pest record (optional).
 
-    For more information on model relationships, visit:
-    https://docs.djangoproject.com/en/stable/topics/db/models/#relationships
-    """
     name = models.CharField(max_length=100)
     scientific_name = models.CharField(max_length=150, blank=True)
     description = models.TextField()
@@ -90,9 +70,6 @@ class PestCheck(models.Model):
         - positives: The number of trees with visible signs of pests.
         - notes: Additional notes about the pest check (optional).
         - path_pattern: The pattern used to walk through the block during the check.
-
-    For more information on model methods, visit:
-    https://docs.djangoproject.com/en/stable/topics/db/models/#methods
     """
     farm_block = models.ForeignKey(FarmBlock, on_delete=models.CASCADE)
     pest = models.ForeignKey(Pest, on_delete=models.CASCADE)
@@ -119,9 +96,6 @@ class PestCheck(models.Model):
 
         The confidence score is based on the prevalence of the pest and the number of trees checked.
         A higher score indicates a higher confidence in the presence of the pest.
-
-        For more information on properties in Django models, visit:
-        https://docs.djangoproject.com/en/stable/topics/db/models/#properties
         """
         if self.num_trees == 0 or self.positives is None:
             return None

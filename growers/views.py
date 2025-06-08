@@ -4,15 +4,15 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.core.paginator import Paginator
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 
 from mango_pests.forms import PestSelectionForm, SampleSizeForm
-from mango_pests.models import FarmBlock, PestCheck
-from mango_pests.data import Pestsdiseases  # <-- import static pests
+from mango_pests.models import Pest, FarmBlock, PestCheck
+from mango_pests.data import Pestsdiseases
 
 from .forms import RegisterUserForm
 
@@ -44,143 +44,111 @@ class RegisterUser(FormView):
 
 @login_required
 def profile_view(request):
-    # A)Fetch all FarmBlock and PestCheck objects for this user,
-    #    then compute a “confidence” value (0–100) on each PestCheck in Python.
     farm_blocks = FarmBlock.objects.filter(grower=request.user)
-    raw_checks_qs = PestCheck.objects.filter(farm_block__grower=request.user).order_by(
-        "-date_checked"
-    )
+    raw_checks_qs = PestCheck.objects.filter(
+        farm_block__grower=request.user
+    ).order_by("-date_checked")
 
-    # A1) Build a new list `all_checks` so that each PestCheck has `.confidence` attached
     all_checks = []
     for c in raw_checks_qs:
         n = getattr(c, "num_trees", 0)
-        # If there were zero positives, compute binomial confidence at 1% prevalence
         if getattr(c, "positives", 0) == 0 and n > 0:
             computed_conf = 100 * (1 - (1 - 0.01) ** n)
         else:
-            # If positives > 0 (or n == 0), treat confidence as 0
             computed_conf = 0.0
-
-        # Attach attribute to this instance for later use
         setattr(c, "confidence", computed_conf)
         all_checks.append(c)
 
-    # B) Read the “status” GET parameter (default = "all")
     status = request.GET.get("status", "all").lower()
-
-    # C) Manually filter the Python list by the computed `.confidence` property
     if status == "high":
-        # Keep only those checks whose confidence ≥ 90
-        filtered_checks = [c for c in all_checks if getattr(c, "confidence", 0) >= 90]
+        filtered_checks = [c for c in all_checks if c.confidence >= 90]
     elif status == "medium":
-        # Keep only those checks with 50 ≤ confidence < 90
-        filtered_checks = [
-            c for c in all_checks if 50 <= getattr(c, "confidence", 0) < 90
-        ]
+        filtered_checks = [c for c in all_checks if 50 <= c.confidence < 90]
     elif status == "low":
-        # Keep only those checks with confidence < 50
-        filtered_checks = [c for c in all_checks if getattr(c, "confidence", 0) < 50]
+        filtered_checks = [c for c in all_checks if c.confidence < 50]
     else:
-        # “all” or any other value → show all checks in this case
-        filtered_checks = list(all_checks)
+        filtered_checks = all_checks
 
-    # D) Totals for summary cards
     total_blocks = farm_blocks.count()
-    total_checks = len(all_checks)  # count of all checks (unfiltered)
-
-    # E) Only show the first 5 in the Recent Pest Checks table
-    recent_pest_checks = filtered_checks[:5]
-
-    # Fetch all pests for display in dashboard (DB + static)
-    from mango_pests.models import Pest
+    total_checks = len(all_checks)
 
     db_pests = list(Pest.objects.all())
-    # Wrap static pests as dicts with DB-like fields for template compatibility
     static_pests = [
-        type('StaticPest', (), {
-            'name': p.cardtitle,
-            'scientific_name': getattr(p, 'scientific_name', ''),
-            'description': p.detailedinfo,
-            'plant_type': type('PlantType', (), {'name': 'Mango'})(),
-            'is_static': True
-        })() for p in Pestsdiseases
+        type(
+            "StaticPest",
+            (),
+            {
+                "name": p.cardtitle,
+                "scientific_name": getattr(p, "scientific_name", ""),
+                "description": p.detailedinfo,
+                "plant_type": type("PlantType", (), {"name": "Mango"})(),
+                "is_static": True,
+            },
+        )()
+        for p in Pestsdiseases
     ]
     pests = db_pests + static_pests
 
-    # F) Two separate forms with prefixes (for the calculators)
     form = PestSelectionForm(request.POST or None, prefix="surv")
     sample_form = SampleSizeForm(request.POST or None, prefix="sample")
 
     surveillance_result = None
-    sample_size_result = None
-
-    # G) If “Check My Surveillance Confidence” form was submitted:
     if "surv-pest" in request.POST and form.is_valid():
         pest = form.cleaned_data["pest"]
         checks = PestCheck.objects.filter(
             pest=pest, positives=0, farm_block__grower=request.user
         )
         total_checked = sum(c.num_trees for c in checks)
-        if total_checked > 0:
-            # 1% prevalence → probability of ≥1 detection
-            confidence = 100 * (1 - (1 - 0.01) ** total_checked)
-        else:
-            confidence = None
+        confidence = (
+            100 * (1 - (1 - 0.01) ** total_checked) if total_checked > 0 else None
+        )
         surveillance_result = {
             "pest": pest,
             "total_checked": total_checked,
             "confidence": confidence,
         }
 
-    # H) If “How Many Trees Should I Check?” form was submitted:
+    sample_size_result = None
     if "sample-prevalence" in request.POST and sample_form.is_valid():
-        p = sample_form.cleaned_data["prevalence"]  # e.g. 0.01
-        c_val = sample_form.cleaned_data["confidence"]  # e.g. 0.95
-        if p > 0 and c_val > 0:
-            required_n = math.ceil(math.log(1 - c_val) / math.log(1 - p))
-        else:
-            required_n = None
+        p = sample_form.cleaned_data["prevalence"]
+        c_val = sample_form.cleaned_data["confidence"]
+        required_n = (
+            math.ceil(math.log(1 - c_val) / math.log(1 - p))
+            if p > 0 and c_val > 0
+            else None
+        )
         sample_size_result = {
             "prevalence": p,
             "confidence": c_val,
             "required_n": required_n,
         }
 
-    # Search and pagination for Farm Blocks
+    # Farm Block: filter by search term and paginate
     fb_search = request.GET.get("fb_search", "").strip().lower()
-    farm_blocks_qs = farm_blocks
-    if fb_search:
-        farm_blocks_qs = farm_blocks_qs.filter(name__icontains=fb_search)
+    farm_blocks_qs = farm_blocks.filter(name__icontains=fb_search) if fb_search else farm_blocks
     fb_page = request.GET.get("fb_page", 1)
     fb_paginator = Paginator(farm_blocks_qs, 5)
     farm_blocks_page = fb_paginator.get_page(fb_page)
 
-    # Search and pagination for Pest Checks
+    # Pest Checks: filter by search term and paginate
     pc_search = request.GET.get("pc_search", "").strip().lower()
-    filtered_checks_qs = filtered_checks
-    if pc_search:
-        filtered_checks_qs = [c for c in filtered_checks if pc_search in c.pest.name.lower() or pc_search in c.farm_block.name.lower()]
+    filtered_checks_qs = [c for c in filtered_checks if pc_search in c.pest.name.lower() or pc_search in c.farm_block.name.lower()] if pc_search else filtered_checks
     pc_page = request.GET.get("pc_page", 1)
     pc_paginator = Paginator(filtered_checks_qs, 5)
     recent_pest_checks_page = pc_paginator.get_page(pc_page)
 
-    # Search and pagination for Pests
+    # Pests: filter by name/type and paginate
     pest_search = request.GET.get("pest_search", "").strip().lower()
-    pest_type = request.GET.get("pest_type", "all").lower()  # new filter
-    pests_qs = pests
-    if pest_search:
-        pests_qs = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, 'scientific_name') and pest_search in (p.scientific_name or '').lower())]
-    # Filter by pest_type
+    pest_type = request.GET.get("pest_type", "all").lower()
+    pests_qs = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, "scientific_name") and pest_search in (p.scientific_name or "").lower())] if pest_search else pests
     if pest_type == "base":
-        pests_qs = [p for p in pests_qs if getattr(p, 'is_static', False)]
+        pests_qs = [p for p in pests_qs if getattr(p, "is_static", False)]
     elif pest_type == "user":
-        pests_qs = [p for p in pests_qs if not getattr(p, 'is_static', False)]
+        pests_qs = [p for p in pests_qs if not getattr(p, "is_static", False)]
     pest_page = request.GET.get("pest_page", 1)
     pest_paginator = Paginator(pests_qs, 5)
     pests_page = pest_paginator.get_page(pest_page)
 
-    # I) Render the template with all context
     return render(
         request,
         "growers/profile.html",
@@ -224,23 +192,18 @@ def ajax_farm_block_list(request):
 
 @login_required
 def ajax_pest_check_list(request):
-    # Rebuild the same logic as in profile_view for pest checks
-    from mango_pests.models import PestCheck
     raw_checks_qs = PestCheck.objects.filter(farm_block__grower=request.user).order_by("-date_checked")
     all_checks = []
     for c in raw_checks_qs:
         n = getattr(c, "num_trees", 0)
         if getattr(c, "positives", 0) == 0 and n > 0:
-            computed_conf = 100 * (1 - (1 - 0.01) ** n)
+            c.confidence = 100 * (1 - (1 - 0.01) ** n)
         else:
-            computed_conf = 0.0
-        c.confidence = computed_conf
+            c.confidence = 0.0
         all_checks.append(c)
-    # Filtering
+
     pc_search = request.GET.get("pc_search", "").strip().lower()
-    filtered_checks = all_checks
-    if pc_search:
-        filtered_checks = [c for c in all_checks if pc_search in c.pest.name.lower() or pc_search in c.farm_block.name.lower()]
+    filtered_checks = [c for c in all_checks if pc_search in c.pest.name.lower() or pc_search in c.farm_block.name.lower()] if pc_search else all_checks
     pc_page = request.GET.get("pc_page", 1)
     pc_paginator = Paginator(filtered_checks, 5)
     recent_pest_checks_page = pc_paginator.get_page(pc_page)
@@ -254,31 +217,31 @@ def ajax_pest_check_list(request):
 
 @login_required
 def ajax_pest_list(request):
-    from mango_pests.models import Pest
-    from mango_pests.data import Pestsdiseases
-    # Build DB and static pest list as in profile_view
     db_pests = list(Pest.objects.all())
     static_pests = [
-        type('StaticPest', (), {
-            'name': p.cardtitle,
-            'scientific_name': getattr(p, 'scientific_name', ''),
-            'description': p.detailedinfo,
-            'plant_type': type('PlantType', (), {'name': 'Mango'})(),
-            'is_static': True
-        })() for p in Pestsdiseases
+        type(
+            "StaticPest",
+            (),
+            {
+                "name": p.cardtitle,
+                "scientific_name": getattr(p, "scientific_name", ""),
+                "description": p.detailedinfo,
+                "plant_type": type("PlantType", (), {"name": "Mango"})(),
+                "is_static": True,
+            },
+        )()
+        for p in Pestsdiseases
     ]
     pests = db_pests + static_pests
     pest_search = request.GET.get("pest_search", "").strip().lower()
-    pest_type = request.GET.get("pest_type", "all").lower()  # new filter
+    pest_type = request.GET.get("pest_type", "all").lower()
     if pest_search:
-        pests = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, 'scientific_name') and pest_search in (p.scientific_name or '').lower())]
-    # Filter by pest_type
+        pests = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, "scientific_name") and pest_search in (p.scientific_name or "").lower())]
     if pest_type == "base":
-        pests = [p for p in pests if getattr(p, 'is_static', False)]
+        pests = [p for p in pests if getattr(p, "is_static", False)]
     elif pest_type == "user":
-        pests = [p for p in pests if not getattr(p, 'is_static', False)]
+        pests = [p for p in pests if not getattr(p, "is_static", False)]
     pest_page = request.GET.get("pest_page", 1)
-    from django.core.paginator import Paginator
     pest_paginator = Paginator(pests, 5)
     pests_page = pest_paginator.get_page(pest_page)
     html = render_to_string(
