@@ -14,6 +14,13 @@ PATH_CHOICES = [
     ("Edge", "Edge perimeter only"),
 ]
 
+INFESTATION_LEVEL_CHOICES = [
+    ("None", "None"),
+    ("Low", "Low"),
+    ("Moderate", "Moderate"),
+    ("High", "High"),
+]
+
 
 class FarmBlock(models.Model):
     #Represents a block of farmland associated with a grower.
@@ -81,7 +88,13 @@ class PestCheck(models.Model):
     pest = models.ForeignKey(Pest, on_delete=models.CASCADE)
     date_checked = models.DateField()
     part_of_plant = models.CharField(max_length=100)
-    infestation_level = models.TextField(blank=True)
+    infestation_level = models.CharField(
+        max_length=10,
+        choices=INFESTATION_LEVEL_CHOICES,
+        blank=True,
+        default="",
+        help_text="Severity of pest presence"
+    )
     num_trees = models.PositiveIntegerField(help_text="Total number of trees checked.")
     positives = models.PositiveIntegerField(help_text="Number of trees with visible pest signs.")
     notes = models.TextField(blank=True)

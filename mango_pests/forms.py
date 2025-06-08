@@ -1,5 +1,5 @@
 from django import forms
-from mango_pests.models import Pest
+from mango_pests.models import Pest, INFESTATION_LEVEL_CHOICES
 from .data import Pestsdiseases
 from .models import PATH_CHOICES, FarmBlock, PestCheck, PlantType
 
@@ -19,6 +19,12 @@ class PestCheckForm(forms.ModelForm):
         ),
     )
     pest = forms.ChoiceField(label="Pest")
+    infestation_level = forms.ChoiceField(
+        choices=[("", "Select infestation level")] + INFESTATION_LEVEL_CHOICES,
+        required=False,
+        label="Infestation Level",
+        widget=forms.Select(attrs={"class": "form-control"})
+    )
 
     class Meta:
         model = PestCheck

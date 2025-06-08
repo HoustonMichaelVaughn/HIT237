@@ -7,3 +7,4 @@ db.sqlite3
 .vscode/
 *.pyc
 mango_pests/migrations/0003_farmblock_area_hectares_farmblock_stocking_rate.py
+mango_pests/migrations/0004_alter_pestcheck_infestation_level.py
