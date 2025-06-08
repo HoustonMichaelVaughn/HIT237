@@ -42,7 +42,7 @@ class SetupApp(wx.Frame):
 
     def on_setup(self, event):
         self.status.SetLabel("Running setup...")
-        wx.Yield()  # Update GUI
+        wx.Yield()
 
         try:
 
