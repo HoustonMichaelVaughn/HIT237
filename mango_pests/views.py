@@ -134,36 +134,64 @@ def add_farm_block(request):
 @login_required
 def create_pest_check(request):
     form = PestCheckForm(request.POST or None, user=request.user)
+
     if request.method == "POST" and form.is_valid():
-        pest_val = form.cleaned_data["pest"]
-        if isinstance(pest_val, str) and pest_val.startswith("static::"):
-            idx = int(pest_val.split("::")[1])
-            static_pest = Pestsdiseases[idx]
-            pest_obj, created = Pest.objects.get_or_create(
-                name=static_pest.cardtitle,
+        real_pest = form.cleaned_data.get("real_pest")
+        static_pest = form.cleaned_data.get("static_pest")
+
+        if real_pest and static_pest:
+            messages.error(request, "Please select only one pest source: database or static.")
+            return redirect("pestcheck:new")
+
+        if not real_pest and not static_pest:
+            messages.error(request, "You must select a pest.")
+            return redirect("pestcheck:new")
+
+        if static_pest:
+            # Handle static pest lookup and conversion
+            try:
+                idx = int(static_pest.split("::")[1])
+                static_def = Pestsdiseases[idx]
+            except (IndexError, ValueError):
+                messages.error(request, "Invalid static pest selected.")
+                return redirect("pestcheck:new")
+
+            # Check if a matching Pest already exists
+            pest_obj, _ = Pest.objects.get_or_create(
+                name=static_def.cardtitle,
                 defaults={
-                    "description": static_pest.detailedinfo,
-                    "scientific_name": getattr(static_pest, "scientific_name", ""),
-                    "plant_type": PlantType.objects.first(),
+                    "description": static_def.detailedinfo,
+                    "scientific_name": getattr(static_def, "scientific_name", ""),
+                    "plant_type": PlantType.objects.first(),  # Or choose smarter default
+                    "owner": request.user,
                 },
             )
+
+            # Mutate POST data to use the resolved pest ID
             post = request.POST.copy()
-            post["pest"] = str(pest_obj.pk)
+            post["real_pest"] = str(pest_obj.pk)
+            post["static_pest"] = ""
             form = PestCheckForm(post, request.FILES or None, user=request.user)
-            if form.is_valid():
-                form.save()
-                messages.success(request, f"Pest check for static pest '{static_pest.cardtitle}' logged.")
-                return redirect("profile")
+
+        if form.is_valid():
+            pest_check = form.save(commit=False)
+            if static_pest:
+                pest_check.pest = pest_obj
             else:
-                messages.error(request, "Failed to log pest check for static pest.")
-        else:
-            form.save()
+                pest_check.pest = real_pest
+            pest_check.save()
+            form.save_m2m()
+            messages.success(request, "Pest check logged successfully.")
             return redirect("profile")
+        else:
+            messages.error(request, "Failed to log pest check.")
+
     return render(
         request,
         "mango_pests/farm_check_add.html",
         {"form": form, "title": "Log New Pest Check", "button_label": "Create"},
     )
+
 
 
 # Update Views

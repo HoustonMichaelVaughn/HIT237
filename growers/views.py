@@ -73,6 +73,9 @@ def profile_view(request):
     total_checks = len(all_checks)
 
     db_pests = list(Pest.objects.all())
+    static_names = {p.cardtitle.lower() for p in Pestsdiseases}
+    db_pests = [p for p in db_pests if p.name.lower() not in static_names]
+
     static_pests = [
         type(
             "StaticPest",
@@ -127,21 +130,18 @@ def profile_view(request):
             "enough_trees": enough_trees,
         }
 
-    # Farm Block: filter by search term and paginate
     fb_search = request.GET.get("fb_search", "").strip().lower()
     farm_blocks_qs = farm_blocks.filter(name__icontains=fb_search) if fb_search else farm_blocks
     fb_page = request.GET.get("fb_page", 1)
     fb_paginator = Paginator(farm_blocks_qs, 5)
     farm_blocks_page = fb_paginator.get_page(fb_page)
 
-    # Pest Checks: filter by search term and paginate
     pc_search = request.GET.get("pc_search", "").strip().lower()
     filtered_checks_qs = [c for c in filtered_checks if pc_search in c.pest.name.lower() or pc_search in c.farm_block.name.lower()] if pc_search else filtered_checks
     pc_page = request.GET.get("pc_page", 1)
     pc_paginator = Paginator(filtered_checks_qs, 5)
     recent_pest_checks_page = pc_paginator.get_page(pc_page)
 
-    # Pests: filter by name/type and paginate
     pest_search = request.GET.get("pest_search", "").strip().lower()
     pest_type = request.GET.get("pest_type", "all").lower()
     pests_qs = [p for p in pests if pest_search in p.name.lower() or (hasattr(p, "scientific_name") and pest_search in (p.scientific_name or "").lower())] if pest_search else pests
@@ -175,6 +175,7 @@ def profile_view(request):
             "pest_paginator": pest_paginator,
         },
     )
+
 
 
 @login_required
@@ -222,6 +223,9 @@ def ajax_pest_check_list(request):
 @login_required
 def ajax_pest_list(request):
     db_pests = list(Pest.objects.all())
+    static_names = {p.cardtitle.lower() for p in Pestsdiseases}
+    db_pests = [p for p in db_pests if p.name.lower() not in static_names]
+
     static_pests = [
         type(
             "StaticPest",
@@ -236,7 +240,9 @@ def ajax_pest_list(request):
         )()
         for p in Pestsdiseases
     ]
+
     pests = db_pests + static_pests
+
     pest_search = request.GET.get("pest_search", "").strip().lower()
     pest_type = request.GET.get("pest_type", "all").lower()
     if pest_search:

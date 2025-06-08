@@ -11,14 +11,28 @@ class SampleSizeForm(forms.Form):
 
 
 class PestCheckForm(forms.ModelForm):
+    # Real pests from DB
+    real_pest = forms.ModelChoiceField(
+        queryset=Pest.objects.all(),
+        required=False,
+        label="Pest (Custom)",
+        widget=forms.Select(attrs={"class": "form-control"})
+    )
+
+    # Optional static pest selection
+    static_pest = forms.ChoiceField(
+        required=False,
+        label="Pest (Base)",
+        choices=[],
+        widget=forms.Select(attrs={"class": "form-control"})
+    )
+
     path_pattern = forms.ChoiceField(
         choices=PATH_CHOICES,
         label="Inspection Pattern",
-        widget=forms.Select(
-            attrs={"class": "form-control", "aria-describedby": "pathHelp"}
-        ),
+        widget=forms.Select(attrs={"class": "form-control", "aria-describedby": "pathHelp"})
     )
-    pest = forms.ChoiceField(label="Pest")
+
     infestation_level = forms.ChoiceField(
         choices=[("", "Select infestation level")] + INFESTATION_LEVEL_CHOICES,
         required=False,
@@ -30,6 +44,8 @@ class PestCheckForm(forms.ModelForm):
         model = PestCheck
         fields = [
             "farm_block",
+            "real_pest",
+            "static_pest",
             "date_checked",
             "part_of_plant",
             "infestation_level",
@@ -42,38 +58,48 @@ class PestCheckForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
+
         if user:
             self.fields["farm_block"].queryset = FarmBlock.objects.filter(grower=user)
         else:
             self.fields["farm_block"].queryset = FarmBlock.objects.none()
-        db_pests = list(Pest.objects.all())
-        static_pests = [
+
+        self.fields["static_pest"].choices = [("", "Choose a base pest")] + [
             (f"static::{i}", p.cardtitle) for i, p in enumerate(Pestsdiseases)
         ]
-        db_choices = [(str(p.pk), p.name) for p in db_pests]
-        self.fields["pest"].choices = db_choices + static_pests
 
-    def clean_pest(self):
-        value = self.cleaned_data["pest"]
-        if value.startswith("static::"):
-            return value
-        try:
-            return Pest.objects.get(pk=value)
-        except (Pest.DoesNotExist, ValueError, TypeError):
-            raise forms.ValidationError("Invalid pest selection.")
+    def clean(self):
+        cleaned_data = super().clean()
+        real_pest = cleaned_data.get("real_pest")
+        static_pest = cleaned_data.get("static_pest")
+
+        if not real_pest and not static_pest:
+            raise forms.ValidationError("You must select either a custom pest or a base pest.")
+
+        if real_pest and static_pest:
+            raise forms.ValidationError("Choose only one pest source: custom OR base.")
+
+        return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        pest_val = self.cleaned_data.get("pest")
-        if isinstance(pest_val, str) and pest_val.startswith("static::"):
-            instance._static_pest = pest_val
+
+        real_pest = self.cleaned_data.get("real_pest")
+        static_pest = self.cleaned_data.get("static_pest")
+
+        if static_pest:
+            instance._static_pest = static_pest
             if commit:
-                raise ValueError("Cannot save PestCheck with static pest directly. Handle in view.")
+                raise ValueError("Cannot save PestCheck with static pest directly. Handle this in the view.")
             return instance
-        instance.pest = pest_val
+
+        if real_pest:
+            instance.pest = real_pest
+
         if commit:
             instance.save()
             self.save_m2m()
+
         return instance
 
 
