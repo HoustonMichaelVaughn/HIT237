@@ -21,9 +21,15 @@ class FarmBlock(models.Model):
     grower = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     location_description = models.TextField()
+    stocking_rate = models.PositiveIntegerField(help_text="Number of trees per hectare.", default=100)
+    area_hectares = models.DecimalField(max_digits=6, decimal_places=2, help_text="Area of the block in hectares.")
 
     def __str__(self):
         return f"{self.name} ({self.grower.username})"
+
+    @property
+    def estimated_tree_count(self):
+        return round(self.area_hectares * self.stocking_rate)
 
 
 class PlantType(models.Model):
@@ -104,3 +110,22 @@ class PestCheck(models.Model):
         prevalence = 0.01
         confidence = 1 - exp(-prevalence * self.num_trees)
         return round(confidence * 100, 2)
+
+    @property
+    def sampling_coverage_percent(self):
+        try:
+            total = self.farm_block.estimated_tree_count
+            if not total or total == 0:
+                return None
+            return round((self.num_trees / total) * 100, 2)
+        except (AttributeError, ZeroDivisionError, TypeError):
+            return None
+
+    @property
+    def sampling_comment(self):
+        percent = self.sampling_coverage_percent
+        if percent is None:
+            return "Coverage unknown"
+        if percent >= 20:
+            return "Sufficient coverage"
+        return "Insufficient coverage"

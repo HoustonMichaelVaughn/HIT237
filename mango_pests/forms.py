@@ -80,7 +80,7 @@ class PestSelectionForm(forms.Form):
 class FarmBlockForm(forms.ModelForm):
     class Meta:
         model = FarmBlock
-        fields = ["name", "location_description"]
+        fields = ["name", "location_description", "stocking_rate", "area_hectares"]
 
 
 class PestForm(forms.ModelForm):

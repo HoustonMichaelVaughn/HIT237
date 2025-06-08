@@ -9,6 +9,8 @@
         <th>Trees</th>
         <th>Positives</th>
         <th>Confidence</th>
+        <th>Sampling Coverage</th>
+        <th>Coverage Comment</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -34,12 +36,26 @@
           {% endif %}
         </td>
         <td>
+          {% if check.sampling_coverage_percent is not None %}
+            {{ check.sampling_coverage_percent }}&#37;
+          {% else %}
+            <span class="text-muted">N/A</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if check.sampling_comment %}
+            {{ check.sampling_comment }}
+          {% else %}
+            <span class="text-muted">N/A</span>
+          {% endif %}
+        </td>
+        <td>
           <a href="{% url 'edit_pest_check' check.id %}" class="btn btn-sm btn-warning">Edit</a>
           <a href="{% url 'delete_pest_check' check.id %}" class="btn btn-sm btn-danger">Delete</a>
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="7" class="text-center">No pest checks found.</td></tr>
+      <tr><td colspan="9" class="text-center">No pest checks found.</td></tr>
       {% endfor %}
     </tbody>
   </table>

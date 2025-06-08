@@ -2,20 +2,23 @@
 <div id="farm-blocks-table">
   <table class="table table-bordered table-hover">
     <thead>
-      <tr><th>Name</th><th>Location</th><th>Actions</th></tr>
+      <tr><th>Name</th><th>Location</th><th>Stocking Rate (trees/ha)</th><th>Area (ha)</th><th>Estimated Tree Count</th><th>Actions</th></tr>
     </thead>
     <tbody>
       {% for block in farm_blocks %}
       <tr>
         <td>{{ block.name }}</td>
         <td>{{ block.location_description }}</td>
+        <td>{{ block.stocking_rate }}</td>
+        <td>{{ block.area_hectares }}</td>
+        <td>{{ block.estimated_tree_count }}</td>
         <td>
           <a href="{% url 'edit_farm_block' block.pk %}" class="btn btn-sm btn-warning">Edit</a>
           <a href="{% url 'delete_farm_block' block.pk %}" class="btn btn-sm btn-danger">Delete</a>
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="3">You haven't added any farm blocks yet.</td></tr>
+      <tr><td colspan="6">You haven't added any farm blocks yet.</td></tr>
       {% endfor %}
     </tbody>
   </table>
