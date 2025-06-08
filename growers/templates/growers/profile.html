@@ -139,7 +139,32 @@
                 hx-swap="innerHTML"
                 hx-on="htmx:afterSwap: document.getElementById('sample-result-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' })">
             {% csrf_token %}
-            {{ sample_form.as_p }}
+            <p class="mb-3 text-muted">
+  This tool calculates the minimum number of trees you should inspect to be reasonably confident that your orchard is free from a specific pest, assuming that pest is present at a low level. 
+  <br><br>
+  To use it:
+  <ul>
+    <li><strong>Prevalence</strong>: Estimate how common the pest might be. Lower values mean rarer pests and require larger samples.</li>
+    <li><strong>Confidence</strong>: Set how sure you want to be about detecting the pest.</li>
+    <li><strong>Trees You Can Check</strong>: Enter how many trees you're actually able to inspect during your surveillance round.</li>
+  </ul>
+  The calculator will tell you how many trees are needed and whether your inspection capacity is sufficient.
+</p>
+      <div class="mb-3">
+        {{ sample_form.prevalence.label_tag }}
+        {{ sample_form.prevalence }}
+        {{ sample_form.prevalence.errors }}
+      </div>
+      <div class="mb-3">
+        {{ sample_form.confidence.label_tag }}
+        {{ sample_form.confidence }}
+        {{ sample_form.confidence.errors }}
+      </div>
+      <div class="mb-3">
+        {{ sample_form.total_trees_available.label_tag }}
+        {{ sample_form.total_trees_available }}
+        {{ sample_form.total_trees_available.errors }}
+      </div>
             <button type="submit" class="btn btn-secondary">
               Calculate Required Sample Size
             </button>

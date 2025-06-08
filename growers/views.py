@@ -112,15 +112,19 @@ def profile_view(request):
     if "sample-prevalence" in request.POST and sample_form.is_valid():
         p = sample_form.cleaned_data["prevalence"]
         c_val = sample_form.cleaned_data["confidence"]
+        total_trees = sample_form.cleaned_data["total_trees_available"]
         required_n = (
             math.ceil(math.log(1 - c_val) / math.log(1 - p))
             if p > 0 and c_val > 0
             else None
         )
+        enough_trees = total_trees >= required_n if required_n is not None else None
         sample_size_result = {
             "prevalence": p,
             "confidence": c_val,
             "required_n": required_n,
+            "total_trees_available": total_trees,
+            "enough_trees": enough_trees,
         }
 
     # Farm Block: filter by search term and paginate

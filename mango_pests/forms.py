@@ -5,20 +5,9 @@ from .models import PATH_CHOICES, FarmBlock, PestCheck, PlantType
 
 
 class SampleSizeForm(forms.Form):
-    prevalence = forms.FloatField(
-        label="Assumed prevalence (e.g. 0.01 = 1%)",
-        initial=0.01,
-        min_value=0.0001,
-        max_value=0.5,
-        required=True,
-    )
-    confidence = forms.FloatField(
-        label="Desired confidence level (e.g. 0.95 = 95%)",
-        initial=0.95,
-        min_value=0.5,
-        max_value=0.9999,
-        required=True,
-    )
+    prevalence = forms.FloatField(label="Prevalence", min_value=0.0001, max_value=0.9999)
+    confidence = forms.FloatField(label="Confidence", min_value=0.0001, max_value=0.9999)
+    total_trees_available = forms.IntegerField(min_value=1, label="Number of Trees You Can Check")
 
 
 class PestCheckForm(forms.ModelForm):
