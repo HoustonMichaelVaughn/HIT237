@@ -1,12 +1,10 @@
 The HIT237 project has been redesigned for comfort and utility
-To get started, please insteall the requirements in requirements.txt then inject data with seed_data.sql
 
-Windows command:
-Get-Content seed_data.sql | sqlite3 db.sqlite3
-Mac command:
-sqlite3 db.sqlite3 < seed_data.sql
-
-Run createsuperuser and enjoy! 
+To get started install requirements via requirements.txt (VERY IMPORTANT STEP)
+Then from a terminal in MANGO_PESTS_PROJECT folder run setup/setup.py
+Click setup to complete the setup of the HIT237 project
+Admin user will be created. User=admin, Pass=admin. 10 survielance records will be generated.
+Enjoy!
 
 The HIT237 project strives to meet and excel in all required features.
 
