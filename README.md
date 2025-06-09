@@ -1,7 +1,8 @@
 The HIT237 project has been redesigned for comfort and utility
 
 To get started install requirements via requirements.txt (VERY IMPORTANT STEP)
-Then from a terminal in MANGO_PESTS_PROJECT folder run setup/setup.py
+Then from a terminal in mango_pests_project folder run:
+python setup/setup.py
 Click setup to complete the setup of the HIT237 project
 Admin user will be created. User=admin, Pass=admin. 10 survielance records will be generated.
 Enjoy!
