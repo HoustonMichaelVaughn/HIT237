@@ -11,7 +11,7 @@ class SetupApp(wx.Frame):
         vbox = wx.BoxSizer(wx.VERTICAL)
 
         pygame.mixer.init()
-        music_path = "keygen.mp3"
+        music_path = "setup/keygen.mp3"
         if os.path.exists(music_path):
             try:
                 pygame.mixer.music.load(music_path)
@@ -19,14 +19,13 @@ class SetupApp(wx.Frame):
             except Exception as e:
                 print(f"Failed to play music: {e}")
 
-        # Load and display image
-        image_path = "hit237_logo.png"
+        image_path = "setup/hit237_logo.png"
         if os.path.exists(image_path):
             img = wx.Image(image_path, wx.BITMAP_TYPE_PNG)
             img = img.Scale(300, 150, wx.IMAGE_QUALITY_HIGH)
             bitmap = wx.StaticBitmap(panel, bitmap=wx.Bitmap(img))
             vbox.Add(bitmap, 0, wx.ALIGN_CENTER | wx.TOP, 15)
-
+        vbox.Add(wx.StaticText(panel, label="После нас — тишина"), 0, wx.ALIGN_CENTER | wx.TOP, 10)
         self.status = wx.StaticText(panel, label="Ready to set up your Django project.")
         vbox.Add(self.status, 0, wx.ALIGN_CENTER | wx.TOP, 15)
 
